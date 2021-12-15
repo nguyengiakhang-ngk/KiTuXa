@@ -2,14 +2,18 @@ import React, {Component} from 'react';
 import {
     Keyboard,
     SafeAreaView,
-    StyleSheet,
-    Text, TextInput, TouchableOpacity, TouchableWithoutFeedback,
+    Text, TouchableWithoutFeedback,
     View
 } from 'react-native';
-import { CheckBox, Icon } from 'react-native-elements';
+import { Icon } from 'react-native-elements';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
 import AppButton from "../components/AppButton";
+import {SignupSchema} from "../utils/validation/ValidateLogin";
+import AppError from "../components/AppError";
+import AppInputAuth from "../components/AppInputAuth";
+import AppCheckBox from "../components/AppCheckBox";
+import {background_color, flex, font, font_weight, text_color, text_size, width} from "../utils/styles/MainStyle";
+import {color_primary} from "../utils/theme/Color";
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         {children}
@@ -17,16 +21,6 @@ const HideKeyboard = ({ children }) => (
 );
 export default class WellComeComponent extends Component{
     state = { checkedRemember: false };
-    SignupSchema = Yup.object().shape({
-        username: Yup.string()
-            .min(6, 'Tên tài khoản quá ngắn!')
-            .max(50, 'Tên tài khoản quá dài!')
-            .required('Tên tài khoản rỗng!'),
-        pass: Yup.string()
-            .min(6, 'Mật khẩu quá ngắn!')
-            .max(16, 'Mật khẩu quá ngắn dài!')
-            .required('Mật khẩu rỗng!')
-    });
     isFormValid (isValid, touched){
         return isValid && Object.keys(touched).length !== 0;
     }
@@ -34,9 +28,9 @@ export default class WellComeComponent extends Component{
         return (
             <Formik
                 initialValues={{username: "", pass: ""}}
-                validationSchema={this.SignupSchema}
+                validationSchema={SignupSchema}
                 onSubmit={values => {
-                    alert(values.username + "-" + values.pass);
+                    alert(values.username + "-" + values.pass + "-" + this.state.checkedRemember);
                 }}
             >
                 {({
@@ -48,90 +42,147 @@ export default class WellComeComponent extends Component{
                       isValid
                 }) => (
                     <HideKeyboard>
-                        <SafeAreaView style={this.styles.container}>
-                            <View style={this.styles.container} onPress={Keyboard.dismiss}>
+                        <SafeAreaView
+                            style={[
+                                {flex: 1},
+                                background_color.white,
+                                flex.justify_content_center,
+                                flex.align_items_center
+                            ]}
+                        >
+                            <View
+                                style={[
+                                    {flex: 1},
+                                    background_color.white,
+                                    flex.justify_content_center,
+                                    flex.align_items_center
+                                ]}
+                                onPress={Keyboard.dismiss}
+                            >
                                 <Icon
                                     raised
                                     name='hotel'
                                     type='font-awesome-5'
-                                    color={this.colorBlueDark}
-                                    size={50}/>
-                                <Text style={[this.styles.textBlue, this.styles.textTitle]}>Ký túc xá</Text>
+                                    color={color_primary}
+                                    size={50}
+                                />
+                                <Text
+                                    style={[
+                                        text_color.primary,
+                                        font.serif,
+                                        font_weight.bold,
+                                        text_size.title
+                                    ]}
+                                >
+                                    Ký túc xá
+                                </Text>
                             </View>
-                            <View style={this.styles.formLogin}>
+                            <View
+                                style={[
+                                    width.w_100,
+                                    {flex: 2},
+                                    flex.justify_content_between
+                                ]}
+                            >
                                 <View>
-                                    <View style={this.styles.formControl}>
-                                        <View style={[this.styles.formInput]}>
-                                            <Icon
-                                                name='user-alt'
-                                                type='font-awesome-5'
-                                                color={this.colorBlueDark}
-                                                size={18}/>
-                                            <TextInput
-                                                placeholder={'Tên tài khoản'} style={ [this.styles.text, this.styles.input] }
-                                                onChangeText={handleChange('username')}
-                                                onBlur={handleBlur('username')}
-                                                value={values.username}
-                                            />
-                                        </View>
-                                        {errors.username && touched.username ? (
-                                            <View style={{flexDirection: "row", marginLeft: 15, marginTop: 5}}>
-                                                <Icon
-                                                    name='exclamation-triangle'
-                                                    type='font-awesome-5'
-                                                    color={'red'}
-                                                    size={16}/>
-                                                <Text style={this.styles.textError}>{errors.username}</Text>
-                                            </View>
-                                        ) : null}
-                                    </View>
-                                    <View style={this.styles.formControl}>
-                                        <View style={[this.styles.formInput]}>
-                                            <Icon
-                                                name='lock'
-                                                type='font-awesome-5'
-                                                color={this.colorBlueDark}
-                                                size={18}/>
-                                            <TextInput
-                                                secureTextEntry={true} placeholder={'Mật khẩu'} style={[this.styles.text, this.styles.input]}
-                                                onChangeText={handleChange('pass')}
-                                                onBlur={handleBlur('pass')}
-                                                value={values.pass}
-                                            />
-                                        </View>
-                                        {errors.pass && touched.pass ? (
-                                            <View style={{flexDirection: "row", marginLeft: 15, marginTop: 5}}>
-                                                <Icon
-                                                    name='exclamation-triangle'
-                                                    type='font-awesome-5'
-                                                    color={'red'}
-                                                    size={16}/>
-                                                <Text style={this.styles.textError}>{errors.pass}</Text>
-                                            </View>
-                                        ) : null}
-                                    </View>
-                                    <View style={[this.styles.formControl, this.styles.viewRow]}>
-                                        <CheckBox
-                                            containerStyle={this.styles.containerCheckbox}
-                                            textStyle={[this.styles.text, this.styles.textBlue, this.styles.titleCheckbox]}
-                                            title='Nhớ mật khẩu'
-                                            checked={this.state.checkedRemember}
-                                            onPress={() => this.setState({checkedRemember: !this.state.checkedRemember})}
-                                            uncheckedColor={this.colorBlueDark}
-                                            checkedColor={this.colorBlueDark}
+                                    <View
+                                        style={[
+                                            width.w_100,
+                                            {paddingLeft: 15, paddingRight: 15, marginTop: 15}
+                                        ]}
+                                    >
+                                        <AppInputAuth placeholder={"Tên tài khoản"}
+                                                      field={"username"}
+                                                      icon={"user-alt"}
+                                                      handleChange={handleChange}
+                                                      handleBlur={handleBlur}
+                                                      values={values}
                                         />
-                                        <Text style={[this.styles.text, this.styles.textBlue]}>Quên mật khẩu?</Text>
+                                        {errors.username && touched.username ? (
+                                            <AppError errors={ errors.username }/>
+                                        ) : null}
                                     </View>
-                                    <View style={[this.styles.formAction]}>
+                                    <View
+                                        style={[
+                                            width.w_100,
+                                            {paddingLeft: 15, paddingRight: 15, marginTop: 15}
+                                        ]}
+                                    >
+                                        <AppInputAuth placeholder={"Mật khẩu"}
+                                                      field={"pass"}
+                                                      icon={"lock"}
+                                                      handleChange={handleChange}
+                                                      handleBlur={handleBlur}
+                                                      values={values}
+                                        />
+                                        {errors.pass && touched.pass ? (
+                                            <AppError errors={ errors.pass }/>
+                                        ) : null}
+                                    </View>
+                                    <View
+                                        style={[
+                                            width.w_100,
+                                            {paddingLeft: 15, paddingRight: 15, marginTop: 15},
+                                            flex.flex_row,
+                                            flex.align_items_center,
+                                            flex.justify_content_between
+                                        ]}
+                                    >
+                                        <AppCheckBox
+                                            title={"Nhớ mật khẩu"}
+                                            values={this.state.checkedRemember}
+                                            onPress={() => this.setState({checkedRemember: !this.state.checkedRemember})}
+                                        />
+                                        <Text
+                                            style={[
+                                                font_weight.f_500,
+                                                font.serif,
+                                                text_size.sm,
+                                                text_color.primary
+                                            ]}
+                                        >
+                                            Quên mật khẩu?
+                                        </Text>
+                                    </View>
+                                    <View
+                                        style={[
+                                            width.w_100,
+                                            {paddingLeft: 15, paddingRight: 15, marginTop: 30}
+                                        ]}
+                                    >
                                         <AppButton
-                                            disabled = { this.isFormValid(isValid, touched) }
+                                            disabled = { !this.isFormValid(isValid, touched) }
                                             onPress = { handleSubmit }
-                                            title="Đăng nhập"/>
+                                            title="Đăng nhập"
+                                        />
                                     </View>
                                 </View>
-                                <View style={[this.styles.view, {flexDirection: "row", justifyContent: 'center', marginBottom: 20}]}>
-                                    <Text style={this.styles.text}>Bạn chưa có tài khoản?&nbsp;</Text>
-                                    <Text style={[this.styles.text, this.styles.textBlue]}>Đăng ký</Text>
+                                <View
+                                    style={[
+                                        flex.flex_row,
+                                        flex.justify_content_center,
+                                        {marginBottom: 20}
+                                    ]}
+                                >
+                                    <Text
+                                        style={[
+                                            font_weight.f_500,
+                                            font.serif,
+                                            text_size.sm
+                                        ]}
+                                    >
+                                        Bạn chưa có tài khoản?&nbsp;
+                                    </Text>
+                                    <Text
+                                        style={[
+                                            font_weight.f_500,
+                                            font.serif,
+                                            text_size.sm,
+                                            text_color.primary
+                                        ]}
+                                    >
+                                        Đăng ký
+                                    </Text>
                                 </View>
                             </View>
                         </SafeAreaView>
@@ -140,91 +191,4 @@ export default class WellComeComponent extends Component{
             </Formik>
         );
     }
-    colorBlueDark = "#0e4582";
-    styles = StyleSheet.create({
-        containerIOS: {
-            flex: 1,
-        },
-        container: {
-            flex: 1,
-            backgroundColor: 'white',
-            justifyContent: 'center',
-            alignItems: 'center'
-        },
-        formLogin: {
-            width: '100%',
-            flex: 2,
-            justifyContent: "space-between"
-        },
-        textTitle: {
-            fontFamily: 'serif',
-            fontSize: 35,
-            fontWeight: 'bold'
-        },
-        formControl: {
-            width: '100%',
-            paddingLeft: 15,
-            paddingRight: 15,
-            marginTop: 15
-        },
-        formAction: {
-            width: '100%',
-            paddingLeft: 15,
-            paddingRight: 15,
-            marginTop: 30
-        },
-        viewRow:{
-            flexDirection: 'row',
-            justifyContent: "space-between",
-            alignItems: "center"
-        },
-        formInput: {
-            width: '100%',
-            flexDirection: 'row',
-            alignItems: 'center',
-            borderRadius: 25,
-            backgroundColor: 'white',
-            padding: 15,
-            shadowColor: "#000",
-            shadowOffset: {
-                width: 0,
-                height: 5,
-            },
-            shadowOpacity: 0.36,
-            shadowRadius: 6.68,
-            elevation: 11,
-        },
-        input: {
-            width: '100%',
-            paddingRight: 40,
-            marginLeft: 10,
-            padding: 0
-        },
-        containerCheckbox: {
-            backgroundColor: 'transparent',
-            borderWidth: 0,
-            padding: 0,
-            marginLeft: 0
-        },
-        titleCheckbox: {
-            marginStart: 2
-        },
-        text: {
-            fontWeight: '500',
-            fontSize: 18,
-            fontFamily: 'serif',
-        },
-        textBlue: {
-            color: this.colorBlueDark
-        },
-        textWhite: {
-            color: '#FFFFFF'
-        },
-        textError: {
-            fontSize: 16,
-            fontFamily: 'serif',
-            color: 'red',
-            marginLeft: 5
-        }
-    });
 }
