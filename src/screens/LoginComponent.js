@@ -91,12 +91,13 @@ export default class WellComeComponent extends Component{
                                             {paddingLeft: 15, paddingRight: 15, marginTop: 15}
                                         ]}
                                     >
-                                        <AppInputAuth placeholder={"Tên tài khoản"}
-                                                      field={"username"}
-                                                      icon={"user-alt"}
-                                                      handleChange={handleChange}
-                                                      handleBlur={handleBlur}
-                                                      values={values}
+                                        <AppInputAuth
+                                            placeholder={"Tên tài khoản"}
+                                            field={"username"}
+                                            icon={"user-alt"}
+                                            handleChange={handleChange}
+                                            handleBlur={handleBlur}
+                                            values={values}
                                         />
                                         {errors.username && touched.username ? (
                                             <AppError errors={ errors.username }/>
@@ -108,12 +109,13 @@ export default class WellComeComponent extends Component{
                                             {paddingLeft: 15, paddingRight: 15, marginTop: 15}
                                         ]}
                                     >
-                                        <AppInputAuth placeholder={"Mật khẩu"}
-                                                      field={"pass"}
-                                                      icon={"lock"}
-                                                      handleChange={handleChange}
-                                                      handleBlur={handleBlur}
-                                                      values={values}
+                                        <AppInputAuth
+                                            placeholder={"Mật khẩu"}
+                                            field={"pass"}
+                                            icon={"lock"}
+                                            handleChange={handleChange}
+                                            handleBlur={handleBlur}
+                                            values={values}
                                         />
                                         {errors.pass && touched.pass ? (
                                             <AppError errors={ errors.pass }/>
