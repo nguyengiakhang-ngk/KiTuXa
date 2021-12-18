@@ -43,12 +43,14 @@ export default class WellComeComponent extends Component{
         //     alert(responseJson);
         // })
         // .catch((error => {console.log(error)}));
-        axios.post("http://192.168.76.102:3001/login",{
+        axios.post("http://192.168.76.101:3001/login",{
             username: username,
             password: password
         })
         .then((response)=>{
-            alert(response.data);
+            if(response.data){
+                this.props.navigation.replace("Tab");
+            }
         })
         .catch((error => {
             console.log(error);
