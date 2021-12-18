@@ -21,6 +21,7 @@ class AppInputAuth extends Component{
                     color={color_primary}
                     size={18}/>
                 <TextInput
+                    secureTextEntry={this.props.secureTextEntry}
                     placeholder={this.props.placeholder}
                     style={[
                         text_size.sm,

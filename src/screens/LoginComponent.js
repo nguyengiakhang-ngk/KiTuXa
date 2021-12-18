@@ -14,6 +14,7 @@ import AppInputAuth from "../components/AppInputAuth";
 import AppCheckBox from "../components/AppCheckBox";
 import {background_color, flex, font, font_weight, text_color, text_size, width} from "../utils/styles/MainStyle";
 import {color_primary} from "../utils/theme/Color";
+import axios from "axios";
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         {children}
@@ -24,13 +25,42 @@ export default class WellComeComponent extends Component{
     isFormValid (isValid, touched){
         return isValid && Object.keys(touched).length !== 0;
     }
+    login = (username, password) => {
+        // alert(username + "-" + password);
+        // fetch("http://192.168.76.102:3001/login", {
+        //     method: "POST",
+        //     headers: {
+        //         "Accept": "application/json",
+        //         "Content-Type": "application/json"
+        //     },
+        //     body: JSON.stringify({
+        //         "username": username,
+        //         "password": password
+        //     })
+        // })
+        // .then((response) => response.json())
+        // .then((responseJson) => {
+        //     alert(responseJson);
+        // })
+        // .catch((error => {console.log(error)}));
+        axios.post("http://192.168.76.102:3001/login",{
+            username: username,
+            password: password
+        })
+        .then((response)=>{
+            alert(response.data);
+        })
+        .catch((error => {
+            console.log(error);
+        }));
+    }
     render() {
         return (
             <Formik
                 initialValues={{username: "", pass: ""}}
                 validationSchema={SignupSchema}
                 onSubmit={values => {
-                    alert(values.username + "-" + values.pass + "-" + this.state.checkedRemember);
+                    this.login(values.username, values.pass);
                 }}
             >
                 {({
@@ -92,6 +122,7 @@ export default class WellComeComponent extends Component{
                                         ]}
                                     >
                                         <AppInputAuth
+                                            secureTextEntry={false}
                                             placeholder={"Tên tài khoản"}
                                             field={"username"}
                                             icon={"user-alt"}
@@ -110,6 +141,7 @@ export default class WellComeComponent extends Component{
                                         ]}
                                     >
                                         <AppInputAuth
+                                            secureTextEntry={true}
                                             placeholder={"Mật khẩu"}
                                             field={"pass"}
                                             icon={"lock"}
