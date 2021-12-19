@@ -1,11 +1,18 @@
 import React, {Component} from 'react';
 import {
+    Image,
     SafeAreaView,
-    Text,
+    Text, View,
 } from 'react-native';
 import {Icon} from "react-native-elements";
-import {background_color, flex, font, font_weight, text_color, text_size} from "../utils/styles/MainStyle";
-import {color_primary} from "../utils/theme/Color";
+import {
+    background_color,
+    flex,
+    text_color,
+    text_size,
+    width
+} from "../utils/styles/MainStyle";
+import AppItemHome from "../components/AppItemHome";
 
 export default class HomeComponent extends Component{
 
@@ -13,28 +20,258 @@ export default class HomeComponent extends Component{
         return (
             <SafeAreaView
                 style={[
-                    {flex: 1},
+                    {
+                        flex: 1,
+                        backgroundColor: 'deepskyblue'
+                    },
                     flex.justify_content_center,
-                    flex.align_items_center,
-                    background_color.primary
+                    flex.align_items_center
                 ]}
             >
-                <Icon
-                    raised
-                    name='hotel'
-                    type='font-awesome-5'
-                    color={color_primary}
-                    size={60}/>
-                <Text
+                <View
                     style={[
-                        font_weight.bold,
-                        text_color.white,
-                        text_size.title,
-                        font.serif
+                        width.w_100,
+                        background_color.transparent,
+                        flex.justify_content_center,
+                        {
+                            flex: 1,
+                            paddingLeft: 10,
+                            paddingRight: 10
+                        }
                     ]}
                 >
-                    Home
-                </Text>
+                    <View
+                        style=
+                            {[
+                                flex.flex_row,
+                                flex.align_items_center,
+                                flex.justify_content_between
+                            ]}
+                    >
+                        <View
+                            style=
+                                {[
+                                    flex.flex_row,
+                                    flex.align_items_center
+                                ]}
+                        >
+                            <Image
+                                source=
+                                       {{
+                                           uri:'https://znews-photo.zadn.vn/w660/Uploaded/mdf_vsxrlu/2021_01_22/meo_3_2.jpg'}}
+                                style=
+                                    {{
+                                        width: 75,
+                                        height: 75,
+                                        marginRight: 10
+                                    }}
+                            />
+                            <View>
+                                <Text
+                                    style=
+                                        {[
+                                            text_color.white,
+                                            text_size.sm
+                                        ]}
+                                >Nguyễn Khắc Nguyên
+                                </Text>
+                                <Text
+                                    style=
+                                        {[
+                                            text_color.white,
+                                            text_size.xs
+                                        ]}
+                                >Người quản lý
+                                </Text>
+                            </View>
+                        </View>
+                        <Icon
+                            name='bell'
+                            type='font-awesome-5'
+                            color='white'
+                            size={30}
+                        />
+                    </View>
+
+                </View>
+                <View
+                    style={[
+                        {flex: 3},
+                        flex.flex_row,
+                        flex.flex_wrap,
+                        width.w_100,
+                        background_color.white,
+                        {borderTopStartRadius: 40},
+                        {borderTopEndRadius: 40},
+                        {paddingTop: 20,
+                        paddingLeft: 5,
+                        paddingRight: 5}
+                    ]}
+                >
+
+                    {/*Icon menu*/}
+                    <View
+                        style={[
+                            width.w_25,
+                            {
+                                paddingRight: 0.5,
+                                paddingLeft: 0.5,
+                                paddingTop: 10,
+                                paddingBottom: 5
+                            }
+                        ]}
+                    >
+                        <AppItemHome
+                            bg = {'red'}
+                            name = 'user-graduate'
+                            size = {25}
+                            color = {'white'}
+                            colorText = {'black'}
+                            label = {'Sinh viên'}
+                        />
+                    </View>
+                    <View
+                        style={[
+                            width.w_25,
+                            {
+                                paddingRight: 0.5,
+                                paddingLeft: 0.5,
+                                paddingTop: 10,
+                                paddingBottom: 5
+                            }
+                        ]}
+                    >
+                        <AppItemHome
+                            bg = {'green'}
+                            name = 'buromobelexperte'
+                            size = {25}
+                            color = {'white'}
+                            colorText = {'black'}
+                            label = {'Loại phòng'}
+                        />
+                    </View>
+                    <View
+                        style={[
+                            width.w_25,
+                            {
+                                paddingRight: 0.5,
+                                paddingLeft: 0.5,
+                                paddingTop: 10,
+                                paddingBottom: 5
+                            }
+                        ]}
+                    >
+                        <AppItemHome
+                            bg = {'blue'}
+                            name = 'house-user'
+                            size = {25}
+                            color = {'white'}
+                            colorText = {'black'}
+                            label = {'Phòng'}
+                        />
+                    </View>
+                    <View
+                        style={[
+                            width.w_25,
+                            {
+                                paddingRight: 0.5,
+                                paddingLeft: 0.5,
+                                paddingTop: 10,
+                                paddingBottom: 5
+                            }
+                        ]}
+                    >
+                        <AppItemHome
+                            bg = {'orange'}
+                            name = 'file-invoice-dollar'
+                            size = {25}
+                            color = {'white'}
+                            colorText = {'black'}
+                            label = {'Hóa đơn'}
+                        />
+                    </View>
+                    <View
+                        style={[
+                            width.w_25,
+                            {
+                                paddingRight: 0.5,
+                                paddingLeft: 0.5,
+                                paddingTop: 10,
+                                paddingBottom: 5
+                            }
+                        ]}
+                    >
+                        <AppItemHome
+                            bg = {'purple'}
+                            name = 'tint'
+                            size = {25}
+                            color = {'white'}
+                            colorText = {'black'}
+                            label = {'Điện/nước'}
+                        />
+                    </View>
+                    <View
+                        style={[
+                            width.w_25,
+                            {
+                                paddingRight: 0.5,
+                                paddingLeft: 0.5,
+                                paddingTop: 10,
+                                paddingBottom: 5
+                            }
+                        ]}
+                    >
+                        <AppItemHome
+                            bg = {'gray'}
+                            name = 'file-signature'
+                            size = {25}
+                            color = {'white'}
+                            colorText = {'black'}
+                            label = {'Hợp đồng'}
+                        />
+                    </View>
+                    <View
+                        style={[
+                            width.w_25,
+                            {
+                                paddingRight: 0.5,
+                                paddingLeft: 0.5,
+                                paddingTop: 10,
+                                paddingBottom: 5
+                            }
+                        ]}
+                    >
+                        <AppItemHome
+                            bg = {'crimson'}
+                            name = 'servicestack'
+                            size = {25}
+                            color = {'white'}
+                            colorText = {'black'}
+                            label = {'Dịch vụ'}
+                        />
+                    </View>
+                    <View
+                        style={[
+                            width.w_25,
+                            {
+                                paddingRight: 0.5,
+                                paddingLeft: 0.5,
+                                paddingTop: 10,
+                                paddingBottom: 5
+                            }
+                        ]}
+                    >
+                        <AppItemHome
+                            bg = {'orangered'}
+                            name = 'bug'
+                            size = {25}
+                            color = {'white'}
+                            colorText = {'black'}
+                            label = {'Sự cố'}
+                        />
+                    </View>
+
+                </View>
             </SafeAreaView>
         );
     }

@@ -22,9 +22,17 @@ export const text_size = StyleSheet.create({
     },
     title: {
         fontSize: 35
+    },
+    small: {
+        fontSize: 12
     }
 });
 
+export const text_align = StyleSheet.create({
+    center: {
+        textAlign: 'center'
+    }
+});
 export const font_weight = StyleSheet.create({
     f_500: {
         fontWeight: '500'
@@ -49,6 +57,12 @@ export const background_color = StyleSheet.create({
     },
     white: {
         backgroundColor: 'white'
+    },
+    blue:{
+        backgroundColor: 'blue'
+    },
+    green:{
+        backgroundColor: 'green'
     }
 });
 
@@ -87,6 +101,9 @@ export const width = StyleSheet.create({
     w_100: {
         width: '100%'
     },
+    w_25: {
+        width: '25%'
+    }
 });
 
 export const flex = StyleSheet.create({
@@ -101,6 +118,12 @@ export const flex = StyleSheet.create({
     },
     justify_content_between: {
         justifyContent: "space-between",
+    },
+    flex_wrap: {
+        flexWrap: "wrap"
     }
+});
+
+export const rounded = StyleSheet.create({
 });
 

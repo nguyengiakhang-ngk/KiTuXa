@@ -43,7 +43,7 @@ export default class WellComeComponent extends Component{
         //     alert(responseJson);
         // })
         // .catch((error => {console.log(error)}));
-        axios.post("http://192.168.76.101:3001/login",{
+        axios.post("http://192.168.1.2:3001/login",{
             username: username,
             password: password
         })
