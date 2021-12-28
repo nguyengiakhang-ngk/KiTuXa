@@ -7,22 +7,25 @@ import {
 import {Icon} from "react-native-elements";
 import {
     background_color,
-    flex,
+    flex, font_weight,
     text_color,
     text_size,
     width
 } from "../utils/styles/MainStyle";
 import AppItemHome from "../components/AppItemHome";
+import {color_primary} from "../utils/theme/Color";
 
 export default class HomeComponent extends Component{
-
+    routeScreen = (title) => {
+        this.props.navigation.navigate(title);
+    }
     render() {
         return (
             <SafeAreaView
                 style={[
                     {
                         flex: 1,
-                        backgroundColor: 'deepskyblue'
+                        backgroundColor: color_primary
                     },
                     flex.justify_content_center,
                     flex.align_items_center
@@ -59,19 +62,24 @@ export default class HomeComponent extends Component{
                                 source=
                                        {{
                                            uri:'https://znews-photo.zadn.vn/w660/Uploaded/mdf_vsxrlu/2021_01_22/meo_3_2.jpg'}}
-                                style=
-                                    {{
-                                        width: 75,
-                                        height: 75,
-                                        marginRight: 10
-                                    }}
+                                style={{
+                                    width: 76,
+                                    height: 76,
+                                    marginRight: 10,
+                                    borderBottomLeftRadius: 38,
+                                    borderBottomRightRadius: 38,
+                                    borderTopRightRadius: 38,
+                                    borderTopLeftRadius: 38,
+                                    overflow: 'hidden',
+                                }}
                             />
                             <View>
                                 <Text
                                     style=
                                         {[
                                             text_color.white,
-                                            text_size.sm
+                                            text_size.sm,
+                                            font_weight.bold
                                         ]}
                                 >Nguyễn Khắc Nguyên
                                 </Text>
@@ -110,6 +118,27 @@ export default class HomeComponent extends Component{
                 >
 
                     {/*Icon menu*/}
+                    <View
+                        style={[
+                            width.w_25,
+                            {
+                                paddingRight: 0.5,
+                                paddingLeft: 0.5,
+                                paddingTop: 10,
+                                paddingBottom: 5
+                            }
+                        ]}
+                    >
+                        <AppItemHome
+                            bg = {'red'}
+                            name = 'vihara'
+                            size = {25}
+                            color = {'white'}
+                            colorText = {'black'}
+                            label = {'Khu trọ'}
+                            onPress = {() => this.routeScreen("AreaList") }
+                        />
+                    </View>
                     <View
                         style={[
                             width.w_25,

@@ -6,12 +6,12 @@ import {Text, View} from "react-native";
 class AppError extends Component{
     render() {
         return (
-            <View style={{flexDirection: "row", marginLeft: 15, marginTop: 5}}>
+            <View style={{flexDirection: "row", marginLeft: this.props.marginLeft, marginTop: 5}}>
                 <Icon
                     name='exclamation-triangle'
                     type='font-awesome-5'
                     color={color_danger}
-                    size={16}/>
+                    size={17}/>
                 <Text style={[
                     text_size.xs,
                     font.serif,

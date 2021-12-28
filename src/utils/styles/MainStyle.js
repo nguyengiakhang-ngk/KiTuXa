@@ -10,6 +10,9 @@ export const text_color = StyleSheet.create({
     },
     white: {
         color: 'white'
+    },
+    black: {
+        color: 'black'
     }
 });
 
@@ -106,6 +109,12 @@ export const width = StyleSheet.create({
     }
 });
 
+export const height = StyleSheet.create({
+    h_100: {
+        height: '100%'
+    },
+});
+
 export const flex = StyleSheet.create({
     flex_row: {
         flexDirection: 'row'
@@ -124,6 +133,12 @@ export const flex = StyleSheet.create({
     }
 });
 
-export const rounded = StyleSheet.create({
+export const position = StyleSheet.create({
+    relative: {
+        position: "relative"
+    },
+    absolute: {
+        position: "absolute"
+    }
 });
 

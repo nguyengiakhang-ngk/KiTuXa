@@ -13,6 +13,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import WelComeComponent from '../screens/WelComeComponent';
 import LoginComponent from '../screens/LoginComponent'
 import TabScreen from "./TabScreen";
+import AreaListScreen from "../screens/Area/AreaListScreen";
+import AddAreaScreen from "../screens/Area/AddAreaScreen";
+import UpdateAreaScreen from "../screens/Area/UpdateAreaScreen";
 const Stack = createNativeStackNavigator();
 const StackScreen: () => Node = () => {
     return (
@@ -31,6 +34,21 @@ const StackScreen: () => Node = () => {
                 <Stack.Screen
                     name="Tab"
                     component={TabScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="AreaList"
+                    component={AreaListScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="AddArea"
+                    component={AddAreaScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="UpdateArea"
+                    component={UpdateAreaScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

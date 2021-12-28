@@ -1,16 +1,17 @@
 import React, {Component} from "react";
-import {Text, View} from "react-native";
+import {Text, TouchableOpacity, View} from "react-native";
 import {Icon} from "react-native-elements";
 import {text_size, font, flex, text_align} from "../utils/styles/MainStyle";
 
 class AppItemHome extends Component{
     render() {
         return (
-            <View
+            <TouchableOpacity
                 style={[
                     flex.align_items_center,
                     flex.justify_content_center
                 ]}
+                onPress = { this.props.onPress }
             >
                 <View
                     style={[
@@ -37,7 +38,7 @@ class AppItemHome extends Component{
                         </Text>
                     ) : null
                 }
-            </View>
+            </TouchableOpacity>
         )
     }
 }

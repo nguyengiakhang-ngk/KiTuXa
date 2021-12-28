@@ -15,6 +15,7 @@ import AppCheckBox from "../components/AppCheckBox";
 import {background_color, flex, font, font_weight, text_color, text_size, width} from "../utils/styles/MainStyle";
 import {color_primary} from "../utils/theme/Color";
 import axios from "axios";
+import {path} from "../utils/config/define";
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         {children}
@@ -43,7 +44,7 @@ export default class WellComeComponent extends Component{
         //     alert(responseJson);
         // })
         // .catch((error => {console.log(error)}));
-        axios.post("http://192.168.1.2:3001/login",{
+        axios.post(path + "/login",{
             username: username,
             password: password
         })
@@ -133,7 +134,7 @@ export default class WellComeComponent extends Component{
                                             values={values}
                                         />
                                         {errors.username && touched.username ? (
-                                            <AppError errors={ errors.username }/>
+                                            <AppError errors={ errors.username } marginLeft={15}/>
                                         ) : null}
                                     </View>
                                     <View
@@ -152,7 +153,7 @@ export default class WellComeComponent extends Component{
                                             values={values}
                                         />
                                         {errors.pass && touched.pass ? (
-                                            <AppError errors={ errors.pass }/>
+                                            <AppError errors={ errors.pass } marginLeft={15}/>
                                         ) : null}
                                     </View>
                                     <View
