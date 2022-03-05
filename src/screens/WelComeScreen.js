@@ -7,7 +7,12 @@ import {Icon} from "react-native-elements";
 import {background_color, flex, font, font_weight, text_color, text_size} from "../utils/styles/MainStyle";
 import {color_primary} from "../utils/theme/Color";
 
-export default class CommentComponent extends Component{
+export default class WelComeScreen extends Component{
+    componentDidMount() {
+        setTimeout(()=>{
+            this.props.navigation.replace("Login");
+        }, 2500);
+    }
 
     render() {
         return (
@@ -33,7 +38,7 @@ export default class CommentComponent extends Component{
                         font.serif
                     ]}
                 >
-                    Comment
+                    Ký túc xá
                 </Text>
             </SafeAreaView>
         );

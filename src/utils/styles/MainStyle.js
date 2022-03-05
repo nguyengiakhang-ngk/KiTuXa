@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import {color_danger, color_primary} from "../theme/Color";
+import {color_danger, color_light, color_light_dark, color_primary} from "../theme/Color";
 
 export const text_color = StyleSheet.create({
     primary: {
@@ -17,6 +17,15 @@ export const text_color = StyleSheet.create({
 });
 
 export const text_size = StyleSheet.create({
+    xl: {
+        fontSize: 24
+    },
+    lg: {
+        fontSize: 22
+    },
+    md: {
+        fontSize: 20
+    },
     sm: {
         fontSize: 18
     },
@@ -66,12 +75,21 @@ export const background_color = StyleSheet.create({
     },
     green:{
         backgroundColor: 'green'
+    },
+    light: {
+        backgroundColor: color_light
+    },
+    danger: {
+        backgroundColor: color_danger
     }
 });
 
 export const margin = StyleSheet.create({
     ml_0: {
         marginLeft: 0
+    },
+    ml_auto: {
+        marginLeft: 'auto'
     }
 });
 

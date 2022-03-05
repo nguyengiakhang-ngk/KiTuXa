@@ -9,15 +9,19 @@ class AppItemTabs extends Component{
     render() {
         return (
             <View>
-                <Icon
-                    name= {this.props.name}
-                    type='font-awesome-5'
-                    size={this.props.size}
-                    color={this.props.color}
-                />
+                {
+                    this.props.name ?
+                        <Icon
+                            name= {this.props.name}
+                            type='font-awesome-5'
+                            size={this.props.size}
+                            color={this.props.color}
+                        />
+                        : null
+                }
                 {
                     this.props.label ? (
-                        <Text style={[ text_size.small, {color: this.props.color}, font.serif ]}>
+                        <Text style={[ {color: this.props.color, fontSize: this.props.text_size }, font.serif ]}>
                             {this.props.label}
                         </Text>
                     ) : null

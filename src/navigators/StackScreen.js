@@ -10,12 +10,16 @@ import React from 'react';
 import type {Node} from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import WelComeComponent from '../screens/WelComeComponent';
-import LoginComponent from '../screens/LoginComponent'
+import WelComeScreen from '../screens/WelComeScreen';
+import LoginScreen from '../screens/Authentication/LoginScreen'
 import TabScreen from "./TabScreen";
-import AreaListScreen from "../screens/Area/AreaListScreen";
-import AddAreaScreen from "../screens/Area/AddAreaScreen";
-import UpdateAreaScreen from "../screens/Area/UpdateAreaScreen";
+import AreaListScreen from "../screens/Admin/Area/AreaListScreen";
+import AddAreaScreen from "../screens/Admin/Area/AddAreaScreen";
+import UpdateAreaScreen from "../screens/Admin/Area/UpdateAreaScreen";
+import RoomTypeListScreen from "../screens/Admin/RoomType/RoomTypeListScreen";
+import AddRoomTypeScreen from "../screens/Admin/RoomType/AddRoomTypeScreen";
+import TabScreenService from "./TabScreenService";
+import UpdateRoomTypeScreen from "../screens/Admin/RoomType/UpdateRoomTypeScreen";
 const Stack = createNativeStackNavigator();
 const StackScreen: () => Node = () => {
     return (
@@ -23,17 +27,22 @@ const StackScreen: () => Node = () => {
             <Stack.Navigator>
                 <Stack.Screen
                     name="Welcome"
-                    component={WelComeComponent}
+                    component={WelComeScreen}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
                     name="Login"
-                    component={LoginComponent}
+                    component={LoginScreen}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
                     name="Tab"
                     component={TabScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="TabService"
+                    component={TabScreenService}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
@@ -49,6 +58,21 @@ const StackScreen: () => Node = () => {
                 <Stack.Screen
                     name="UpdateArea"
                     component={UpdateAreaScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="RoomTypeList"
+                    component={RoomTypeListScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="AddRoomType"
+                    component={AddRoomTypeScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="UpdateRoomType"
+                    component={UpdateRoomTypeScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

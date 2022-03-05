@@ -17,9 +17,9 @@ class AppItemHome extends Component{
                     style={[
                         {
                             backgroundColor: this.props.bg,
-                            padding: 15,
+                            padding: 12,
                             borderRadius: 20,
-                            width: 'auto',
+                            width: '80%',
                             height: 'auto'
                         }
                     ]}
@@ -33,7 +33,7 @@ class AppItemHome extends Component{
                 </View>
                 {
                     this.props.label ? (
-                        <Text style={[ text_size.sm, {color: this.props.colorText}, font.serif, text_align.center ]} numberOfLines={1}>
+                        <Text style={[ text_size.md, {color: this.props.colorText}, font.serif, text_align.center ]} numberOfLines={1}>
                             {this.props.label}
                         </Text>
                     ) : null

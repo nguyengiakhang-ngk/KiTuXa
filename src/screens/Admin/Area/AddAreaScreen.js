@@ -8,15 +8,15 @@ import {
     flex,
     height,
     width
-} from "../../utils/styles/MainStyle";
-import AppError from "../../components/AppError";
+} from "../../../utils/styles/MainStyle";
+import AppError from "../../../components/AppError";
 import {Formik} from "formik";
-import {AreaSchema} from "../../utils/validation/ValidationArea";
-import AppInputInf from "../../components/AppInputInf";
-import AppDialogSelect from "../../components/AppDialogSelect";
-import AppButton from "../../components/AppButton";
+import {AreaSchema} from "../../../utils/validation/ValidationArea";
+import AppInputInf from "../../../components/AppInputInf";
+import AppDialogSelect from "../../../components/AppDialogSelect";
+import AppButton from "../../../components/AppButton";
 import axios from "axios";
-import {path} from "../../utils/config/define";
+import {path} from "../../../constant/define";
 
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -39,6 +39,10 @@ export default class AddAreaScreen extends Component {
 
     componentDidMount() {
         this.getUserData();
+    }
+
+    componentWillUnmount() {
+        this.props.route.params.refresh();
     }
 
     getUserData(){
@@ -94,7 +98,7 @@ export default class AddAreaScreen extends Component {
                           errors,
                           touched ,
                           isValid
-                      }) => (
+                    }) => (
                         <HideKeyboard>
                             <SafeAreaView
                                 style={[

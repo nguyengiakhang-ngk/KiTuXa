@@ -8,10 +8,10 @@
 
 import React from 'react';
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
-import HomeComponent from "../screens/HomeComponent";
-import PersonalComponent from "../screens/PersonalComponent";
-import NotificationComponent from "../screens/NotificationComponent";
-import CommentComponent from "../screens/CommentComponent";
+import HomeScreen from "../screens/Admin/Container/HomeScreen";
+import PersonalScreen from "../screens/Admin/Container/PersonalScreen";
+import NotificationScreen from "../screens/Admin/Container/NotificationScreen";
+import CommentScreen from "../screens/Admin/Container/CommentScreen";
 import {color_primary, color_secondary} from "../utils/theme/Color";
 import AppItemTabs from "../components/AppItemTabs";
 import {View} from "react-native";
@@ -44,7 +44,7 @@ const TabScreen = () => {
         >
             <Tab.Screen
                 name="Home"
-                component={HomeComponent}
+                component={HomeScreen}
                 options={{
                     headerShown: false,
                     tabBarIcon: ({focused}) => (
@@ -53,6 +53,7 @@ const TabScreen = () => {
                             color = {focused ? color_primary : color_secondary}
                             label={'Trang chủ'}
                             size={20}
+                            text_size = {12}
                         />
                     )
             }}
@@ -60,7 +61,7 @@ const TabScreen = () => {
             />
             <Tab.Screen
                 name="Notification"
-                component={NotificationComponent}
+                component={NotificationScreen}
                 options={{
                     headerShown: false,
                     tabBarIcon: ({focused}) => (
@@ -69,13 +70,14 @@ const TabScreen = () => {
                             color = {focused ? color_primary : color_secondary}
                             label={'Thông Báo'}
                             size={20}
+                            text_size = {12}
                         />
                     )
                 }}
             />
             <Tab.Screen
                 name="Qrcode"
-                component={HomeComponent}
+                component={HomeScreen}
                 options={{
                     headerShown: false,
                     tabBarIcon: ({focused}) => (
@@ -99,7 +101,7 @@ const TabScreen = () => {
             />
             <Tab.Screen
                 name="Comment"
-                component={CommentComponent}
+                component={CommentScreen}
                 options={{
                     headerShown: false,
                     tabBarIcon: ({focused}) => (
@@ -108,13 +110,14 @@ const TabScreen = () => {
                             color = {focused ? color_primary : color_secondary}
                             label={'Góp ý'}
                             size={20}
+                            text_size = {12}
                         />
                     )
                 }}
             />
             <Tab.Screen
                 name="Personal"
-                component={PersonalComponent}
+                component={PersonalScreen}
                 options={{
                     headerShown: false,
                     tabBarIcon: ({focused}) => (
@@ -123,6 +126,7 @@ const TabScreen = () => {
                             color = {focused ? color_primary : color_secondary}
                             label={'Cá Nhân'}
                             size={20}
+                            text_size = {12}
                         />
                     )
                 }}

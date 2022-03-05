@@ -3,13 +3,23 @@ import {
     FlatList,
     Text, TouchableOpacity, View
 } from 'react-native';
-import AppFAB from "../../components/AppFAB";
+import AppFAB from "../../../components/AppFAB";
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
-import {flex, font, font_weight, height, position, text_color, text_size} from "../../utils/styles/MainStyle";
-import {color_danger, color_primary, color_success} from "../../utils/theme/Color";
+import {
+    background_color,
+    flex,
+    font,
+    font_weight,
+    height,
+    position,
+    shadow,
+    text_color,
+    text_size
+} from "../../../utils/styles/MainStyle";
+import {color_danger, color_primary, color_success} from "../../../utils/theme/Color";
 import axios from "axios";
-import {path} from "../../utils/config/define";
-import { width } from "../../utils/styles/MainStyle";
+import {path} from "../../../constant/define";
+import { width } from "../../../utils/styles/MainStyle";
 import {Icon} from "react-native-elements";
 
 export default class AreaListScreen extends Component{
@@ -21,7 +31,10 @@ export default class AreaListScreen extends Component{
         }
     }
     viewAddArea(){
-        this.props.navigation.navigate("AddArea");
+        this.props.navigation.navigate("AddArea", { refresh: () => {this.refreshList()} });
+    }
+    refreshList() {
+        this.getAreaData();
     }
     deleteArea(id_kt) {
         axios.delete(path + `/deleteArea/${id_kt}`)
@@ -57,7 +70,8 @@ export default class AreaListScreen extends Component{
 
     updateArea(id_kt){
         this.props.navigation.navigate("UpdateArea", {
-            id_kt: id_kt
+            id_kt: id_kt,
+            refresh: () => {this.refreshList()}
         });
     }
 
@@ -66,7 +80,12 @@ export default class AreaListScreen extends Component{
             <View
                 style={[
                     width.w_100,
-                    {borderBottomWidth: 1, marginTop: 10,  paddingBottom: 10},
+                    {
+                        marginTop: 10,
+                        padding: 5,
+                        borderRadius: 5
+                    },
+                    background_color.light,
                     flex.flex_row,
                     flex.justify_content_between,
                     flex.align_items_center
@@ -82,7 +101,7 @@ export default class AreaListScreen extends Component{
                             {
                                 backgroundColor: color_primary,
                                 padding: 15,
-                                borderRadius: 10,
+                                borderRadius: 5,
                                 marginRight: 10
                             }
                         ]}
@@ -121,7 +140,7 @@ export default class AreaListScreen extends Component{
                                 style={[
                                     text_size.xs,
                                     font.serif,
-                                    {marginLeft: 2}
+                                    {marginLeft: 4}
                                 ]}
                             >
                                 {item.diachi}
@@ -165,9 +184,10 @@ export default class AreaListScreen extends Component{
         return (
             <SafeAreaView
                 style={[
-                    {flex: 1, padding: 5, paddingLeft: 10, paddingRight: 10},
+                    {flex: 1, padding: 2, paddingLeft: 10, paddingRight: 10},
                     height.h_100,
-                    position.relative
+                    position.relative,
+                    background_color.white
                 ]}
             >
                 <View

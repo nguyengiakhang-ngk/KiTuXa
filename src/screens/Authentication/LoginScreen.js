@@ -7,26 +7,30 @@ import {
 } from 'react-native';
 import { Icon } from 'react-native-elements';
 import { Formik } from 'formik';
-import AppButton from "../components/AppButton";
-import {SignupSchema} from "../utils/validation/ValidateLogin";
-import AppError from "../components/AppError";
-import AppInputAuth from "../components/AppInputAuth";
-import AppCheckBox from "../components/AppCheckBox";
-import {background_color, flex, font, font_weight, text_color, text_size, width} from "../utils/styles/MainStyle";
-import {color_primary} from "../utils/theme/Color";
-import axios from "axios";
-import {path} from "../utils/config/define";
+import AppButton from "../../components/AppButton";
+import {SignupSchema} from "../../utils/validation/ValidateLogin";
+import AppError from "../../components/AppError";
+import AppInputAuth from "../../components/AppInputAuth";
+import AppCheckBox from "../../components/AppCheckBox";
+import {background_color, flex, font, font_weight, text_color, text_size, width} from "../../utils/styles/MainStyle";
+import {color_primary} from "../../utils/theme/Color";
+import {connect} from "react-redux";
+import login from "../../redux/reducers/login";
+import { areaRequest } from "../../redux/actions/area";
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         {children}
     </TouchableWithoutFeedback>
 );
-export default class WellComeComponent extends Component{
+class LoginScreen extends Component{
     state = { checkedRemember: false };
     isFormValid (isValid, touched){
         return isValid && Object.keys(touched).length !== 0;
     }
-    login = (username, password) => {
+    componentDidMount() {
+        this.props.areaRequest();
+    };
+    login = async (username, password) => {
         // alert(username + "-" + password);
         // fetch("http://192.168.76.102:3001/login", {
         //     method: "POST",
@@ -44,18 +48,20 @@ export default class WellComeComponent extends Component{
         //     alert(responseJson);
         // })
         // .catch((error => {console.log(error)}));
-        axios.post(path + "/login",{
-            username: username,
-            password: password
-        })
-        .then((response)=>{
-            if(response.data){
-                this.props.navigation.replace("Tab");
-            }
-        })
-        .catch((error => {
-            console.log(error);
-        }));
+        // axios.post(path + "/login",{
+        //     username: username,
+        //     password: password
+        // })
+        // .then((response)=>{
+        //     if(response.data){
+        //         this.props.navigation.replace("Tab");
+        //     }else{
+        //         alert("Đăng nhập không thành công!");
+        //     }
+        // })
+        // .catch((error => {
+        //     console.log(error);
+        // }));
     }
     render() {
         return (
@@ -229,3 +235,14 @@ export default class WellComeComponent extends Component{
         );
     }
 }
+
+const mapStateToProps = state => {
+    console.log(JSON.stringify(state.area.areList));
+    return state;
+};
+
+const mapDispatchToProps = {
+    areaRequest
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen)

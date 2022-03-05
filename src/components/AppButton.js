@@ -10,7 +10,7 @@ class AppButton extends Component{
                     background_color.primary,
                     flex.align_items_center,
                     width.w_100,
-                    {opacity: !this.props.disabled ? 1 : 0.5, borderRadius: 25, padding: 18}
+                    {opacity: !this.props.disabled ? 1 : 0.5, borderRadius: 25, padding: 17}
                 ]}
                 onPress={this.props.onPress}
             >
