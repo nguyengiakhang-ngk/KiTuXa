@@ -13,7 +13,7 @@ class AppInputAuth extends Component{
                 flex.align_items_center,
                 flex.justify_content_center,
                 background_color.white,
-                {borderRadius: 25, padding: 15, paddingLeft: 25}
+                {borderRadius: 12, padding: 15, paddingLeft: 25}
             ]}>
                 <Icon
                     name= {this.props.icon}

@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {
     Keyboard,
     SafeAreaView,
-    Text, TouchableWithoutFeedback,
+    Text, TouchableOpacity, TouchableWithoutFeedback,
     View
 } from 'react-native';
 import { Icon } from 'react-native-elements';
@@ -15,8 +15,8 @@ import AppCheckBox from "../../components/AppCheckBox";
 import {background_color, flex, font, font_weight, text_color, text_size, width} from "../../utils/styles/MainStyle";
 import {color_primary} from "../../utils/theme/Color";
 import {connect} from "react-redux";
-import login from "../../redux/reducers/login";
-import { areaRequest } from "../../redux/actions/area";
+// import login from "../../redux/reducers/login";
+import { loadListArea } from "../../redux/actions/area";
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         {children}
@@ -28,8 +28,11 @@ class LoginScreen extends Component{
         return isValid && Object.keys(touched).length !== 0;
     }
     componentDidMount() {
-        this.props.areaRequest();
+        this.props.loadListArea();
     };
+    viewSignUp = () => {
+        this.props.navigation.navigate("SignUp");
+    }
     login = async (username, password) => {
         // alert(username + "-" + password);
         // fetch("http://192.168.76.102:3001/login", {
@@ -69,7 +72,7 @@ class LoginScreen extends Component{
                 initialValues={{username: "", pass: ""}}
                 validationSchema={SignupSchema}
                 onSubmit={values => {
-                    this.login(values.username, values.pass);
+                    // this.login(values.username, values.pass);
                 }}
             >
                 {({
@@ -194,8 +197,11 @@ class LoginScreen extends Component{
                                         ]}
                                     >
                                         <AppButton
-                                            disabled = { !this.isFormValid(isValid, touched) }
-                                            onPress = { handleSubmit }
+                                            // disabled = { !this.isFormValid(isValid, touched) }
+                                            // onPress = { handleSubmit }
+                                            onPress={() => {
+                                                this.props.navigation.navigate("TabUser");
+                                            }}
                                             title="Đăng nhập"
                                         />
                                     </View>
@@ -216,16 +222,20 @@ class LoginScreen extends Component{
                                     >
                                         Bạn chưa có tài khoản?&nbsp;
                                     </Text>
-                                    <Text
-                                        style={[
-                                            font_weight.f_500,
-                                            font.serif,
-                                            text_size.sm,
-                                            text_color.primary
-                                        ]}
+                                    <TouchableOpacity
+                                        onPress={() => { this.viewSignUp() }}
                                     >
-                                        Đăng ký
-                                    </Text>
+                                        <Text
+                                            style={[
+                                                font_weight.f_500,
+                                                font.serif,
+                                                text_size.sm,
+                                                text_color.primary
+                                            ]}
+                                        >
+                                            Đăng ký
+                                        </Text>
+                                    </TouchableOpacity>
                                 </View>
                             </View>
                         </SafeAreaView>
@@ -242,7 +252,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-    areaRequest
+    loadListArea
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen)

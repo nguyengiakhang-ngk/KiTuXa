@@ -19,7 +19,9 @@ import UpdateAreaScreen from "../screens/Admin/Area/UpdateAreaScreen";
 import RoomTypeListScreen from "../screens/Admin/RoomType/RoomTypeListScreen";
 import AddRoomTypeScreen from "../screens/Admin/RoomType/AddRoomTypeScreen";
 import TabScreenService from "./TabScreenService";
+import TabUserScreen from "./TabUserScreen";
 import UpdateRoomTypeScreen from "../screens/Admin/RoomType/UpdateRoomTypeScreen";
+import SignUpScreen from "../screens/Authentication/SignUpScreen";
 const Stack = createNativeStackNavigator();
 const StackScreen: () => Node = () => {
     return (
@@ -36,8 +38,18 @@ const StackScreen: () => Node = () => {
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
+                    name="SignUp"
+                    component={SignUpScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
                     name="Tab"
                     component={TabScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="TabUser"
+                    component={TabUserScreen}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen

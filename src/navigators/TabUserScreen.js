@@ -1,15 +1,15 @@
 import React from 'react';
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
-import HomeScreen from "../screens/Admin/Container/HomeScreen";
-import PersonalScreen from "../screens/Admin/Container/PersonalScreen";
-import NotificationScreen from "../screens/Admin/Container/NotificationScreen";
-import CommentScreen from "../screens/Admin/Container/CommentScreen";
+import HomeScreen from "../screens/User/Container/HomeScreen";
+import PersonalScreen from "../screens/User/Container/PersonalScreen";
+import NotificationScreen from "../screens/User/Container/NotificationScreen";
+import SearchScreen from "../screens/User/Container/SearchScreen";
 import {color_primary, color_secondary} from "../utils/theme/Color";
 import AppItemTabs from "../components/AppItemTabs";
 import {View} from "react-native";
 import {background_color} from "../utils/styles/MainStyle";
 const Tab = createBottomTabNavigator();
-const TabScreen = () => {
+const TabUserScreen = () => {
     return (
         <Tab.Navigator
             screenOptions = {{
@@ -19,9 +19,9 @@ const TabScreen = () => {
                     left: 10,
                     right: 10,
                     bottom: 10,
-                    borderRadius: 15,
+                    borderRadius: 30,
                     background_color: 'white',
-                    height: 60,
+                    height: 50,
                     shadowColor: "#000",
                     shadowOffset: {
                         width: 0,
@@ -48,8 +48,24 @@ const TabScreen = () => {
                             text_size = {12}
                         />
                     )
-            }}
+                }}
 
+            />
+            <Tab.Screen
+                name="Search"
+                component={SearchScreen}
+                options={{
+                    headerShown: false,
+                    tabBarIcon: ({focused}) => (
+                        <AppItemTabs
+                            name='search'
+                            color = {focused ? color_primary : color_secondary}
+                            label={'Tìm kiếm'}
+                            size={20}
+                            text_size = {12}
+                        />
+                    )
+                }}
             />
             <Tab.Screen
                 name="Notification"
@@ -61,46 +77,6 @@ const TabScreen = () => {
                             name='bell'
                             color = {focused ? color_primary : color_secondary}
                             label={'Thông Báo'}
-                            size={20}
-                            text_size = {12}
-                        />
-                    )
-                }}
-            />
-            <Tab.Screen
-                name="Qrcode"
-                component={HomeScreen}
-                options={{
-                    headerShown: false,
-                    tabBarIcon: ({focused}) => (
-                        <View
-                            style={[
-                                background_color.primary,
-                                {
-                                    borderRadius: 10,
-                                    padding: 10
-                                }
-                            ]}
-                        >
-                            <AppItemTabs
-                                name='qrcode'
-                                color = { 'white' }
-                                size={25}
-                            />
-                        </View>
-                    )
-                }}
-            />
-            <Tab.Screen
-                name="Comment"
-                component={CommentScreen}
-                options={{
-                    headerShown: false,
-                    tabBarIcon: ({focused}) => (
-                        <AppItemTabs
-                            name='comments'
-                            color = {focused ? color_primary : color_secondary}
-                            label={'Góp ý'}
                             size={20}
                             text_size = {12}
                         />
@@ -126,4 +102,4 @@ const TabScreen = () => {
         </Tab.Navigator>
     );
 }
-export default TabScreen;
+export default TabUserScreen;

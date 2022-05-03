@@ -1,6 +1,15 @@
 import React, { Component } from "react";
 import { Text, TouchableOpacity } from "react-native";
-import {background_color, flex, font, font_weight, text_color, text_size, width} from "../utils/styles/MainStyle";
+import {
+    background_color,
+    flex,
+    font,
+    font_weight,
+    shadow,
+    text_color,
+    text_size,
+    width
+} from "../utils/styles/MainStyle";
 class AppButton extends Component{
     render() {
         return (
@@ -10,7 +19,8 @@ class AppButton extends Component{
                     background_color.primary,
                     flex.align_items_center,
                     width.w_100,
-                    {opacity: !this.props.disabled ? 1 : 0.5, borderRadius: 25, padding: 17}
+                    shadow.shadow,
+                    {opacity: !this.props.disabled ? 1 : 0.5, borderRadius: 12, padding: 16}
                 ]}
                 onPress={this.props.onPress}
             >

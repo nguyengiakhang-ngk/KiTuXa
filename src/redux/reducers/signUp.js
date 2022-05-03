@@ -1,28 +1,28 @@
-import { LOGIN, LOGIN_SUCCESS, LOGIN_ERROR } from '../actions/types';
+import { SIGN_UP, SIGN_UP_SUCCESS, SIGN_UP_ERROR } from '../actions/types';
 
 const INITIAL_STATE = {
-    user: '',
+    status: null,
     error: ''
 }
 
 export default (preState = INITIAL_STATE, action) => {
     switch (action.type) {
-        case LOGIN:
+        case SIGN_UP:
             return {
                 ...preState,
-                user: '',
+                status: null,
                 error: ''
             }
-        case LOGIN_SUCCESS:
+        case SIGN_UP_SUCCESS:
             return {
                 ...preState,
-                user: action.user,
-                error:''
+                status: action.status,
+                error: ''
             }
-        case LOGIN_ERROR:
+        case SIGN_UP_ERROR:
             return {
                 ...preState,
-                user: '',
+                status: action.status,
                 error: action.error
             }
         default:
