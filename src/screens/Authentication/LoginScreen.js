@@ -54,7 +54,7 @@ class LoginScreen extends Component{
         // })
         // .then((response)=>{
         //     if(response.data){
-        //         this.props.navigation.replace("Tab");
+                 this.props.navigation.replace("Tab");
         //     }else{
         //         alert("Đăng nhập không thành công!");
         //     }
@@ -66,7 +66,7 @@ class LoginScreen extends Component{
     render() {
         return (
             <Formik
-                initialValues={{username: "", pass: ""}}
+                initialValues={{username: "12345678", pass: "12345678"}}
                 validationSchema={SignupSchema}
                 onSubmit={values => {
                     this.login(values.username, values.pass);
@@ -194,7 +194,7 @@ class LoginScreen extends Component{
                                         ]}
                                     >
                                         <AppButton
-                                            disabled = { !this.isFormValid(isValid, touched) }
+                                            //disabled = { !this.isFormValid(isValid, touched) }
                                             onPress = { handleSubmit }
                                             title="Đăng nhập"
                                         />
