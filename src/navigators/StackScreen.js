@@ -22,6 +22,8 @@ import TabScreenService from "./TabScreenService";
 import TabUserScreen from "./TabUserScreen";
 import UpdateRoomTypeScreen from "../screens/Admin/RoomType/UpdateRoomTypeScreen";
 import SignUpScreen from "../screens/Authentication/SignUpScreen";
+import ContractScreen from '../screens/Admin/Contract/ContractScreen';
+import AddContract from '../screens/Admin/Contract/AddContract';
 const Stack = createNativeStackNavigator();
 const StackScreen: () => Node = () => {
     return (
@@ -85,6 +87,18 @@ const StackScreen: () => Node = () => {
                 <Stack.Screen
                     name="UpdateRoomType"
                     component={UpdateRoomTypeScreen}
+                    options={{ headerShown: false }}
+                />
+
+                {/* Contract Stack Screen */}
+                <Stack.Screen
+                    name="ContractScreen"
+                    component={ContractScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="AddContract"
+                    component={AddContract}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

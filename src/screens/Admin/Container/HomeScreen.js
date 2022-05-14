@@ -261,6 +261,7 @@ export default class HomeScreen extends Component{
                             color = {'white'}
                             colorText = {'black'}
                             label = {'Hợp đồng'}
+                            onPress = {() => this.routeScreen("ContractScreen") }
                         />
                     </View>
                     <View
