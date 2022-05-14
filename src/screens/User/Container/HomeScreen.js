@@ -33,60 +33,70 @@ export default class HomeScreen extends Component{
                     id: 1,
                     name: "Hội trường",
                     s: 15,
+                    price: 15000,
                     img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg"
                 },
                 {
                     id: 2,
                     name: "Hội trường",
                     s: 15,
+                    price: 15000,
                     img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg"
                 },
                 {
                     id: 3,
                     name: "Hội trường",
                     s: 15,
+                    price: 15000,
                     img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg"
                 },
                 {
                     id: 4,
                     name: "Hội trường",
                     s: 15,
+                    price: 15000,
                     img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg"
                 },
                 {
                     id: 5,
                     name: "Hội trường",
                     s: 15,
+                    price: 15000,
                     img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg"
                 },
                 {
                     id: 1,
                     name: "Hội trường",
                     s: 15,
+                    price: 15000,
                     img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg"
                 },
                 {
                     id: 2,
                     name: "Hội trường",
                     s: 15,
+                    price: 15000,
                     img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg"
                 },
                 {
                     id: 3,
                     name: "Hội trường",
                     s: 15,
+                    price: 15000,
                     img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg"
                 },
                 {
                     id: 4,
                     name: "Hội trường",
                     s: 15,
+                    price: 15000,
                     img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg"
                 },
                 {
                     id: 5,
                     name: "Hội trường",
                     s: 15,
+                    price: 15000,
                     img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg"
                 }
             ],
@@ -103,13 +113,14 @@ export default class HomeScreen extends Component{
             <SafeAreaView
                 style={[
                     {
-                        flex: 1
+                        flex: 1,
+                        paddingBottom: 60
                     },
                     flex.justify_content_center,
                     flex.align_items_center
                 ]}
             >
-                <FlatList data={this.state.dataTitle} renderItem={this._renderItemTitle} keyExtractor={item => item.id.toString()} />
+                <FlatList showsVerticalScrollIndicator={false} data={this.state.dataTitle} renderItem={this._renderItemTitle} keyExtractor={item => item.id.toString()} />
             </SafeAreaView>
         );
     }
@@ -149,7 +160,7 @@ export default class HomeScreen extends Component{
                         {item. name}
                     </Text>
                 </View>
-                <FlatList numColumns={2} data={this.state.data} renderItem={this._renderItem} keyExtractor={item => item.id.toString()} />
+                <FlatList showsVerticalScrollIndicator={false} numColumns={2} data={this.state.data} renderItem={this._renderItem} keyExtractor={item => item.id.toString()} />
             </View>
         )
     }
@@ -201,7 +212,6 @@ export default class HomeScreen extends Component{
                         flex.align_items_center,
                         {
                             marginLeft: 4,
-                            marginBottom: 5,
                             marginTop: -3
                         }
                     ]}
@@ -221,6 +231,34 @@ export default class HomeScreen extends Component{
                         ]}
                     >
                         {item.s} (m3)
+                    </Text>
+                </View>
+                <View
+                    style={[
+                        flex.flex_row,
+                        flex.align_items_center,
+                        {
+                            marginLeft: 4,
+                            marginBottom: 5,
+                            marginTop: -6
+                        }
+                    ]}
+                >
+                    <Icon
+                        raised
+                        name='money-bill'
+                        type='font-awesome-5'
+                        color={color_primary}
+                        size={10}
+                    />
+                    <Text
+                        numberOfLines={1}
+                        style={[
+                            text_size.xs,
+                            text_color.black
+                        ]}
+                    >
+                        {item.price} (vnđ)
                     </Text>
                 </View>
             </View>

@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {
+    FlatList,
     SafeAreaView,
     Text,
 } from 'react-native';
@@ -11,15 +12,15 @@ export default class SearchScreen extends Component{
         return (
             <SafeAreaView
                 style={[
-                    {flex: 1},
+                    {
+                        flex: 1,
+                        paddingBottom: 60
+                    },
                     flex.justify_content_center,
-                    flex.align_items_center,
-                    background_color.primary
+                    flex.align_items_center
                 ]}
             >
-                <Text>
-                    Search
-                </Text>
+                
             </SafeAreaView>
         );
     }
