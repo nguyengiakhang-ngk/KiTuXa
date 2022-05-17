@@ -9,7 +9,7 @@ import {
     flex, shadow, text_color, text_size
 } from "../../../utils/styles/MainStyle";
 import {color_danger, color_primary} from "../../../utils/theme/Color";
-import {Icon} from "react-native-elements";
+import {Icon} from "@rneui/base";
 
 export default class HomeScreen extends Component{
     constructor(props) {

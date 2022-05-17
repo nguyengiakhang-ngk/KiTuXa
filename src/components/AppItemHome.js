@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {Text, TouchableOpacity, View} from "react-native";
-import {Icon} from "react-native-elements";
+import {Icon} from "@rneui/base";
 import {text_size, font, flex, text_align} from "../utils/styles/MainStyle";
 
 class AppItemHome extends Component{

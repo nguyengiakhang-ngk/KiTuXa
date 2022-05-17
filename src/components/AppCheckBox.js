@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {CheckBox} from "react-native-elements";
+import {CheckBox} from "@rneui/base";
 import {color_primary} from "../utils/theme/Color";
 import {
     background_color,

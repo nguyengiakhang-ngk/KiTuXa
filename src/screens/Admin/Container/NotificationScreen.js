@@ -8,7 +8,7 @@ import {
     Image,
     TouchableOpacity
 } from 'react-native';
-import { Icon } from "react-native-elements";
+import { Icon } from "@rneui/base";
 import { background_color, flex, font, font_weight, text_color, text_size, width } from "../../../utils/styles/MainStyle";
 import { color_primary, color_success, color_danger } from "../../../utils/theme/Color";
 

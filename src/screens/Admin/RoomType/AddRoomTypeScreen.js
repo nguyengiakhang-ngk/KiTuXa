@@ -18,7 +18,7 @@ import axios from "axios";
 import {path} from "../../../constant/define";
 import {RoomTypeSchema} from "../../../utils/validation/ValidationRoomType";
 import ImagePicker from 'react-native-image-crop-picker';
-import {Icon} from "react-native-elements";
+import {Icon} from "@rneui/base";
 import {color_danger, color_primary, color_success, color_white} from "../../../utils/theme/Color";
 import AppButtonActionInf from "../../../components/AppButtonActionInf";
 

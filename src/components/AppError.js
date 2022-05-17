@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {Icon} from "react-native-elements";
+import {Icon} from "@rneui/base";
 import {font, text_color, text_size} from "../utils/styles/MainStyle";
 import {color_danger} from "../utils/theme/Color";
 import {Text, View} from "react-native";
