@@ -5,7 +5,7 @@ import {
     Text, TouchableOpacity, TouchableWithoutFeedback,
     View
 } from 'react-native';
-import { Icon } from 'react-native-elements';
+import { Icon } from '@rneui/base';
 import { Formik } from 'formik';
 import AppButton from "../../components/AppButton";
 import {SignupSchema} from "../../utils/validation/ValidateLogin";

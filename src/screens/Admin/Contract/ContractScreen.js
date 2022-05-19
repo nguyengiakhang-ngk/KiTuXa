@@ -4,7 +4,7 @@ import axios from "axios";
 import {path} from "../../../constant/define";
 import {flex, font, font_weight, height, position, text_color, text_size, width} from "../../../utils/styles/MainStyle";
 import {color_danger, color_primary, color_success} from "../../../utils/theme/Color";
-import {Icon} from "react-native-elements";
+import {Icon} from "@rneui/base";
 import AppFAB from "../../../components/AppFAB";
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
 import moment from "moment";

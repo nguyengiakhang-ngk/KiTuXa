@@ -11,7 +11,7 @@ import {
     width
 } from "../utils/styles/MainStyle";
 import {Text, TextInput, View} from "react-native";
-import {Icon} from "react-native-elements";
+import {Icon} from "@rneui/base";
 import {color_secondary} from "../utils/theme/Color";
 class AppDialogSelect extends Component{
     constructor(props) {

@@ -20,7 +20,7 @@ import {color_danger, color_primary, color_success} from "../../../utils/theme/C
 import axios from "axios";
 import {path} from "../../../constant/define";
 import { width } from "../../../utils/styles/MainStyle";
-import {Icon} from "react-native-elements";
+import {Icon} from "@rneui/base";
 
 export default class RoomTypeListScreen extends Component{
     constructor(props) {

@@ -19,7 +19,7 @@ import {color_danger, color_primary, color_success} from "../../../../utils/them
 import axios from "axios";
 import {path} from "../../../../constant/define";
 import { width } from "../../../../utils/styles/MainStyle";
-import {Icon} from "react-native-elements";
+import {Icon} from "@rneui/base";
 import AppInputInf from "../../../../components/AppInputInf";
 import AppError from "../../../../components/AppError";
 import {AreaSchema} from "../../../../utils/validation/ValidationArea";

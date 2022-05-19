@@ -8,7 +8,7 @@ import {
     Image,
     TouchableOpacity
 } from 'react-native';
-import { Icon } from "react-native-elements";
+import { Icon } from "@rneui/base";
 import { background_color, flex, font, font_weight, text_color, text_size, width } from "../../../utils/styles/MainStyle";
 import { color_primary, color_success, color_danger } from "../../../utils/theme/Color";
 
@@ -53,7 +53,7 @@ export default class NotificationScreen extends Component {
 
     _renderItem = ({ item, index }) => {
         return (
-            <TouchableOpacity 
+            <TouchableOpacity
                 style={[styles.ItemNoti, flex.flex_row]}
                 onPress={() => alert('move to: ' + index)}
                 >
@@ -70,15 +70,15 @@ export default class NotificationScreen extends Component {
                         numberOfLines={2}>
 
                         Phiếu đặt phòng {item.room} của bạn vừa được
-                        xác nhận với trạng thái 
-                        <Text 
+                        xác nhận với trạng thái
+                        <Text
                         style={
-                            item.status === "Waiting Approve" ? 
-                            {color: '#6c757d'} 
-                            : 
-                            (item.status === "Approved" ? 
+                            item.status === "Waiting Approve" ?
+                            {color: '#6c757d'}
+                            :
+                            (item.status === "Approved" ?
                             {color: '#28a745'}
-                            : 
+                            :
                             {color: 'red'})
                         }
 

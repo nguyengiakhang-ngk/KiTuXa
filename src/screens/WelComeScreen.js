@@ -3,7 +3,7 @@ import {
     SafeAreaView,
     Text,
 } from 'react-native';
-import {Icon} from "react-native-elements";
+import {Icon} from "@rneui/base";
 import {background_color, flex, font, font_weight, text_color, text_size} from "../utils/styles/MainStyle";
 import {color_primary} from "../utils/theme/Color";
 
