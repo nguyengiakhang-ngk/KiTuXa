@@ -23,7 +23,7 @@ export default class PersonalScreen extends Component {
             {
                 id: 2,
                 name: 'Phòng đã đặt',
-                onPress: 'roombook',
+                onPress: 'RoomBookedList',
                 icon: require("../../../../assets/icons/booking.png")
             },
             {
@@ -51,7 +51,7 @@ export default class PersonalScreen extends Component {
 
     renderFunction = ({ item, index }) => {
         return (
-            <TouchableOpacity style={styles.functionProfile} onPress={() => { alert('click: ' + item.name) }}>
+            <TouchableOpacity style={styles.functionProfile} onPress={() => { this.props.navigation.navigate("RoomBookedList") }}>
                 <Image style={{
                     width: 28,
                     height: 28,
