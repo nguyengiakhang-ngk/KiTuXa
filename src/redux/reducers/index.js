@@ -1,11 +1,11 @@
 import { combineReducers } from "redux";
 import areaReducer from "./area";
-import loginReducer from "./login";
+import userReducer from "./user";
 import signUpReducer from "./signUp";
 
 const reducers = combineReducers({
     area: areaReducer,
-    login: loginReducer,
+    user: userReducer,
     signUp: signUpReducer
 });
 

@@ -6,11 +6,17 @@ import {
 import {Icon} from "@rneui/base";
 import {background_color, flex, font, font_weight, text_color, text_size} from "../utils/styles/MainStyle";
 import {color_primary} from "../utils/theme/Color";
+import AsyncStorage from "@react-native-community/async-storage";
 
 export default class WelComeScreen extends Component{
-    componentDidMount() {
-        setTimeout(()=>{
-            this.props.navigation.replace("Login");
+    async componentDidMount() {
+        const user = await AsyncStorage.getItem('user');
+        setTimeout(() => {
+            if(user){
+                this.props.navigation.replace("TabUser");
+            }else{
+                this.props.navigation.replace("Login");
+            }
         }, 2500);
     }
 

@@ -34,37 +34,7 @@ class LoginScreen extends Component{
         this.props.navigation.navigate("SignUp");
     }
     login = async (username, password) => {
-        // alert(username + "-" + password);
-        // fetch("http://192.168.76.102:3001/login", {
-        //     method: "POST",
-        //     headers: {
-        //         "Accept": "application/json",
-        //         "Content-Type": "application/json"
-        //     },
-        //     body: JSON.stringify({
-        //         "username": username,
-        //         "password": password
-        //     })
-        // })
-        // .then((response) => response.json())
-        // .then((responseJson) => {
-        //     alert(responseJson);
-        // })
-        // .catch((error => {console.log(error)}));
-        // axios.post(path + "/login",{
-        //     username: username,
-        //     password: password
-        // })
-        // .then((response)=>{
-        //     if(response.data){
-                 this.props.navigation.replace("Tab");
-        //     }else{
-        //         alert("Đăng nhập không thành công!");
-        //     }
-        // })
-        // .catch((error => {
-        //     console.log(error);
-        // }));
+        
     }
     render() {
         return (

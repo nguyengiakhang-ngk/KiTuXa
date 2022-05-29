@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Text, TouchableOpacity } from "react-native";
+import { Button } from '@rneui/base';
 import {
     background_color,
     flex,
@@ -13,28 +14,32 @@ import {
 class AppButton extends Component{
     render() {
         return (
-            <TouchableOpacity
-                disabled={ this.props.disabled }
-                style={[
+            <Button
+                buttonStyle={[
                     background_color.primary,
                     flex.align_items_center,
                     width.w_100,
-                    shadow.shadow,
-                    {opacity: !this.props.disabled ? 1 : 0.5, borderRadius: 12, padding: 16}
+                    {padding: 16}
                 ]}
+                titleStyle={[
+                    font_weight.bold,
+                    text_size.sm,
+                    font.serif,
+                    text_color.white
+                ]}
+                disabledStyle={[background_color.primary, {opacity: 0.5}]}
+                disabledTitleStyle={[
+                    font_weight.bold,
+                    text_size.sm,
+                    font.serif,
+                    text_color.white
+                ]}
+                title={this.props.title}
+                disabled={true}
+                raised
+                radius={10}
                 onPress={this.props.onPress}
-            >
-                <Text
-                    style={[
-                        font_weight.bold,
-                        text_size.sm,
-                        font.serif,
-                        text_color.white
-                    ]}
-                >
-                    { this.props.title }
-                </Text>
-            </TouchableOpacity>
+            />
         )
     }
 }
