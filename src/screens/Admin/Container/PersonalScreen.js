@@ -8,9 +8,9 @@ import {
     TouchableOpacity,
     FlatList
 } from 'react-native';
-import { Icon } from "@rneui/base";
-import { background_color, flex, font, font_weight, text_color, text_size } from "../../../utils/styles/MainStyle";
-import { color_primary, color_success } from "../../../utils/theme/Color";
+import {Icon} from "@rneui/base";
+import {background_color, flex, font, font_weight, text_color, text_size} from "../../../utils/styles/MainStyle";
+import {color_primary} from "../../../utils/theme/Color";
 
 export default class PersonalScreen extends Component {
 

@@ -53,7 +53,7 @@ export default class NotificationScreen extends Component {
 
     _renderItem = ({ item, index }) => {
         return (
-            <TouchableOpacity 
+            <TouchableOpacity
                 style={[styles.ItemNoti, flex.flex_row]}
                 onPress={() => alert('move to: ' + index)}
                 >
@@ -70,15 +70,15 @@ export default class NotificationScreen extends Component {
                         numberOfLines={2}>
 
                         Phiếu đặt phòng {item.room} của bạn vừa được
-                        xác nhận với trạng thái 
-                        <Text 
+                        xác nhận với trạng thái
+                        <Text
                         style={
-                            item.status === "Waiting Approve" ? 
-                            {color: '#6c757d'} 
-                            : 
-                            (item.status === "Approved" ? 
+                            item.status === "Waiting Approve" ?
+                            {color: '#6c757d'}
+                            :
+                            (item.status === "Approved" ?
                             {color: '#28a745'}
-                            : 
+                            :
                             {color: 'red'})
                         }
 

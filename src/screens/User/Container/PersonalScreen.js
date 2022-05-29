@@ -8,9 +8,7 @@ import {
     TouchableOpacity,
     FlatList
 } from 'react-native';
-import { Icon } from "@rneui/base";
-import { background_color, flex, font, font_weight, text_color, text_size } from "../../../utils/styles/MainStyle";
-import { color_primary, color_success } from "../../../utils/theme/Color";
+import { color_primary } from "../../../utils/theme/Color";
 
 export default class PersonalScreen extends Component {
 
@@ -26,9 +24,8 @@ export default class PersonalScreen extends Component {
             {
                 id: 2,
                 name: 'Phòng đã đặt',
-                onPress: 'roombook',
-                icon: require("../../../../assets/icons/booking.png"),
-                navigate: ''
+                onPress: 'RoomBookedList',
+                icon: require("../../../../assets/icons/booking.png")
             },
             {
                 id: 3,
@@ -57,7 +54,8 @@ export default class PersonalScreen extends Component {
 
     renderFunction = ({ item, index }) => {
         return (
-            <TouchableOpacity style={styles.functionProfile} onPress={() => { this.props.navigation.navigate('SavedRoom') }}>
+            // <TouchableOpacity style={styles.functionProfile} onPress={() => { this.props.navigation.navigate('SavedRoom') }}>
+            <TouchableOpacity style={styles.functionProfile} onPress={() => { this.props.navigation.navigate("RoomBookedList") }}>
                 <Image style={{
                     width: 28,
                     height: 28,
