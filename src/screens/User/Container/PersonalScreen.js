@@ -21,24 +21,28 @@ export default class PersonalScreen extends Component {
                 name: 'Thông tin cá nhân',
                 onPress: 'information',
                 icon: require("../../../../assets/icons/information.png"),
+                navigate: ''
             },
             {
                 id: 2,
                 name: 'Phòng đã đặt',
                 onPress: 'roombook',
-                icon: require("../../../../assets/icons/booking.png")
+                icon: require("../../../../assets/icons/booking.png"),
+                navigate: ''
             },
             {
                 id: 3,
                 name: 'Đã lưu',
                 onPress: 'love',
-                icon: require("../../../../assets/icons/saved.png")
+                icon: require("../../../../assets/icons/saved.png"),
+                navigate: 'SavedRoom'
             },
             {
                 id: 4,
                 name: 'Đăng xuất',
                 onPress: 'logout',
-                icon: require("../../../../assets/icons/logout.png")
+                icon: require("../../../../assets/icons/logout.png"),
+                navigate: ''
             }
         ]
 
@@ -53,7 +57,7 @@ export default class PersonalScreen extends Component {
 
     renderFunction = ({ item, index }) => {
         return (
-            <TouchableOpacity style={styles.functionProfile} onPress={() => { alert('click: ' + item.name) }}>
+            <TouchableOpacity style={styles.functionProfile} onPress={() => { this.props.navigation.navigate('SavedRoom') }}>
                 <Image style={{
                     width: 28,
                     height: 28,
