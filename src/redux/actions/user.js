@@ -1,5 +1,5 @@
 import { LOGIN, LOGIN_SUCCESS, LOGIN_ERROR, SIGN_UP, SIGN_UP_SUCCESS, SIGN_UP_ERROR } from "./types";
-import {login, signUp} from "../../api/userAPI";
+import { login, signUp } from "../../api/userAPI";
 
 export const initUser = (user) => dispatch => {
     if(user) {
@@ -22,12 +22,17 @@ export const doLogin = (user) => dispatch => {
 };
 
 export const doSignUp = (user) => dispatch => {
-    signUp()
-        .then(response => response.json())
-        .then(
-            data => signUpSuccess(data),
-            error => signUpError(error.message || 'Unexpected Error!!!')
-        )
+    return new Promise((resolve, reject) => {
+        signUp(user)
+            .then(data => {
+                signUpSuccess();
+                resolve(data);
+            })
+            .catch(error => {
+                signUpError(error);
+                reject(error);
+            });
+    })
 };
 
 const loadLogin = () => dispatch => {
@@ -56,7 +61,7 @@ const loadSignUp = () => dispatch => {
     });
 }
 
-const signUpSuccess = (user) => dispatch => {
+const signUpSuccess = () => dispatch => {
     dispatch({
         type: SIGN_UP_SUCCESS
     });
@@ -64,6 +69,7 @@ const signUpSuccess = (user) => dispatch => {
 
 const signUpError = (error) => dispatch => {
     dispatch({
-        type: SIGN_UP_ERROR
+        type: SIGN_UP_ERROR,
+        error: error
     });
 }

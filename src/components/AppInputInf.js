@@ -37,6 +37,7 @@ class AppInputInf extends Component{
                     { this.props.lable }
                 </Text>
                 <TextInput
+                    returnKeyType={this.props.returnKeyType}
                     secureTextEntry={this.props.secureTextEntry}
                     placeholder={this.props.placeholder}
                     keyboardType = {this.props.keyboardType}

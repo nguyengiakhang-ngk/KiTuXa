@@ -31,6 +31,7 @@ class PersonalScreen extends Component {
                 name: 'Thông tin cá nhân',
                 onPress: 'information',
                 icon: require("../../../../assets/icons/information.png"),
+                navigate: ''
             },
             {
                 id: 2,
@@ -42,13 +43,15 @@ class PersonalScreen extends Component {
                 id: 3,
                 name: 'Đã lưu',
                 onPress: 'love',
-                icon: require("../../../../assets/icons/saved.png")
+                icon: require("../../../../assets/icons/saved.png"),
+                navigate: 'SavedRoom'
             },
             {
                 id: 4,
                 name: this.props.user.user ? 'Đăng xuất' : 'Đăng nhập',
                 onPress: this.props.user.user ? 'Welcome' : 'Login',
-                icon: require("../../../../assets/icons/logout.png")
+                icon: require("../../../../assets/icons/logout.png"),
+                navigate: ''
             }
         ];
         this.setState({
@@ -77,7 +80,7 @@ class PersonalScreen extends Component {
                     resizeMode={'stretch'}
                     source={item.icon}
                 />
-                <Text style={[styles.textNameFunction, item.id == 4 ? {color: 'red'} : '']}>{item.name}</Text>
+                <Text style={[styles.textNameFunction, item.id === 4 ? {color: 'red'} : '']}>{item.name}</Text>
             </TouchableOpacity>
         )
     }

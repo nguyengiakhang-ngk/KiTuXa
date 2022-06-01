@@ -24,8 +24,8 @@ import UpdateRoomTypeScreen from "../screens/Admin/RoomType/UpdateRoomTypeScreen
 import SignUpScreen from "../screens/Authentication/SignUpScreen";
 import ContractScreen from '../screens/Admin/Contract/ContractScreen';
 import AddContract from '../screens/Admin/Contract/AddContract';
+import SavedRoom from '../screens/User/Container/SavedRoomScreen';
 import RoomBookedListScreen from '../screens/User/RoomBooked/RoomBookedListScreen';
-
 const Stack = createNativeStackNavigator();
 const StackScreen: () => Node = () => {
 
@@ -102,6 +102,11 @@ const StackScreen: () => Node = () => {
                 <Stack.Screen
                     name="AddContract"
                     component={AddContract}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="SavedRoom"
+                    component={SavedRoom}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
