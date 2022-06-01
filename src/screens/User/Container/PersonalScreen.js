@@ -10,11 +10,22 @@ import {
 } from 'react-native';
 import { color_primary } from "../../../utils/theme/Color";
 import AsyncStorage from "@react-native-community/async-storage";
+import {doLogin} from "../../../redux/actions/user";
+import {connect} from "react-redux";
 
-export default class PersonalScreen extends Component {
+class PersonalScreen extends Component {
 
-    listFunction =
-        [
+    constructor(props) {
+        super(props);
+        this.state = {
+            isLoading: true,
+            listFunction: []
+        };
+    }
+
+    componentDidMount() {
+        // alert(this.props.user.user);
+        let tamp = [
             {
                 id: 1,
                 name: 'Thông tin cá nhân',
@@ -35,17 +46,14 @@ export default class PersonalScreen extends Component {
             },
             {
                 id: 4,
-                name: 'Đăng xuất',
-                onPress: 'TabUser',
+                name: this.props.user.user ? 'Đăng xuất' : 'Đăng nhập',
+                onPress: this.props.user.user ? 'Welcome' : 'Login',
                 icon: require("../../../../assets/icons/logout.png")
             }
-        ]
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            isLoading: true,
-        };
+        ];
+        this.setState({
+            listFunction: tamp
+        })
     }
 
     renderFunction = ({ item, index }) => {
@@ -100,7 +108,7 @@ export default class PersonalScreen extends Component {
                 </View>
                 <View style={styles.containerFunction}>
                     <FlatList
-                        data={this.listFunction}
+                        data={this.state.listFunction}
                         renderItem={this.renderFunction}
                         keyExtractor={item => item.id}
                         showsVerticalScrollIndicator={false}
@@ -112,6 +120,17 @@ export default class PersonalScreen extends Component {
         );
     }
 }
+
+const mapStateToProps = ({ user }) => {
+    alert(JSON.stringify(user));
+    return user;
+};
+
+const mapDispatchToProps = {
+    doLogin
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(PersonalScreen)
 
 const styles = StyleSheet.create({
     container: {

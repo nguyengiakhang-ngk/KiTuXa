@@ -42,7 +42,7 @@ class LoginScreen extends Component{
                     alert("Sai mật khẩu!");
                 } else {
                     try {
-                        await AsyncStorage.setItem('@user', data);
+                        await AsyncStorage.setItem('@user', JSON.stringify(data));
                         this.props.navigation.navigate('TabUser');
                     } catch (e) {
                         console.log(e);

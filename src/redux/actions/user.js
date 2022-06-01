@@ -1,15 +1,21 @@
 import { LOGIN, LOGIN_SUCCESS, LOGIN_ERROR, SIGN_UP, SIGN_UP_SUCCESS, SIGN_UP_ERROR } from "./types";
 import {login, signUp} from "../../api/userAPI";
 
+export const initUser = (user) => dispatch => {
+    if(user) {
+        loginSuccess(user);
+    }
+};
+
 export const doLogin = (user) => dispatch => {
     return new Promise((resolve, reject) => {
         login(user)
             .then(data => {
-                loginSuccess(data);
+                loginSuccess(dispatch, data);
                 resolve(data);
             })
             .catch(error => {
-                loginError(error);
+                loginError(dispatch, error);
                 reject(error);
             });
     })
