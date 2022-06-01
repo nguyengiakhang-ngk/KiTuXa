@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 
 export const SignupSchema = Yup.object().shape({
-    fullName: Yup.string()
+    name: Yup.string()
         .required('Họ và tên rỗng!'),
     yearOfBirth: Yup.string()
         .min(4, 'Năm sinh không đúng!')
@@ -11,11 +11,11 @@ export const SignupSchema = Yup.object().shape({
         .required('Chưa chọn giới tính!'),
     address: Yup.string()
         .required('Địa chỉ rỗng!'),
-    identityCardNumber: Yup.string()
+    identityNumber: Yup.string()
         .required('Số CMNN/CCCD rỗng!'),
-    phoneNumber: Yup.string()
+    numberPhone: Yup.string()
         .required('Số điện thoại rỗng!'),
-    pass: Yup.string()
+    password: Yup.string()
         .min(6, 'Mật khẩu quá ngắn!')
         .max(16, 'Mật khẩu quá ngắn dài!')
         .required('Mật khẩu rỗng!'),

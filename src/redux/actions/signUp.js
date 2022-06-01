@@ -1,9 +1,5 @@
 import { SIGN_UP, SIGN_UP_SUCCESS, SIGN_UP_ERROR } from "./types";
 
-export const  dooSignUp = () => dispatch => {
-
-};
-
 const signUp = () => dispatch => {
     dispatch({
         type: SIGN_UP

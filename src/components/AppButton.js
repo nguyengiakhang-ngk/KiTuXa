@@ -35,7 +35,7 @@ class AppButton extends Component{
                     text_color.white
                 ]}
                 title={this.props.title}
-                disabled={true}
+                disabled={this.props.disabled}
                 raised
                 radius={10}
                 onPress={this.props.onPress}

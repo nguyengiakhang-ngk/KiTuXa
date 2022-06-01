@@ -17,12 +17,14 @@ import AppInputInf from "../../components/AppInputInf";
 import AppError from "../../components/AppError";
 import AppButton from "../../components/AppButton";
 import AppRadioButton from "../../components/AppRadioButton";
+import { connect } from 'react-redux';
+import { doSignUp } from '../../redux/actions/user';
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         {children}
     </TouchableWithoutFeedback>
 );
-export default class SignUpScreen extends Component{
+class SignUpScreen extends Component{
     constructor(props) {
         super(props);
         this.state = {
@@ -43,16 +45,27 @@ export default class SignUpScreen extends Component{
         return isValid && Object.keys(touched).length !== 0;
     }
 
+    signUp = async (values) => {
+        this.props.doSignUp(values).then(data => {
+            if(data){
+                alert("Đăng ký thành công!");
+            }else{
+                alert("Đăng ký thất bại! Vui lòng thử lại!");
+            }
+        });
+        
+    }
+
     render() {
         return (
             <ScrollView
                 style={{ flex: 1}} contentContainerStyle={{ flexGrow: 1 }}
             >
                 <Formik
-                    initialValues={{fullName: '', yearOfBirth: '', gender: 1, address: '', identityCardNumber: '', phoneNumber: '', pass: '', rePass: ''}}
+                    initialValues={{name: '', yearOfBirth: '', gender: 1, address: '', identityNumber: '', numberPhone: '', password: '', rePass: ''}}
                     validationSchema={SignupSchema}
                     onSubmit={values => {
-                        alert('hi!')
+                        this.signUp(values);
                     }}
                 >
                     {({
@@ -81,10 +94,11 @@ export default class SignUpScreen extends Component{
                                     <AppInputInf
                                         lable={"Họ và tên:"}
                                         secureTextEntry={false}
-                                        field={"fullName"}
+                                        field={"name"}
                                         handleChange={handleChange}
                                         handleBlur={handleBlur}
                                         values={values}
+                                        returnKeyType="next"
                                     />
                                     {errors.fullName && touched.fullName ? (
                                         <AppError errors={ errors.fullName }/>
@@ -109,6 +123,7 @@ export default class SignUpScreen extends Component{
                                             handleChange={handleChange}
                                             handleBlur={handleBlur}
                                             values={values}
+                                            returnKeyType="next"
                                         />
                                         {errors.yearOfBirth && touched.yearOfBirth ? (
                                             <AppError errors={ errors.yearOfBirth }/>
@@ -141,6 +156,7 @@ export default class SignUpScreen extends Component{
                                         handleChange={handleChange}
                                         handleBlur={handleBlur}
                                         values={values}
+                                        returnKeyType="next"
                                     />
                                     {errors.address && touched.address ? (
                                         <AppError errors={ errors.address }/>
@@ -156,10 +172,11 @@ export default class SignUpScreen extends Component{
                                         lable={"Số CMNN/CCCD:"}
                                         keyboardType={'numeric'}
                                         secureTextEntry={false}
-                                        field={"identityCardNumber"}
+                                        field={"identityNumber"}
                                         handleChange={handleChange}
                                         handleBlur={handleBlur}
                                         values={values}
+                                        returnKeyType="next"
                                     />
                                     {errors.identityCardNumber && touched.identityCardNumber ? (
                                         <AppError errors={ errors.identityCardNumber }/>
@@ -172,13 +189,14 @@ export default class SignUpScreen extends Component{
                                     ]}
                                 >
                                     <AppInputInf
-                                        lable={"phoneNumber"}
+                                        lable={"Số Điện Thoại:"}
                                         keyboardType={'numeric'}
                                         secureTextEntry={false}
-                                        field={"phoneNumber"}
+                                        field={"numberPhone"}
                                         handleChange={handleChange}
                                         handleBlur={handleBlur}
                                         values={values}
+                                        returnKeyType="next"
                                     />
                                     {errors.phoneNumber && touched.phoneNumber ? (
                                         <AppError errors={ errors.phoneNumber }/>
@@ -193,10 +211,11 @@ export default class SignUpScreen extends Component{
                                     <AppInputInf
                                         lable={"Mật khẩu:"}
                                         secureTextEntry={true}
-                                        field={"pass"}
+                                        field={"password"}
                                         handleChange={handleChange}
                                         handleBlur={handleBlur}
                                         values={values}
+                                        returnKeyType="next"
                                     />
                                     {errors.pass && touched.pass ? (
                                         <AppError errors={ errors.pass }/>
@@ -215,6 +234,7 @@ export default class SignUpScreen extends Component{
                                         handleChange={handleChange}
                                         handleBlur={handleBlur}
                                         values={values}
+                                        returnKeyType="done"
                                     />
                                     {errors.rePass && touched.rePass ? (
                                         <AppError errors={ errors.rePass }/>
@@ -240,3 +260,13 @@ export default class SignUpScreen extends Component{
         );
     }
 }
+
+const mapStateToProps = (doSignUp) => {
+    return doSignUp;
+};
+
+const mapDispatchToProps = {
+    doSignUp
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignUpScreen)
