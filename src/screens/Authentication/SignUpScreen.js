@@ -237,7 +237,7 @@ class SignUpScreen extends Component{
                                         returnKeyType="done"
                                     />
                                     {errors.rePass && touched.rePass ? (
-                                        <AppError errors={ errors.rePass }/>
+                                        <AppError errors={errors.rePass}/>
                                     ) : null}
                                 </View>
                                 <View
@@ -247,7 +247,7 @@ class SignUpScreen extends Component{
                                     ]}
                                 >
                                     <AppButton
-                                        disabled = { !this.isFormValid(isValid, touched) }
+                                        disabled = { !this.isFormValid(isValid, touched) || values.password !== values.rePass }
                                         onPress = { handleSubmit }
                                         title="Thêm"
                                     />

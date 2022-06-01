@@ -17,10 +17,10 @@ export const SignupSchema = Yup.object().shape({
         .required('Số điện thoại rỗng!'),
     password: Yup.string()
         .min(6, 'Mật khẩu quá ngắn!')
-        .max(16, 'Mật khẩu quá ngắn dài!')
+        .max(16, 'Mật khẩu quá dài!')
         .required('Mật khẩu rỗng!'),
     rePass: Yup.string()
         .min(6, 'Mật khẩu quá ngắn!')
-        .max(16, 'Mật khẩu quá ngắn dài!')
+        .max(16, 'Mật khẩu quá dài!')
         .required('Mật khẩu rỗng!')
 });
