@@ -1,7 +1,7 @@
 import {doPost} from './apiCommon'
 import {LOGIN, SIGNUP} from '../constant/apiUrl'
 
-export const login = async (user) => {
+export const login = (user) => {
     return doPost(LOGIN, user);
 }
 

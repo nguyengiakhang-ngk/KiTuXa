@@ -1,16 +1,21 @@
 import { LOGIN, LOGIN_SUCCESS, LOGIN_ERROR, SIGN_UP, SIGN_UP_SUCCESS, SIGN_UP_ERROR } from "./types";
 import {login, signUp} from "../../api/userAPI";
 
-export const  doLogin = (user) => dispatch => {
-    login()
-    .then(response => response.json())
-        .then(
-            data => loginSuccess(data),
-            error => loginError(error.message || 'Unexpected Error!!!')
-        )
+export const doLogin = (user) => dispatch => {
+    return new Promise((resolve, reject) => {
+        login(user)
+            .then(data => {
+                loginSuccess(data);
+                resolve(data);
+            })
+            .catch(error => {
+                loginError(error);
+                reject(error);
+            });
+    })
 };
 
-export const  doSignUp = (user) => dispatch => {
+export const doSignUp = (user) => dispatch => {
     signUp()
         .then(response => response.json())
         .then(
@@ -19,7 +24,7 @@ export const  doSignUp = (user) => dispatch => {
         )
 };
 
-const login = () => dispatch => {
+const loadLogin = () => dispatch => {
     dispatch({
         type: LOGIN
     });
@@ -39,7 +44,7 @@ const loginError = (error) => dispatch => {
     });
 }
 
-const signUp = () => dispatch => {
+const loadSignUp = () => dispatch => {
     dispatch({
         type: SIGN_UP
     });

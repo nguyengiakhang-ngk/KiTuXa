@@ -15,8 +15,8 @@ import AppCheckBox from "../../components/AppCheckBox";
 import {background_color, flex, font, font_weight, text_color, text_size, width} from "../../utils/styles/MainStyle";
 import {color_primary} from "../../utils/theme/Color";
 import {connect} from "react-redux";
-// import login from "../../redux/reducers/login";
-import { loadListArea } from "../../redux/actions/area";
+import {doLogin} from "../../redux/actions/user";
+import AsyncStorage from "@react-native-community/async-storage";
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         {children}
@@ -28,21 +28,35 @@ class LoginScreen extends Component{
         return isValid && Object.keys(touched).length !== 0;
     }
     componentDidMount() {
-        this.props.loadListArea();
+
     };
     viewSignUp = () => {
         this.props.navigation.navigate("SignUp");
     }
-    login = async (username, password) => {
-        
+    login = (numberPhone, password) => {
+        this.props.doLogin({numberPhone: numberPhone, password: password})
+            .then(async data => {
+                if (data === 1) {
+                    alert("Tài khoản không tồn tại");
+                } else if (data === 2) {
+                    alert("Sai mật khẩu!");
+                } else {
+                    try {
+                        await AsyncStorage.setItem('@user', data);
+                        this.props.navigation.navigate('TabUser');
+                    } catch (e) {
+                        console.log(e);
+                    }
+                }
+            });
     }
     render() {
         return (
             <Formik
-                initialValues={{username: "12345678", pass: "12345678"}}
+                initialValues={{numberPhone: "", pass: ""}}
                 validationSchema={SignupSchema}
                 onSubmit={values => {
-                    // this.login(values.username, values.pass);
+                    this.login(values.numberPhone, values.pass);
                 }}
             >
                 {({
@@ -106,14 +120,14 @@ class LoginScreen extends Component{
                                         <AppInputAuth
                                             secureTextEntry={false}
                                             placeholder={"Tên tài khoản"}
-                                            field={"username"}
+                                            field={"numberPhone"}
                                             icon={"user-alt"}
                                             handleChange={handleChange}
                                             handleBlur={handleBlur}
                                             values={values}
                                         />
-                                        {errors.username && touched.username ? (
-                                            <AppError errors={ errors.username } marginLeft={15}/>
+                                        {errors.numberPhone && touched.numberPhone ? (
+                                            <AppError errors={ errors.numberPhone } marginLeft={15}/>
                                         ) : null}
                                     </View>
                                     <View
@@ -167,11 +181,8 @@ class LoginScreen extends Component{
                                         ]}
                                     >
                                         <AppButton
-                                            // disabled = { !this.isFormValid(isValid, touched) }
-                                            // onPress = { handleSubmit }
-                                            onPress={() => {
-                                                this.props.navigation.navigate("TabUser");
-                                            }}
+                                            disabled = { !this.isFormValid(isValid, touched) }
+                                            onPress = { handleSubmit }
                                             //disabled = { !this.isFormValid(isValid, touched) }
                                             title="Đăng nhập"
                                         />
@@ -223,7 +234,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-    loadListArea
+    doLogin
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen)

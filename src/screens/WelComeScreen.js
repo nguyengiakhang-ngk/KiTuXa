@@ -10,7 +10,7 @@ import AsyncStorage from "@react-native-community/async-storage";
 
 export default class WelComeScreen extends Component{
     async componentDidMount() {
-        const user = await AsyncStorage.getItem('user');
+        const user = await AsyncStorage.getItem('@user');
         setTimeout(() => {
             if(user){
                 this.props.navigation.replace("TabUser");

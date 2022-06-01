@@ -9,6 +9,7 @@ import {
     FlatList
 } from 'react-native';
 import { color_primary } from "../../../utils/theme/Color";
+import AsyncStorage from "@react-native-community/async-storage";
 
 export default class PersonalScreen extends Component {
 
@@ -35,7 +36,7 @@ export default class PersonalScreen extends Component {
             {
                 id: 4,
                 name: 'Đăng xuất',
-                onPress: 'logout',
+                onPress: 'TabUser',
                 icon: require("../../../../assets/icons/logout.png")
             }
         ]
@@ -47,11 +48,19 @@ export default class PersonalScreen extends Component {
         };
     }
 
-
-
     renderFunction = ({ item, index }) => {
         return (
-            <TouchableOpacity style={styles.functionProfile} onPress={() => { this.props.navigation.navigate("RoomBookedList") }}>
+            <TouchableOpacity style={styles.functionProfile} onPress={async () => {
+                if (item.onPress === 'TabUser') {
+                    try {
+                        await AsyncStorage.removeItem('@user');
+                        return true;
+                    } catch (exception) {
+                        return false;
+                    }
+                }
+                this.props.navigation.replace(item.onPress);
+            }}>
                 <Image style={{
                     width: 28,
                     height: 28,

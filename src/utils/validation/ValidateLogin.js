@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 
 export const SignupSchema = Yup.object().shape({
-    username: Yup.string()
+    numberPhone: Yup.string()
         .min(6, 'Tên tài khoản quá ngắn!')
         .max(50, 'Tên tài khoản quá dài!')
         .required('Tên tài khoản rỗng!'),
