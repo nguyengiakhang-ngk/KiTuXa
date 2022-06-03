@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {
-    SafeAreaView,
     Text,
     StyleSheet,
     View,
@@ -24,7 +23,6 @@ class PersonalScreen extends Component {
     }
 
     componentDidMount() {
-        // alert(this.props.user.user);
         let tamp = [
             {
                 id: 1,
@@ -48,8 +46,8 @@ class PersonalScreen extends Component {
             },
             {
                 id: 4,
-                name: this.props.user.user ? 'Đăng xuất' : 'Đăng nhập',
-                onPress: this.props.user.user ? 'Welcome' : 'Login',
+                name: this.props.user ? 'Đăng xuất' : 'Đăng nhập',
+                onPress: this.props.user ? 'Welcome' : 'Login',
                 icon: require("../../../../assets/icons/logout.png"),
                 navigate: ''
             }
@@ -62,11 +60,12 @@ class PersonalScreen extends Component {
     renderFunction = ({ item, index }) => {
         return (
             <TouchableOpacity style={styles.functionProfile} onPress={async () => {
-                if (item.onPress === 'TabUser') {
+                if (item.onPress === 'Welcome') {
                     try {
-                        await AsyncStorage.removeItem('@user');
+                        await AsyncStorage.setItem('@user', null);
                         return true;
                     } catch (exception) {
+
                         return false;
                     }
                 }
@@ -125,7 +124,6 @@ class PersonalScreen extends Component {
 }
 
 const mapStateToProps = ({ user }) => {
-    alert(JSON.stringify(user));
     return user;
 };
 

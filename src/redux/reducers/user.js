@@ -10,19 +10,16 @@ export default (preState = INITIAL_STATE, action) => {
         case LOGIN:
             return {
                 ...preState,
-                user: '',
-                error: ''
+                ...INITIAL_STATE
             }
         case LOGIN_SUCCESS:
             return {
                 ...preState,
                 user: action.user,
-                error:''
             }
         case LOGIN_ERROR:
             return {
                 ...preState,
-                user: '',
                 error: action.error
             }
         case SIGN_UP:

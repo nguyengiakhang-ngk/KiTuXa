@@ -3,7 +3,7 @@ import { login, signUp } from "../../api/userAPI";
 
 export const initUser = (user) => dispatch => {
     if(user) {
-        loginSuccess(user);
+        loginSuccess(dispatch, user);
     }
 };
 
@@ -41,14 +41,14 @@ const loadLogin = () => dispatch => {
     });
 }
 
-const loginSuccess = (user) => dispatch => {
+const loginSuccess = (dispatch, user) => {
     dispatch({
         type: LOGIN_SUCCESS,
         user: user
     });
 }
 
-const loginError = (error) => dispatch => {
+const loginError = (dispatch, error) => {
     dispatch({
         type: LOGIN_ERROR,
         error: error
