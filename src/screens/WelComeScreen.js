@@ -13,11 +13,14 @@ import {initUser} from "../redux/actions/user";
 class WelComeScreen extends Component{
     async componentDidMount() {
         const user = await AsyncStorage.getItem('@user');
+        console.log(user);
         setTimeout(() => {
             if(user){
                 this.props.initUser(JSON.parse(user));
+            }else{
+                this.props.initUser("");
             }
-            this.props.navigation.replace("TabUser");
+            this.props.navigation.replace("TabUser", {userData: user});
         }, 2500);
     }
 

@@ -26,6 +26,7 @@ import ContractScreen from '../screens/Admin/Contract/ContractScreen';
 import AddContract from '../screens/Admin/Contract/AddContract';
 import SavedRoom from '../screens/User/Container/SavedRoomScreen';
 import RoomBookedListScreen from '../screens/User/RoomBooked/RoomBookedListScreen';
+import HomeScreen from '../screens/Admin/Container/HomeScreen'
 const Stack = createNativeStackNavigator();
 const StackScreen: () => Node = () => {
 
@@ -60,6 +61,12 @@ const StackScreen: () => Node = () => {
                 <Stack.Screen
                     name="TabService"
                     component={TabScreenService}
+                    options={{ headerShown: false }}
+                />
+                {/* Home admin */}
+                <Stack.Screen
+                    name="HomeScreen"
+                    component={HomeScreen}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen

@@ -43,7 +43,7 @@ class LoginScreen extends Component{
                 } else {
                     try {
                         await AsyncStorage.setItem('@user', JSON.stringify(data));
-                        this.props.navigation.navigate('TabUser');
+                        this.props.navigation.replace('TabUser', {userData: data});
                     } catch (e) {
                         console.log(e);
                     }
