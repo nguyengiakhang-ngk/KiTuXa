@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {
-    FlatList, Keyboard, Modal, ScrollView,
-    Text, TouchableOpacity, TouchableWithoutFeedback, View
+    FlatList, Keyboard, Modal, Text, TouchableOpacity, TouchableWithoutFeedback, View, Image
 } from 'react-native';
 import AppFAB from "../../../../components/AppFAB";
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
@@ -10,23 +9,23 @@ import {
     flex,
     font,
     font_weight,
-    height, margin,
+    height,
     position,
-    shadow,
     text_color,
     text_size
 } from "../../../../utils/styles/MainStyle";
 import {color_danger, color_primary, color_success} from "../../../../utils/theme/Color";
-import axios from "axios";
-import {path} from "../../../../constant/define";
+import { url } from "../../../../constant/define";
 import { width } from "../../../../utils/styles/MainStyle";
 import {Icon} from "@rneui/base";
 import AppInputInf from "../../../../components/AppInputInf";
 import AppError from "../../../../components/AppError";
-import {AreaSchema} from "../../../../utils/validation/ValidationArea";
 import {Formik} from "formik";
 import {FreeServiceSchema} from "../../../../utils/validation/ValidateFreeService";
-import AppButton from "../../../../components/AppButton";
+import AppButtonActionInf from "../../../../components/AppButtonActionInf";
+import ImagePicker from "react-native-image-crop-picker";
+import {connect} from "react-redux";
+import {doGetListFreeService, doAddFreeService, doUpdateFreeService, doDeleteFreeService} from "../../../../redux/actions/freeService";
 
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -34,264 +33,118 @@ const HideKeyboard = ({ children }) => (
     </TouchableWithoutFeedback>
 );
 
-export default class FreeServiceListScreen extends Component{
+class FreeServiceListScreen extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            isLoading: true,
             dataFreeService: [],
-            freeSerViceUpdate: "",
+            freeSerViceUpdate: null,
             iconAdd: "servicestack",
             isShowModalAdd: false,
-            isShowModalIcon: false,
-            isShowModalUpdate: false,
-            dataIcon: [
-                {
-                    name: 'wifi',
-                    checked: false
-                },
-                {
-                    name: 'fan',
-                    checked: false
-                },
-                {
-                    name: 'parking',
-                    checked: false
-                }
-            ]
+            imageFreeService: null
         }
     }
 
     componentDidMount() {
-        this.getFreeServiceData();
-    }
-
-    isFormValid = (isValid, touched) => {
-        return isValid && Object.keys(touched).length !== 0;
+        this.removeWillFocusListener = this.props.navigation.addListener(
+            'focus', () => {
+                this.getFreeServiceData();
+            }
+        );
     }
 
     getFreeServiceData(){
-        axios.get(path + "/getFreeService")
-            .then((response)=>{
-                this.setState({
-                    isLoading: false,
-                    dataFreeService: response.data
-                })
-            })
-            .catch((error => {
-                console.log(error);
-            }));
+        this.props.doGetListFreeService({userId: this.props.user.user.id}).then(data =>{
+            console.log(JSON.stringify(data));
+        });
     }
 
-    _renderItemIcon = ({item, index}) => {
-        return(
-            <TouchableOpacity
-                style={[
-                    {
-                        paddingVertical: 10,
-                        borderRadius: 5,
-                        margin: 5,
-                        width: '17%'
-                    },
-                    item.checked ? background_color.light : ''
-
-                ]}
-                onPress={ () => {
-                    this.state.dataIcon.map( (value, i) => {
-                        value.checked = i === index;
-                    });
-                    this.setState({
-                        dataIcon: this.state.dataIcon,
-                        isShowModalIcon: false,
-                        iconAdd: this.state.dataIcon[index].name
-                    });
-                }}
-            >
-                <Icon
-                    name={item.name}
-                    type='font-awesome-5'
-                    color={color_primary}
-                    size={30}/>
-            </TouchableOpacity>
-        )
+    componentWillUnmount() {
+        this.removeWillFocusListener();
     }
 
-    _renderItemFreeService = ({item, index}) => {
-        return(
-            <View
-                style={[
-                    width.w_100,
-                    {
-                        marginTop: 10,
-                        padding: 5,
-                        borderRadius: 5
-                    },
-                    background_color.light,
-                    flex.flex_row,
-                    flex.justify_content_between,
-                    flex.align_items_center
-                ]}
-            >
-                <View
-                    style={[
-                        flex.flex_row
-                    ]}
-                >
-                    <View
-                        style={[
-                            {
-                                backgroundColor: color_primary,
-                                borderRadius: 5,
-                                width: 50,
-                                marginRight: 10
-                            },
-                            flex.justify_content_center
-                        ]}
-                    >
-                        <Icon
-                            name= {item.anh_dd}
-                            type='font-awesome-5'
-                            size={18}
-                            color={'white'}
-                        />
-                    </View>
-                    <View>
-                        <Text
-                            style={[
-                                text_size.sm,
-                                font.serif,
-                                font_weight.bold,
-                                text_color.primary
-                            ]}
-                        >
-                            {item.tendv}
-                        </Text>
-                        <View
-                            style={[
-                                flex.flex_row,
-                                flex.align_items_center,
-                                {marginTop: 2}
-                            ]}
-                        >
-                            <Icon
-                                name= {"circle"}
-                                type='font-awesome-5'
-                                size={10}
-                                color={color_success}
-                            />
-                            <Text
-                                style={[
-                                    text_size.xs,
-                                    font.serif,
-                                    {marginLeft: 4}
-                                ]}
-                            >
-                                Miễn phí
-                            </Text>
-                        </View>
-                    </View>
-                </View>
-                <View
-                    style={[
-                        flex.flex_row
-                    ]}
-                >
-                    <TouchableOpacity
-                        style={[
-                            {marginRight: 10}
-                        ]}
-                        onPress={() => this.deleteFreeService(item.id_mp)}
-                    >
-                        <Icon
-                            name= {"trash-alt"}
-                            type='font-awesome-5'
-                            size={22}
-                            color={color_danger}
-                        />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => {
-                            this.state.dataIcon.map( (value, i) => {
-                                value.checked = value.name === item.anh_dd;
-                            });
-                            this.setState({
-                                dataIcon: this.state.dataIcon,
-                                isShowModalUpdate: true,
-                                freeSerViceUpdate: this.state.dataFreeService[index],
-                                iconAdd: this.state.dataFreeService[index].anh_dd,
-                            });
-                        }}
-                    >
-                        <Icon
-                            name= {"pencil-alt"}
-                            type='font-awesome-5'
-                            size={22}
-                            color={color_success}
-                        />
-                    </TouchableOpacity>
-                </View>
-            </View>
-        )
-    }
-
-    deleteFreeService(id_mp) {
-        axios.delete(path + `/deleteFreeService/${id_mp}`)
-            .then((response)=>{
-                if(response.data){
-                    this.getFreeServiceData();
-                }
-            })
-            .catch((error => {
-                console.log(error);
-            }));
+    deleteFreeService(freeService) {
+        this.props.doDeleteFreeService({id: freeService.id, image: freeService.image}).then(data => {
+            if(data) {
+                this.getFreeServiceData();
+            }
+        })
     }
 
     addFreeService = (values) => {
-        axios.post(path + "/addFreeService",{
-            serviceName: values.serviceName,
-            icon: this.state.iconAdd
+        const date = new Date();
+        const minutes = date.getMinutes();
+        let data = new FormData();
+        let freeService = {
+            name: values.serviceName,
+            userId: this.props.user.user.id
+        }
+        data.append("image", {
+            freeService: freeService,
+            uri: this.state.imageFreeService.path,
+            type: "image/jpeg",
+            name: this.state.imageFreeService.filename || `temp_image_${minutes}.jpg`
+        });
+        data.append("freeService", JSON.stringify(freeService));
+        this.props.doAddFreeService(data).then(data => {
+            if(data) {
+                this.setState({
+                    isShowModalAdd: false,
+                    imageFreeService: null
+                });
+                this.getFreeServiceData();
+            }
         })
-            .then((response)=>{
-                if(response.data){
-                    this.setState({
-                        isShowModalAdd: false
-                    });
-                    this.getFreeServiceData();
-                    this.resetDataIcon();
-                }
-            })
-            .catch((error => {
-                console.log(error);
-            }));
-    }
-
-    resetDataIcon = () => {
-        this.state.dataIcon.map(item => {
-           item.checked = false;
-        });
-        this.setState({
-            dataIcon: this.state.dataIcon,
-            iconAdd: "servicestack"
-        });
     }
 
     updateFreeService = (values) => {
-        axios.put(path + `/updateFreeService/${this.state.freeSerViceUpdate.id_mp}`,{
-            serviceName: values.serviceName,
-            icon: this.state.iconAdd
-        })
-            .then((response)=>{
-                if(response.data){
-                    this.setState({
-                        isShowModalUpdate: false
-                    });
-                    this.getFreeServiceData();
-                    this.resetDataIcon();
+        const date = new Date();
+        const minutes = date.getMinutes();
+        let data = new FormData();
+        let freeService = {
+            name: values.serviceName,
+            image: this.state.freeSerViceUpdate.image
+        }
+        if(this.state.imageFreeService) {
+            data.append("image", {
+                freeService: freeService,
+                uri: this.state.imageFreeService.path,
+                type: "image/jpeg",
+                name: this.state.imageFreeService.filename || `temp_image_${minutes}.jpg`
+            });
+        }
+        data.append("freeService", JSON.stringify(freeService));
+        this.props.doUpdateFreeService(data, {id: this.state.freeSerViceUpdate.id}).then(data => {
+            if(data) {
+                this.setState({
+                    isShowModalAdd: false,
+                    imageFreeService: null,
+                    freeSerViceUpdate: null
+                });
+                this.getFreeServiceData();
+            }
+        });
+    }
+
+    chooseImage(){
+        ImagePicker.openPicker({
+            multiple: false,
+            waitAnimationEnd: false,
+            includeExif: true,
+            forceJpg: true,
+            compressImageQuality: 0.8,
+            mediaType: "any",
+            includeBase64: true,
+        }).then(res => {
+            console.log('Res: ', res);
+            this.setState({
+                imageFreeService: {
+                    filename: res.filename,
+                    path: res.path,
+                    data: res.data
                 }
-            })
-            .catch((error => {
-                console.log(error);
-            }));
+            });
+        }).catch(error => console.log('Error: ', error.message));
     }
 
     render() {
@@ -332,291 +185,306 @@ export default class FreeServiceListScreen extends Component{
                                 }
                             ]}
                         >
-                            <ScrollView
-                                style={[
-                                    {
-                                        width: '90%',
-                                        backgroundColor: 'white',
-                                        borderRadius: 5,
-                                        maxHeight: 270
-                                    }
-                                ]}
-                            >
-                                <Formik
-                                    initialValues={{serviceName: ""}}
-                                    validationSchema={FreeServiceSchema}
-                                    onSubmit={values => {
-                                        this.addFreeService(values);
-                                    }}
-                                >
-                                    {({
-                                          handleChange,
-                                          handleBlur,
-                                          handleSubmit, values,
-                                          errors,
-                                          touched ,
-                                          isValid
-                                    }) => (
-                                        <HideKeyboard>
-                                            <SafeAreaView
-                                                style={[
-                                                    { flex: 1, height: 240, margin: 15},
-                                                    background_color.white,
-                                                    flex.justify_content_between
-                                                ]}
-                                                onPress={Keyboard.dismiss}
-                                            >
-                                                <View
-                                                    style={[
-                                                        width.w_100
-                                                    ]}
-                                                >
-                                                    <View
-                                                        style={[
-                                                            width.w_100
-                                                        ]}
-                                                    >
-                                                        <AppInputInf
-                                                            lable={"Tên dịch vụ:"}
-                                                            secureTextEntry={false}
-                                                            field={"serviceName"}
-                                                            handleChange={handleChange}
-                                                            handleBlur={handleBlur}
-                                                            values={values}
-                                                        />
-                                                        {errors.serviceName && touched.serviceName ? (
-                                                            <AppError errors={ errors.serviceName }/>
-                                                        ) : null}
-                                                    </View>
-                                                    <View
-                                                        style={[
-                                                            width.w_100,
-                                                            flex.flex_row,
-                                                            flex.align_items_center,
-                                                            {
-                                                                marginTop: 10
-                                                            }
-                                                        ]}
-                                                    >
-                                                        <Text
-                                                            style={[
-                                                                font.serif,
-                                                                text_size.sm
-                                                            ]}
-                                                        >
-                                                            Biểu tượng dịch vụ:
-                                                        </Text>
-
-                                                        <TouchableOpacity
-                                                            style={[
-                                                                {
-                                                                    marginLeft: 10,
-                                                                    paddingVertical: 5,
-                                                                    paddingHorizontal: 10,
-                                                                    borderRadius: 5
-                                                                },
-                                                                background_color.light,
-                                                                flex.justify_content_center,
-                                                                flex.align_items_center
-                                                            ]}
-                                                            onPress={ () => this.setState( {isShowModalIcon: true} ) }
-                                                        >
-                                                            <Icon
-                                                                name={this.state.iconAdd}
-                                                                type='font-awesome-5'
-                                                                color={color_primary}
-                                                                size={35}/>
-                                                        </TouchableOpacity>
-                                                    </View>
-                                                </View>
-                                                <View
-                                                    style={[
-                                                        width.w_100
-                                                    ]}
-                                                >
-                                                    <AppButton
-                                                        disabled = { !this.isFormValid(isValid, touched) }
-                                                        onPress = { handleSubmit }
-                                                        title="Thêm"
-                                                    />
-                                                </View>
-                                            </SafeAreaView>
-                                        </HideKeyboard>
-                                    )}
-                                </Formik>
-                            </ScrollView>
-                        </View>
-                    </Modal>
-                    <Modal transparent visible={this.state.isShowModalUpdate}>
-                        <View
-                            style={[
-                                {
-                                    flex: 1,
-                                    backgroundColor: 'rgba(0,0,0,0.5)',
-                                    justifyContent: "center",
-                                    alignItems: "center"
-                                }
-                            ]}
-                        >
-                            <ScrollView
-                                style={[
-                                    {
-                                        width: '90%',
-                                        backgroundColor: 'white',
-                                        borderRadius: 5,
-                                        maxHeight: 270
-                                    }
-                                ]}
-                            >
-                                <Formik
-                                    initialValues={{serviceName: this.state.freeSerViceUpdate.tendv}}
-                                    validationSchema={FreeServiceSchema}
-                                    onSubmit={values => {
-                                        this.updateFreeService(values);
-                                    }}
-                                >
-                                    {({
-                                          handleChange,
-                                          handleBlur,
-                                          handleSubmit, values,
-                                          errors,
-                                          touched ,
-                                          isValid
-                                    }) => (
-                                        <HideKeyboard>
-                                            <SafeAreaView
-                                                style={[
-                                                    { flex: 1, height: 240, margin: 15},
-                                                    background_color.white,
-                                                    flex.justify_content_between
-                                                ]}
-                                                onPress={Keyboard.dismiss}
-                                            >
-                                                <View
-                                                    style={[
-                                                        width.w_100
-                                                    ]}
-                                                >
-                                                    <View
-                                                        style={[
-                                                            width.w_100
-                                                        ]}
-                                                    >
-                                                        <AppInputInf
-                                                            lable={"Tên dịch vụ:"}
-                                                            secureTextEntry={false}
-                                                            field={"serviceName"}
-                                                            handleChange={handleChange}
-                                                            handleBlur={handleBlur}
-                                                            values={values}
-                                                        />
-                                                        {errors.serviceName && touched.serviceName ? (
-                                                            <AppError errors={ errors.serviceName }/>
-                                                        ) : null}
-                                                    </View>
-                                                    <View
-                                                        style={[
-                                                            width.w_100,
-                                                            flex.flex_row,
-                                                            flex.align_items_center,
-                                                            {
-                                                                marginTop: 10
-                                                            }
-                                                        ]}
-                                                    >
-                                                        <Text
-                                                            style={[
-                                                                font.serif,
-                                                                text_size.sm
-                                                            ]}
-                                                        >
-                                                            Biểu tượng dịch vụ:
-                                                        </Text>
-
-                                                        <TouchableOpacity
-                                                            style={[
-                                                                {
-                                                                    marginLeft: 10,
-                                                                    paddingVertical: 5,
-                                                                    paddingHorizontal: 10,
-                                                                    borderRadius: 5
-                                                                },
-                                                                background_color.light,
-                                                                flex.justify_content_center,
-                                                                flex.align_items_center
-                                                            ]}
-                                                            onPress={ () => this.setState( {isShowModalIcon: true} ) }
-                                                        >
-                                                            <Icon
-                                                                name={this.state.iconAdd}
-                                                                type='font-awesome-5'
-                                                                color={color_primary}
-                                                                size={35}/>
-                                                        </TouchableOpacity>
-                                                    </View>
-                                                </View>
-                                                <View
-                                                    style={[
-                                                        width.w_100
-                                                    ]}
-                                                >
-                                                    <AppButton
-                                                        onPress = { handleSubmit }
-                                                        title="Sửa"
-                                                    />
-                                                </View>
-                                            </SafeAreaView>
-                                        </HideKeyboard>
-                                    )}
-                                </Formik>
-                            </ScrollView>
-                        </View>
-                    </Modal>
-                    <Modal transparent visible={this.state.isShowModalIcon}>
-                        <View
-                            style={[
-                                {
-                                    flex: 1,
-                                    justifyContent: "center",
-                                    alignItems: "center"
-                                }
-                            ]}
-                        >
                             <View
                                 style={[
                                     {
                                         width: '90%',
                                         backgroundColor: 'white',
-                                        paddingVertical: 15,
-                                        paddingHorizontal: 15,
-                                        borderRadius: 5,
-                                        height: 270
+                                        borderRadius: 5
                                     }
                                 ]}
                             >
-                                <View
-                                    style={[
-                                        width.w_100,
-                                        flex.align_items_center
-                                    ]}
+                                <Formik
+                                    initialValues={{serviceName: this.state.freeSerViceUpdate ? this.state.freeSerViceUpdate.name : ''}}
+                                    validationSchema={FreeServiceSchema}
+                                    onSubmit={values => {
+                                        if(this.state.freeSerViceUpdate) {
+                                            this.updateFreeService(values);
+                                        }else {
+                                            this.addFreeService(values);
+                                        }
+                                    }}
                                 >
-                                    <Text
-                                        style={[
-                                            text_size.xl,
-                                            text_color.danger,
-                                            font.serif
-                                        ]}
-                                    >
-                                        Chọn biểu tượng
-                                    </Text>
-                                </View>
-                                <FlatList style={{padding: 5}} numColumns={5} data={this.state.dataIcon} renderItem={this._renderItemIcon} keyExtractor={(item, index) => index.toString()}/>
+                                    {({
+                                          handleChange,
+                                          handleBlur,
+                                          handleSubmit, values,
+                                          errors,
+                                          touched ,
+                                          isValid
+                                    }) => (
+                                        <HideKeyboard>
+                                            <SafeAreaView
+                                                style={[
+                                                    { margin: 15},
+                                                    background_color.white,
+                                                    flex.justify_content_between
+                                                ]}
+                                                onPress={Keyboard.dismiss}
+                                            >
+                                                <View
+                                                    style={[
+                                                        width.w_100
+                                                    ]}
+                                                >
+                                                    <View
+                                                        style={[
+                                                            width.w_100
+                                                        ]}
+                                                    >
+                                                        <AppInputInf
+                                                            lable={"Tên dịch vụ:"}
+                                                            secureTextEntry={false}
+                                                            field={"serviceName"}
+                                                            handleChange={handleChange}
+                                                            handleBlur={handleBlur}
+                                                            values={values}
+                                                        />
+                                                        {errors.serviceName && touched.serviceName ? (
+                                                            <AppError errors={ errors.serviceName }/>
+                                                        ) : null}
+                                                    </View>
+                                                    <View
+                                                        style={[
+                                                            width.w_100,
+                                                            flex.flex_row,
+                                                            flex.align_items_center,
+                                                            {
+                                                                marginTop: 10
+                                                            }
+                                                        ]}
+                                                    >
+                                                        <TouchableOpacity
+                                                            style={[
+                                                                width.w_100,
+                                                                flex.flex_row,
+                                                                flex.align_items_center,
+                                                            ]}
+                                                            onPress={() => this.chooseImage()}
+                                                        >
+                                                            <Icon
+                                                                name='plus-circle'
+                                                                type='font-awesome-5'
+                                                                size={20}
+                                                                color={color_success}
+                                                            />
+                                                            <Text
+                                                                style={[
+                                                                    text_size.sm,
+                                                                    font.serif,
+                                                                    {
+                                                                        marginLeft: 3
+                                                                    }
+                                                                ]}
+                                                            >
+                                                                Ảnh dịch vụ:
+                                                            </Text>
+                                                        </TouchableOpacity>
+                                                    </View>
+                                                    {
+                                                        (this.state.imageFreeService || this.state.freeSerViceUpdate) ?
+                                                            <View
+                                                                style={[
+                                                                    width.w_100
+                                                                ]}
+                                                            >
+                                                                <Image
+                                                                    style={[
+                                                                        width.w_100,
+                                                                        {height: 340}
+                                                                    ]}
+                                                                    source={
+                                                                        {
+                                                                            uri: this.state.imageFreeService ? this.state.imageFreeService.path : `${url}/${this.state.freeSerViceUpdate.image}`
+                                                                        }
+                                                                    }
+                                                                />
+                                                            </View>
+                                                            : null
+                                                    }
+                                                </View>
+                                                <View
+                                                    style={[
+                                                        width.w_100,
+                                                        flex.flex_row,
+                                                        {paddingLeft: 15, paddingRight: 15, marginTop: 20}
+                                                    ]}
+                                                >
+                                                    <View
+                                                        style={[
+                                                            {
+                                                                flex: 1,
+                                                                marginRight: 15
+                                                            }
+                                                        ]}
+                                                    >
+                                                        <AppButtonActionInf
+                                                            size={10}
+                                                            textSize={18}
+                                                            bg={color_danger}
+                                                            onPress = { () => {
+                                                                this.setState({
+                                                                    isShowModalAdd: false,
+                                                                    imageFreeService: null,
+                                                                    freeSerViceUpdate: null
+                                                                })
+                                                            } }
+                                                            title="Hủy"
+                                                        />
+                                                    </View>
+                                                    <View
+                                                        style={[
+                                                            {
+                                                                flex: 1
+                                                            }
+                                                        ]}
+                                                    >
+                                                        <AppButtonActionInf
+                                                            size={10}
+                                                            textSize={18}
+                                                            bg={color_primary}
+                                                            disabled = { !values.serviceName }
+                                                            onPress = { handleSubmit }
+                                                            title={this.state.freeSerViceUpdate ? 'Lưu' : 'Thêm'}
+                                                        />
+                                                    </View>
+                                                </View>
+                                            </SafeAreaView>
+                                        </HideKeyboard>
+                                    )}
+                                </Formik>
                             </View>
                         </View>
                     </Modal>
                 </View>
-                <FlatList data={this.state.dataFreeService} renderItem={this._renderItemFreeService} keyExtractor={(item, index) => index.toString()}/>
+                <FlatList showsVerticalScrollIndicator={false} data={this.props.freeService.freeServiceList} renderItem={this._renderItemFreeService} keyExtractor={(item, index) => index.toString()}/>
             </SafeAreaView>
         );
     }
+
+    _renderItemFreeService = ({item, index}) => {
+        return(
+            <View
+                style={[
+                    width.w_100,
+                    {
+                        marginTop: 10,
+                        padding: 5,
+                        borderRadius: 5
+                    },
+                    background_color.light,
+                    flex.flex_row,
+                    flex.justify_content_between,
+                    flex.align_items_center
+                ]}
+            >
+                <View
+                    style={[
+                        flex.flex_row
+                    ]}
+                >
+                    <View
+                        style={[
+                            {
+                                backgroundColor: color_primary,
+                                borderRadius: 5,
+                                width: 50,
+                                marginRight: 10
+                            },
+                            flex.justify_content_center
+                        ]}
+                    >
+                        <Icon
+                            name= {'servicestack'}
+                            type='font-awesome-5'
+                            size={18}
+                            color={'white'}
+                        />
+                    </View>
+                    <View>
+                        <Text
+                            style={[
+                                text_size.sm,
+                                font.serif,
+                                font_weight.bold,
+                                text_color.primary
+                            ]}
+                        >
+                            {item.name}
+                        </Text>
+                        <View
+                            style={[
+                                flex.flex_row,
+                                flex.align_items_center,
+                                {marginTop: 2}
+                            ]}
+                        >
+                            <Icon
+                                name= {"circle"}
+                                type='font-awesome-5'
+                                size={10}
+                                color={color_success}
+                            />
+                            <Text
+                                style={[
+                                    text_size.xs,
+                                    font.serif,
+                                    {marginLeft: 4}
+                                ]}
+                            >
+                                Miễn phí
+                            </Text>
+                        </View>
+                    </View>
+                </View>
+                <View
+                    style={[
+                        flex.flex_row
+                    ]}
+                >
+                    <TouchableOpacity
+                        style={[
+                            {marginRight: 10}
+                        ]}
+                        onPress={() => this.deleteFreeService(item)}
+                    >
+                        <Icon
+                            name= {"trash-alt"}
+                            type='font-awesome-5'
+                            size={22}
+                            color={color_danger}
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => {
+                            this.setState({
+                                isShowModalAdd: true,
+                                freeSerViceUpdate: item
+                            });
+                        }}
+                    >
+                        <Icon
+                            name= {"pencil-alt"}
+                            type='font-awesome-5'
+                            size={22}
+                            color={color_success}
+                        />
+                    </TouchableOpacity>
+                </View>
+            </View>
+        )
+    }
 }
+
+const mapStateToProps = ({user, freeService}) => {
+    return {user, freeService};
+};
+
+const mapDispatchToProps = {
+    doAddFreeService,
+    doGetListFreeService,
+    doUpdateFreeService,
+    doDeleteFreeService
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(FreeServiceListScreen)

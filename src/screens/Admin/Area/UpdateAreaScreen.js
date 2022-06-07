@@ -13,84 +13,57 @@ import AppError from "../../../components/AppError";
 import {Formik} from "formik";
 import {AreaSchema} from "../../../utils/validation/ValidationArea";
 import AppInputInf from "../../../components/AppInputInf";
-import AppDialogSelect from "../../../components/AppDialogSelect";
-import AppButton from "../../../components/AppButton";
-import axios from "axios";
-import {path} from "../../../constant/define";
+import {doGetListArea, doUpdateArea} from "../../../redux/actions/area";
+import {connect} from "react-redux";
+import AppButtonActionInf from "../../../components/AppButtonActionInf";
+import {color_danger, color_primary} from "../../../utils/theme/Color";
 
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         {children}
     </TouchableWithoutFeedback>
 );
-export default class UpdateAreaScreen extends Component {
+class UpdateAreaScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
             isLoading: true,
             data: [],
-            khuTro: {},
+            area: this.props.route.params.area,
             ss: ""
         }
     }
 
-    isFormValid = (isValid, touched) => {
-        return isValid && Object.keys(touched).length !== 0;
+    isFormValid = (isValid) => {
+        return isValid;
     }
 
     componentDidMount() {
-        this.getUserData();
-        this.getAreaById();
-    }
 
-    getUserData(){
-        axios.get(path + "/getUser")
-            .then((response)=>{
-                this.setState({
-                    isLoading: false,
-                    data: response.data.map(item => ({key: item.id_tk, label: item.hoten}))
-                });
-            })
-            .catch((error => {
-                console.log(error);
-            }));
-    }
-
-    getAreaById(){
-        axios.get(path + `/getAreaById/${this.props.route.params.id_kt}`)
-            .then((response)=>{
-                this.setState({
-                    khuTro: response.data
-                })
-            })
-            .catch((error => {
-                console.log(error);
-            }));
     }
 
     componentWillUnmount() {
-        this.props.route.params.refresh();
+
     }
 
     updateArea = (values) => {
-        axios.put(path + `/updateArea/${this.props.route.params.id_kt}`,{
+        let area = {
             areaName: values.areaName,
             address: values.address,
             totalRoom: values.totalRoom,
-            status: values.status,
             time: values.time,
             content: values.content,
-            description: values.description,
-            id_tk: values.id_tk
+            description: values.description
+        }
+        this.props.doUpdateArea(area, {id: this.state.area.id}).then(data => {
+            if(data) {
+                // this.props.doGetListArea({userId: this.props.user.user.id}).then(data => {
+                //     if(data.length){
+                        this.props.navigation.goBack();
+                //     }
+                // });
+            }
         })
-            .then((response)=>{
-                if(response.data){
-                    this.props.navigation.goBack();
-                }
-            })
-            .catch((error => {
-                console.log(error);
-            }));
     }
     render() {
         return (
@@ -100,14 +73,13 @@ export default class UpdateAreaScreen extends Component {
                 <Formik
                     enableReinitialize
                     initialValues={
-                        {   areaName: this.state.khuTro.ten_kt,
-                            address: this.state.khuTro.diachi,
-                            totalRoom: String(this.state.khuTro.sophong),
-                            status: String(this.state.khuTro.tinhtrang_quangcao),
-                            time: this.state.khuTro.gio_dong_mo_cua,
-                            content: this.state.khuTro.noidung,
-                            description: this.state.khuTro.mota,
-                            id_tk: String(this.state.khuTro.id_tk),
+                        {
+                            areaName: this.state.area.areaName,
+                            address: this.state.area.address,
+                            totalRoom: String(this.state.area.totalRoom),
+                            time: this.state.area.time,
+                            content: this.state.area.content,
+                            description: this.state.area.description
                         }
                     }
                     validationSchema={AreaSchema}
@@ -123,7 +95,7 @@ export default class UpdateAreaScreen extends Component {
                           errors,
                           touched ,
                           isValid
-                      }) => (
+                    }) => (
                         <HideKeyboard>
                             <SafeAreaView
                                 style={[
@@ -157,26 +129,6 @@ export default class UpdateAreaScreen extends Component {
                                         {paddingLeft: 15, paddingRight: 15, marginTop: 10}
                                     ]}
                                 >
-                                    <AppDialogSelect
-                                        lable={"Người đại diện:"}
-                                        data={this.state.data}
-                                        placeholder={""}
-                                        value={values}
-                                        field={"id_tk"}
-                                        initValue = {
-                                            this.state.khuTro.hoten
-                                        }
-                                    />
-                                    {errors.nguoidung && touched.nguoidung ? (
-                                        <AppError errors={ errors.nguoidung }/>
-                                    ) : null}
-                                </View>
-                                <View
-                                    style={[
-                                        width.w_100,
-                                        {paddingLeft: 15, paddingRight: 15, marginTop: 10}
-                                    ]}
-                                >
                                     <AppInputInf
                                         lable={"Địa chỉ:"}
                                         secureTextEntry={false}
@@ -191,46 +143,21 @@ export default class UpdateAreaScreen extends Component {
                                 </View>
                                 <View
                                     style={[
-                                        flex.flex_row,
-                                        width.w_100,
+                                        {paddingLeft: 15, paddingRight: 10, marginTop: 10, flex: 1}
                                     ]}
                                 >
-                                    <View
-                                        style={[
-                                            {paddingLeft: 15, paddingRight: 10, marginTop: 10, flex: 1}
-                                        ]}
-                                    >
-                                        <AppInputInf
-                                            lable={"Số phòng:"}
-                                            secureTextEntry={false}
-                                            keyboardType={'numeric'}
-                                            field={"totalRoom"}
-                                            handleChange={handleChange}
-                                            handleBlur={handleBlur}
-                                            values={values}
-                                        />
-                                        {errors.totalRoom && touched.totalRoom ? (
-                                            <AppError errors={ errors.totalRoom }/>
-                                        ) : null}
-                                    </View>
-                                    <View
-                                        style={[
-                                            {paddingLeft: 10, paddingRight: 15, marginTop: 10, flex: 1}
-                                        ]}
-                                    >
-                                        <AppInputInf
-                                            lable={"Tình trạng:"}
-                                            keyboardType={'numeric'}
-                                            secureTextEntry={false}
-                                            field={"status"}
-                                            handleChange={handleChange}
-                                            handleBlur={handleBlur}
-                                            values={values}
-                                        />
-                                        {errors.status && touched.status ? (
-                                            <AppError errors={ errors.status }/>
-                                        ) : null}
-                                    </View>
+                                    <AppInputInf
+                                        lable={"Số phòng:"}
+                                        secureTextEntry={false}
+                                        keyboardType={'numeric'}
+                                        field={"totalRoom"}
+                                        handleChange={handleChange}
+                                        handleBlur={handleBlur}
+                                        values={values}
+                                    />
+                                    {errors.totalRoom && touched.totalRoom ? (
+                                        <AppError errors={ errors.totalRoom }/>
+                                    ) : null}
                                 </View>
                                 <View
                                     style={[
@@ -293,14 +220,42 @@ export default class UpdateAreaScreen extends Component {
                                 <View
                                     style={[
                                         width.w_100,
-                                        {paddingLeft: 15, paddingRight: 15, marginTop: 30}
+                                        flex.flex_row,
+                                        {paddingLeft: 15, paddingRight: 15, marginTop: 20}
                                     ]}
                                 >
-                                    <AppButton
-                                        disabled = { false }
-                                        onPress = { handleSubmit }
-                                        title="Cập nhật"
-                                    />
+                                    <View
+                                        style={[
+                                            {
+                                                flex: 1,
+                                                marginRight: 15
+                                            }
+                                        ]}
+                                    >
+                                        <AppButtonActionInf
+                                            size={13}
+                                            textSize={18}
+                                            bg={color_danger}
+                                            onPress = { () => { this.props.navigation.goBack() } }
+                                            title="Hủy"
+                                        />
+                                    </View>
+                                    <View
+                                        style={[
+                                            {
+                                                flex: 1
+                                            }
+                                        ]}
+                                    >
+                                        <AppButtonActionInf
+                                            size={13}
+                                            textSize={18}
+                                            bg={color_primary}
+                                            disabled = { !this.isFormValid(isValid) }
+                                            onPress = { handleSubmit }
+                                            title="Lưu"
+                                        />
+                                    </View>
                                 </View>
                             </SafeAreaView>
                         </HideKeyboard>
@@ -310,4 +265,15 @@ export default class UpdateAreaScreen extends Component {
         );
     }
 }
+
+const mapStateToProps = ({area, user}) => {
+    return {area, user};
+};
+
+const mapDispatchToProps = {
+    doUpdateArea,
+    doGetListArea
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(UpdateAreaScreen)
 

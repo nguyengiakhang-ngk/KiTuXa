@@ -229,7 +229,7 @@ class LoginScreen extends Component{
 }
 
 const mapStateToProps = state => {
-    console.log(JSON.stringify(state.area.areList));
+    console.log(JSON.stringify(state));
     return state;
 };
 

@@ -14,8 +14,14 @@ import {
 } from "../../../utils/styles/MainStyle";
 import AppItemHome from "../../../components/AppItemHome";
 import {color_primary} from "../../../utils/theme/Color";
+import {connect} from "react-redux";
 
-export default class HomeScreen extends Component{
+class HomeScreen extends Component{
+
+    constructor(props) {
+        super(props);
+    }
+
     routeScreen = (title) => {
         this.props.navigation.navigate(title);
     }
@@ -311,3 +317,14 @@ export default class HomeScreen extends Component{
         );
     }
 }
+
+const mapStateToProps = ({user}) => {
+    // alert(JSON.stringify(user));
+    return user;
+};
+
+const mapDispatchToProps = {
+    // doAddArea
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen)
