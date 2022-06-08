@@ -11,7 +11,7 @@ import {
   TextInput
 } from 'react-native';
 import SafeAreaView from 'react-native/Libraries/Components/SafeAreaView/SafeAreaView';
-import {background_color, flex, font, font_weight, padding, shadow, text_size, width, height} from "../../../utils/styles/MainStyle";
+import { background_color, flex, font, font_weight, padding, shadow, text_size, width, height } from "../../../utils/styles/MainStyle";
 import AppError from '../../../components/AppError';
 import { Formik } from 'formik';
 import AppInputInf from '../../../components/AppInputInf';
@@ -111,14 +111,14 @@ export default class AddContract extends Component {
             })
             .then(response => {
               if (response.data) {
-                
-                for(let i = 0; i < termData.length; i++){
+
+                for (let i = 0; i < termData.length; i++) {
                   axios.post(path + '/addTerm'
-                  // ,{
-                  //   nameOfTerm: 'Điều khoản ' + i,
-                  //   content: termData[i],
-                  //   contractId: 1
-                  // }
+                    // ,{
+                    //   nameOfTerm: 'Điều khoản ' + i,
+                    //   content: termData[i],
+                    //   contractId: 1
+                    // }
                   )
                 }
                 this.props.navigation.goBack();
@@ -142,14 +142,14 @@ export default class AddContract extends Component {
   };
 
   changeTextTerm = () => {
-      
+
   }
   _renderTerm = (item, index, handleChange, handleBlur, values) => {
     console.log(this.state.termData)
     return (
       <View
         key={index}
-        style={[ { flex: 1 }, styles.splitView]}>
+        style={[{ flex: 1 }, styles.splitView]}>
         {/* <AppInputInf
           lable={'Điều khoản ' + (index + 1) + ':'}
           secureTextEntry={false}
@@ -159,37 +159,37 @@ export default class AddContract extends Component {
           values={values}
         /> */}
         <View>
-        <View style={[
+          <View style={[
+            width.w_100,
+            flex.justify_content_center,
+          ]}>
+            <Text
+              style={[
+                text_size.sm,
+                font.serif
+              ]}
+            >
+              {'Điều khoản ' + (index + 1) + ':'}
+            </Text>
+            <TextInput
+              secureTextEntry={false}
+              style={[
+                text_size.sm,
+                font_weight.f_500,
+                font.serif,
+                padding.p_0,
                 width.w_100,
-                flex.justify_content_center,
-            ]}>
-                <Text
-                    style={[
-                        text_size.sm,
-                        font.serif
-                    ]}
-                >
-                    {'Điều khoản ' + (index + 1) + ':'}
-                </Text>
-                <TextInput
-                    secureTextEntry={false}
-                    style={[
-                        text_size.sm,
-                        font_weight.f_500,
-                        font.serif,
-                        padding.p_0,
-                        width.w_100,
-                        background_color.white,
-                        shadow.shadow,
-                        {borderRadius: 7, padding: 12, paddingLeft: 10, paddingRight: 10, marginTop: 5, textAlignVertical: 'top',},
-                    ]}
-                    onChangeText={(newValue) => {
-                      this.state.termData[index] = newValue;
-                      this.setState({termData: this.state.termData});
-                    }}
-                    // value={}
-                />
-            </View>
+                background_color.white,
+                shadow.shadow,
+                { borderRadius: 7, padding: 12, paddingLeft: 10, paddingRight: 10, marginTop: 5, textAlignVertical: 'top', },
+              ]}
+              onChangeText={(newValue) => {
+                this.state.termData[index] = newValue;
+                this.setState({ termData: this.state.termData });
+              }}
+            // value={}
+            />
+          </View>
         </View>
       </View>
     );
@@ -215,22 +215,14 @@ export default class AddContract extends Component {
             // this.state.termData
             //alert(this.state.date);
           }}>
-          {({
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            values,
-            errors,
-            touched,
-            isValid,
-          }) => {
+          {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, }) => {
             return (
               <HideKeyboard>
                 <SafeAreaView
                   style={[styles.container, background_color.white, height.h_100]}
                   onPress={Keyboard.dismiss}>
                   <View
-                    style={[ width.w_100, styles.splitView ]}>
+                    style={[width.w_100, styles.splitView]}>
                     <AppDialogSelect
                       lable={'Khách thuê:'}
                       data={this.state.dataK}

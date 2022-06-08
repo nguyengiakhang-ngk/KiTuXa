@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
     Keyboard,
     SafeAreaView,
@@ -8,13 +8,13 @@ import {
 import { Icon } from '@rneui/base';
 import { Formik } from 'formik';
 import AppButton from "../../components/AppButton";
-import {SignupSchema} from "../../utils/validation/ValidateLogin";
+import { SignupSchema } from "../../utils/validation/ValidateLogin";
 import AppError from "../../components/AppError";
 import AppInputAuth from "../../components/AppInputAuth";
 import AppCheckBox from "../../components/AppCheckBox";
-import {background_color, flex, font, font_weight, text_color, text_size, width} from "../../utils/styles/MainStyle";
-import {color_primary} from "../../utils/theme/Color";
-import {connect} from "react-redux";
+import { background_color, flex, font, font_weight, text_color, text_size, width } from "../../utils/styles/MainStyle";
+import { color_primary } from "../../utils/theme/Color";
+import { connect } from "react-redux";
 // import login from "../../redux/reducers/login";
 import { loadListArea } from "../../redux/actions/area";
 const HideKeyboard = ({ children }) => (
@@ -22,9 +22,9 @@ const HideKeyboard = ({ children }) => (
         {children}
     </TouchableWithoutFeedback>
 );
-class LoginScreen extends Component{
+class LoginScreen extends Component {
     state = { checkedRemember: false };
-    isFormValid (isValid, touched){
+    isFormValid(isValid, touched) {
         return isValid && Object.keys(touched).length !== 0;
     }
     componentDidMount() {
@@ -57,7 +57,7 @@ class LoginScreen extends Component{
         // })
         // .then((response)=>{
         //     if(response.data){
-                 this.props.navigation.replace("Tab");
+        this.props.navigation.replace("Tab");
         //     }else{
         //         alert("Đăng nhập không thành công!");
         //     }
@@ -69,24 +69,24 @@ class LoginScreen extends Component{
     render() {
         return (
             <Formik
-                initialValues={{username: "12345678", pass: "12345678"}}
+                initialValues={{ username: "12345678", pass: "12345678" }}
                 validationSchema={SignupSchema}
                 onSubmit={values => {
                     // this.login(values.username, values.pass);
                 }}
             >
                 {({
-                      handleChange,
-                      handleBlur,
-                      handleSubmit, values,
-                      errors,
-                      touched ,
-                      isValid
+                    handleChange,
+                    handleBlur,
+                    handleSubmit, values,
+                    errors,
+                    touched,
+                    isValid
                 }) => (
                     <HideKeyboard>
                         <SafeAreaView
                             style={[
-                                {flex: 1},
+                                { flex: 1 },
                                 background_color.white,
                                 flex.justify_content_center,
                                 flex.align_items_center
@@ -94,7 +94,7 @@ class LoginScreen extends Component{
                         >
                             <View
                                 style={[
-                                    {flex: 1},
+                                    { flex: 1 },
                                     background_color.white,
                                     flex.justify_content_center,
                                     flex.align_items_center
@@ -122,7 +122,7 @@ class LoginScreen extends Component{
                             <View
                                 style={[
                                     width.w_100,
-                                    {flex: 2},
+                                    { flex: 2 },
                                     flex.justify_content_between
                                 ]}
                             >
@@ -130,7 +130,7 @@ class LoginScreen extends Component{
                                     <View
                                         style={[
                                             width.w_100,
-                                            {paddingLeft: 15, paddingRight: 15, marginTop: 15}
+                                            { paddingLeft: 15, paddingRight: 15, marginTop: 15 }
                                         ]}
                                     >
                                         <AppInputAuth
@@ -143,13 +143,13 @@ class LoginScreen extends Component{
                                             values={values}
                                         />
                                         {errors.username && touched.username ? (
-                                            <AppError errors={ errors.username } marginLeft={15}/>
+                                            <AppError errors={errors.username} marginLeft={15} />
                                         ) : null}
                                     </View>
                                     <View
                                         style={[
                                             width.w_100,
-                                            {paddingLeft: 15, paddingRight: 15, marginTop: 15}
+                                            { paddingLeft: 15, paddingRight: 15, marginTop: 15 }
                                         ]}
                                     >
                                         <AppInputAuth
@@ -162,13 +162,13 @@ class LoginScreen extends Component{
                                             values={values}
                                         />
                                         {errors.pass && touched.pass ? (
-                                            <AppError errors={ errors.pass } marginLeft={15}/>
+                                            <AppError errors={errors.pass} marginLeft={15} />
                                         ) : null}
                                     </View>
                                     <View
                                         style={[
                                             width.w_100,
-                                            {paddingLeft: 15, paddingRight: 15, marginTop: 15},
+                                            { paddingLeft: 15, paddingRight: 15, marginTop: 15 },
                                             flex.flex_row,
                                             flex.align_items_center,
                                             flex.justify_content_between
@@ -177,7 +177,10 @@ class LoginScreen extends Component{
                                         <AppCheckBox
                                             title={"Nhớ mật khẩu"}
                                             values={this.state.checkedRemember}
-                                            onPress={() => this.setState({checkedRemember: !this.state.checkedRemember})}
+                                            onPress={() => {
+                                                this.setState({ checkedRemember: !this.state.checkedRemember })
+                                                this.props.navigation.navigate("Tab");
+                                            }}
                                         />
                                         <Text
                                             style={[
@@ -193,7 +196,7 @@ class LoginScreen extends Component{
                                     <View
                                         style={[
                                             width.w_100,
-                                            {paddingLeft: 15, paddingRight: 15, marginTop: 30}
+                                            { paddingLeft: 15, paddingRight: 15, marginTop: 30 }
                                         ]}
                                     >
                                         <AppButton
@@ -211,7 +214,7 @@ class LoginScreen extends Component{
                                     style={[
                                         flex.flex_row,
                                         flex.justify_content_center,
-                                        {marginBottom: 20}
+                                        { marginBottom: 20 }
                                     ]}
                                 >
                                     <Text

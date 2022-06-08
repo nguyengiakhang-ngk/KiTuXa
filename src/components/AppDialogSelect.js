@@ -10,10 +10,10 @@ import {
     text_size,
     width
 } from "../utils/styles/MainStyle";
-import {Text, TextInput, View} from "react-native";
-import {Icon} from "@rneui/base";
-import {color_secondary} from "../utils/theme/Color";
-class AppDialogSelect extends Component{
+import { Text, TextInput, View } from "react-native";
+import { Icon } from "@rneui/base";
+import { color_secondary } from "../utils/theme/Color";
+class AppDialogSelect extends Component {
     constructor(props) {
         super(props);
 
@@ -21,8 +21,8 @@ class AppDialogSelect extends Component{
             textInputValue: ''
         }
     }
-    setText(option){
-        this.setState({textInputValue:option.label})
+    setText(option) {
+        this.setState({ textInputValue: option.label })
         this.props.value[this.props.field] = option.key;
     }
     render() {
@@ -30,6 +30,7 @@ class AppDialogSelect extends Component{
             <View style={[
                 width.w_100,
                 flex.justify_content_center,
+                this.props?.style
             ]}>
                 <Text
                     style={[
@@ -37,17 +38,17 @@ class AppDialogSelect extends Component{
                         font.serif
                     ]}
                 >
-                    { this.props.lable }
+                    {this.props.lable}
                 </Text>
                 <ModalSelector
                     touchableStyle={[
                         width.w_100,
                         background_color.white,
                         shadow.shadow,
-                        {borderRadius: 7, padding: 3, paddingLeft: 6, paddingRight: 10, marginTop: 5},
+                        { borderRadius: 7, padding: 3, paddingLeft: 6, paddingRight: 10, marginTop: 5 },
                     ]}
                     selectStyle={[
-                        {borderWidth: 0, textAlignVertical: 'right'}
+                        { borderWidth: 0, textAlignVertical: 'right' }
                     ]}
                     selectedItemTextStyle={[
                         text_color.primary,
@@ -73,10 +74,10 @@ class AppDialogSelect extends Component{
                     touchableActiveOpacity={.8}
                     data={this.props.data}
                     placeholder={this.props.placeholder}
-                    onChange={ (option)=>{ this.setText(option) } }>
+                    onChange={(option) => { this.setText(option) }}>
 
                     <TextInput
-                        style={[text_size.sm, font.serif, font_weight.f_500, {color: 'black', width: '95%'}]}
+                        style={[text_size.sm, font.serif, font_weight.f_500, { color: 'black', width: '95%' }]}
                         placeholder={this.props.placeholder}
                         value={this.state.textInputValue ? this.state.textInputValue : this.props.initValue}
                     />
@@ -84,7 +85,7 @@ class AppDialogSelect extends Component{
                         name='caret-down'
                         type='font-awesome-5'
                         color={color_secondary}
-                        size={22}/>
+                        size={22} />
                 </ModalSelector>
             </View>
         )

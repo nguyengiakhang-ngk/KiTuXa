@@ -49,7 +49,6 @@ const TabUserScreen = () => {
                         />
                     )
                 }}
-
             />
             <Tab.Screen
                 name="Search"

@@ -23,7 +23,7 @@ export default class PersonalScreen extends Component {
             {
                 id: 2,
                 name: 'Phòng đã đặt',
-                onPress: 'roombook',
+                onPress: "BookTicket",
                 icon: require("../../../../assets/icons/booking.png")
             },
             {
@@ -47,11 +47,11 @@ export default class PersonalScreen extends Component {
         };
     }
 
-
-
     renderFunction = ({ item, index }) => {
         return (
-            <TouchableOpacity style={styles.functionProfile} onPress={() => { alert('click: ' + item.name) }}>
+            <TouchableOpacity style={styles.functionProfile} onPress={() => {   
+                this.props.navigation.navigate(item.onPress);
+            }}>
                 <Image style={{
                     width: 28,
                     height: 28,
@@ -60,7 +60,7 @@ export default class PersonalScreen extends Component {
                     resizeMode={'stretch'}
                     source={item.icon}
                 />
-                <Text style={[styles.textNameFunction, item.id == 4 ? {color: 'red'} : '']}>{item.name}</Text>
+                <Text style={[styles.textNameFunction, item.id == 4 ? { color: 'red' } : '']}>{item.name}</Text>
             </TouchableOpacity>
         )
     }
@@ -97,7 +97,7 @@ export default class PersonalScreen extends Component {
                         showsVerticalScrollIndicator={false}
                         style={{ flex: 1 }}
                     />
-                    <Text style={[styles.textNameFunction, {alignSelf: 'center', marginBottom: 15}]}>Thank you, ©2022</Text>
+                    <Text style={[styles.textNameFunction, { alignSelf: 'center', marginBottom: 15 }]}>Thank you, ©2022</Text>
                 </View>
             </View>
         );

@@ -7,7 +7,7 @@
  */
 
 import React from 'react';
-import type {Node} from 'react';
+import type { Node } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import WelComeScreen from '../screens/WelComeScreen';
@@ -24,6 +24,7 @@ import UpdateRoomTypeScreen from "../screens/Admin/RoomType/UpdateRoomTypeScreen
 import SignUpScreen from "../screens/Authentication/SignUpScreen";
 import ContractScreen from '../screens/Admin/Contract/ContractScreen';
 import AddContract from '../screens/Admin/Contract/AddContract';
+import BookTicket from '../screens/User/Container/BookTicket';
 const Stack = createNativeStackNavigator();
 const StackScreen: () => Node = () => {
     return (
@@ -99,6 +100,11 @@ const StackScreen: () => Node = () => {
                 <Stack.Screen
                     name="AddContract"
                     component={AddContract}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="BookTicket"
+                    component={BookTicket}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

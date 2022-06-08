@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
     FlatList, Image,
     SafeAreaView, Text, View,
@@ -8,10 +8,10 @@ import {
     background_color,
     flex, shadow, text_color, text_size
 } from "../../../utils/styles/MainStyle";
-import {color_danger, color_primary} from "../../../utils/theme/Color";
-import {Icon} from "@rneui/base";
+import { color_danger, color_primary } from "../../../utils/theme/Color";
+import { Icon } from "@rneui/base";
 
-export default class HomeScreen extends Component{
+export default class HomeScreen extends Component {
     constructor(props) {
         super(props);
 
@@ -125,8 +125,8 @@ export default class HomeScreen extends Component{
         );
     }
 
-    _renderItemTitle = ({item, index}) => {
-        return(
+    _renderItemTitle = ({ item, index }) => {
+        return (
             <View
                 style={
                     {
@@ -157,7 +157,7 @@ export default class HomeScreen extends Component{
                             }
                         ]}
                     >
-                        {item. name}
+                        {item.name}
                     </Text>
                 </View>
                 <FlatList showsVerticalScrollIndicator={false} numColumns={2} data={this.state.data} renderItem={this._renderItem} keyExtractor={item => item.id.toString()} />
@@ -165,7 +165,7 @@ export default class HomeScreen extends Component{
         )
     }
 
-    _renderItem = ({item, index}) => {
+    _renderItem = ({ item, index }) => {
         const windowWidth = Dimensions.get('window').width / 2 - 15;
         return (
             <View
@@ -189,7 +189,7 @@ export default class HomeScreen extends Component{
                         }
                     ]}
                     source={
-                        {uri: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg"}
+                        { uri: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg" }
                     }
                     resizeMode={'stretch'}
                 />
