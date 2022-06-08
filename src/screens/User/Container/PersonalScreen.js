@@ -121,11 +121,11 @@ class PersonalScreen extends Component {
                             source={require("../../../../assets/images/avt_dummy.png")}
                         />
                         <View style={styles.detailContainer}>
-                            <Text style={styles.textName} numberOfLines={1}>{this.props.user.user.name}</Text>
+                            <Text style={styles.textName} numberOfLines={1}>{this.props.user.user.name ? this.props.user.user.name : 'Chưa đăng nhập'}</Text>
                             <View>
-                                <Text style={styles.textDetail}>{this.props.user.user.gender == '1' ? "Nam" : "Nữ"}</Text>
-                                <Text style={styles.textDetail}>SĐT: {this.props.user.user.numberPhone}</Text>
-                                <Text style={styles.textDetail}>Địa chỉ: {this.props.user.user.address}</Text>
+                                <Text style={styles.textDetail}>{this.props.user.user ? this.props.user.user.gender == '1' ? "Nam" : "Nữ" : ''}</Text>
+                                <Text style={styles.textDetail}>{this.props.user.user ? 'SĐT: '+this.props.user.user.numberPhone : ''}</Text>
+                                <Text style={styles.textDetail}>{this.props.user.user ? 'Địa chỉ: '+this.props.user.user.address : ''}</Text>
                             </View>
                         </View>
                     </View>
