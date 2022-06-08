@@ -13,23 +13,23 @@ import AppError from "../../../components/AppError";
 import {Formik} from "formik";
 import {AreaSchema} from "../../../utils/validation/ValidationArea";
 import AppInputInf from "../../../components/AppInputInf";
-import AppDialogSelect from "../../../components/AppDialogSelect";
-import AppButton from "../../../components/AppButton";
 import axios from "axios";
-import {path} from "../../../constant/define";
+import AppButtonActionInf from "../../../components/AppButtonActionInf";
+import {color_danger, color_primary} from "../../../utils/theme/Color";
+import {doAddArea, doGetListArea} from "../../../redux/actions/area";
+import { connect } from "react-redux";
 
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         {children}
     </TouchableWithoutFeedback>
 );
-export default class AddAreaScreen extends Component {
+
+class AddAreaScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isLoading: true,
             data: [],
-
         }
     }
 
@@ -38,46 +38,43 @@ export default class AddAreaScreen extends Component {
     }
 
     componentDidMount() {
-        this.getUserData();
+        // this.getUserData();
     }
 
     componentWillUnmount() {
-        this.props.route.params.refresh();
+
     }
 
-    getUserData(){
-        axios.get(path + "/getUser")
-            .then((response)=>{
-                // alert(JSON.stringify(response));
-                this.setState({
-                    isLoading: false,
-                    data: response.data.map(item => ({key: item.id_tk, label: item.hoten}))
-                })
-            })
-            .catch((error => {
-                console.log(error);
-            }));
-    }
+    // getUserData(){
+    //     axios.get(path + "/getUser")
+    //         .then((response)=>{
+    //             // alert(JSON.stringify(response));
+    //             this.setState({
+    //                 isLoading: false,
+    //                 data: response.data.map(item => ({key: item.id_tk, label: item.hoten}))
+    //             })
+    //         })
+    //         .catch((error => {
+    //             console.log(error);
+    //         }));
+    // }
 
     addArea = (values) => {
-        axios.post(path + "/addArea",{
+        let area = {
             areaName: values.areaName,
             address: values.address,
             totalRoom: values.totalRoom,
-            status: values.status,
+            status: true,
             time: values.time,
             content: values.content,
             description: values.description,
-            id_tk: values.id_tk
+            userId: this.props.user.id
+        }
+        this.props.doAddArea(area).then(data => {
+            if(data){
+                this.props.navigation.goBack();
+            }
         })
-            .then((response)=>{
-                if(response.data){
-                    this.props.navigation.goBack();
-                }
-            })
-            .catch((error => {
-                console.log(error);
-            }));
     }
     render() {
         return (
@@ -85,7 +82,7 @@ export default class AddAreaScreen extends Component {
                 style={{ flex: 1}} contentContainerStyle={{ flexGrow: 1 }}
             >
                 <Formik
-                    initialValues={{areaName: "", address: "", totalRoom:"", status:"", time:"", content:"", description:"", id_tk:""}}
+                    initialValues={{areaName: "", address: "", totalRoom:"", time:"", content:"", description:""}}
                     validationSchema={AreaSchema}
                     onSubmit={values => {
                         this.addArea(values);
@@ -126,23 +123,23 @@ export default class AddAreaScreen extends Component {
                                         <AppError errors={ errors.areaName }/>
                                     ) : null}
                                 </View>
-                                <View
-                                    style={[
-                                        width.w_100,
-                                        {paddingLeft: 15, paddingRight: 15, marginTop: 10}
-                                    ]}
-                                >
-                                    <AppDialogSelect
-                                        lable={"Người đại diện:"}
-                                        data={this.state.data}
-                                        placeholder={"Vui lòng chọn người đại diện..."}
-                                        value={values}
-                                        field={"id_tk"}
-                                    />
-                                    {errors.nguoidung && touched.nguoidung ? (
-                                        <AppError errors={ errors.nguoidung }/>
-                                    ) : null}
-                                </View>
+                                {/*<View*/}
+                                {/*    style={[*/}
+                                {/*        width.w_100,*/}
+                                {/*        {paddingLeft: 15, paddingRight: 15, marginTop: 10}*/}
+                                {/*    ]}*/}
+                                {/*>*/}
+                                {/*    <AppDialogSelect*/}
+                                {/*        lable={"Người đại diện:"}*/}
+                                {/*        data={this.state.data}*/}
+                                {/*        placeholder={"Vui lòng chọn người đại diện..."}*/}
+                                {/*        value={values}*/}
+                                {/*        field={"id_tk"}*/}
+                                {/*    />*/}
+                                {/*    {errors.nguoidung && touched.nguoidung ? (*/}
+                                {/*        <AppError errors={ errors.nguoidung }/>*/}
+                                {/*    ) : null}*/}
+                                {/*</View>*/}
                                 <View
                                     style={[
                                         width.w_100,
@@ -163,46 +160,21 @@ export default class AddAreaScreen extends Component {
                                 </View>
                                 <View
                                     style={[
-                                        flex.flex_row,
-                                        width.w_100,
+                                        {paddingLeft: 15, paddingRight: 10, marginTop: 10, flex: 1}
                                     ]}
                                 >
-                                    <View
-                                        style={[
-                                            {paddingLeft: 15, paddingRight: 10, marginTop: 10, flex: 1}
-                                        ]}
-                                    >
-                                        <AppInputInf
-                                            lable={"Số phòng:"}
-                                            secureTextEntry={false}
-                                            keyboardType={'numeric'}
-                                            field={"totalRoom"}
-                                            handleChange={handleChange}
-                                            handleBlur={handleBlur}
-                                            values={values}
-                                        />
-                                        {errors.totalRoom && touched.totalRoom ? (
-                                            <AppError errors={ errors.totalRoom }/>
-                                        ) : null}
-                                    </View>
-                                    <View
-                                        style={[
-                                            {paddingLeft: 10, paddingRight: 15, marginTop: 10, flex: 1}
-                                        ]}
-                                    >
-                                        <AppInputInf
-                                            lable={"Tình trạng:"}
-                                            keyboardType={'numeric'}
-                                            secureTextEntry={false}
-                                            field={"status"}
-                                            handleChange={handleChange}
-                                            handleBlur={handleBlur}
-                                            values={values}
-                                        />
-                                        {errors.status && touched.status ? (
-                                            <AppError errors={ errors.status }/>
-                                        ) : null}
-                                    </View>
+                                    <AppInputInf
+                                        lable={"Số phòng:"}
+                                        secureTextEntry={false}
+                                        keyboardType={'numeric'}
+                                        field={"totalRoom"}
+                                        handleChange={handleChange}
+                                        handleBlur={handleBlur}
+                                        values={values}
+                                    />
+                                    {errors.totalRoom && touched.totalRoom ? (
+                                        <AppError errors={ errors.totalRoom }/>
+                                    ) : null}
                                 </View>
                                 <View
                                     style={[
@@ -265,14 +237,42 @@ export default class AddAreaScreen extends Component {
                                 <View
                                     style={[
                                         width.w_100,
-                                        {paddingLeft: 15, paddingRight: 15, marginTop: 30}
+                                        flex.flex_row,
+                                        {paddingLeft: 15, paddingRight: 15, marginTop: 20}
                                     ]}
                                 >
-                                    <AppButton
-                                        disabled = { !this.isFormValid(isValid, touched) }
-                                        onPress = { handleSubmit }
-                                        title="Thêm"
-                                    />
+                                    <View
+                                        style={[
+                                            {
+                                                flex: 1,
+                                                marginRight: 15
+                                            }
+                                        ]}
+                                    >
+                                        <AppButtonActionInf
+                                            size={13}
+                                            textSize={18}
+                                            bg={color_danger}
+                                            onPress = { () => { this.props.navigation.goBack() } }
+                                            title="Hủy"
+                                        />
+                                    </View>
+                                    <View
+                                        style={[
+                                            {
+                                                flex: 1
+                                            }
+                                        ]}
+                                    >
+                                        <AppButtonActionInf
+                                            size={13}
+                                            textSize={18}
+                                            bg={color_primary}
+                                            disabled = { !this.isFormValid(isValid, touched) }
+                                            onPress = { handleSubmit }
+                                            title="Thêm"
+                                        />
+                                    </View>
                                 </View>
                             </SafeAreaView>
                         </HideKeyboard>
@@ -282,4 +282,15 @@ export default class AddAreaScreen extends Component {
         );
     }
 }
+
+const mapStateToProps = ({user}) => {
+    return user;
+};
+
+const mapDispatchToProps = {
+    doAddArea,
+    doGetListArea
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddAreaScreen)
 

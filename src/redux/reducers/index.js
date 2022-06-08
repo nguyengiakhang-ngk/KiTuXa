@@ -1,12 +1,14 @@
 import { combineReducers } from "redux";
 import areaReducer from "./area";
-import loginReducer from "./login";
+import userReducer from "./user";
 import signUpReducer from "./signUp";
+import freeServiceReducer from "./freeService";
 
 const reducers = combineReducers({
     area: areaReducer,
-    login: loginReducer,
-    signUp: signUpReducer
+    user: userReducer,
+    signUp: signUpReducer,
+    freeService: freeServiceReducer
 });
 
 export default ( state, action ) => reducers(state, action);

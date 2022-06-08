@@ -12,72 +12,71 @@ import {
     font_weight,
     height,
     position,
-    shadow,
     text_color,
     text_size
 } from "../../../utils/styles/MainStyle";
 import {color_danger, color_primary, color_success} from "../../../utils/theme/Color";
-import axios from "axios";
-import {path} from "../../../constant/define";
 import { width } from "../../../utils/styles/MainStyle";
 import {Icon} from "@rneui/base";
+import { connect } from "react-redux";
+import {doGetListArea, doDeleteArea} from "../../../redux/actions/area";
 
-export default class AreaListScreen extends Component{
+class AreaListScreen extends Component{
     constructor(props) {
         super(props);
         this.state = {
             isLoading: true,
-            data: [],
+            listAre: this.props.area.areaList,
         }
     }
+
     viewAddArea(){
-        this.props.navigation.navigate("AddArea", { refresh: () => {this.refreshList()} });
+        this.props.navigation.navigate("AddArea");
     }
-    refreshList() {
-        this.getAreaData();
+
+    deleteArea(id) {
+        this.props.doDeleteArea({id: id}).then(data => {
+            this.getAreaData();
+        })
     }
-    deleteArea(id_kt) {
-        axios.delete(path + `/deleteArea/${id_kt}`)
-            .then((response)=>{
-                if(response.data){
-                    this.setState({
-                        isLoading: true,
-                        data: []
-                    });
-                    this.getAreaData();
-                }
-            })
-            .catch((error => {
-                console.log(error);
-            }));
-    }
+
     componentDidMount() {
-        this.getAreaData();
+        this.removeWillFocusListener = this.props.navigation.addListener(
+            'focus', () => {
+                this.getAreaData();
+            }
+        );
+
+        this.removeWillBlurListener = this.props.navigation.addListener(
+            'blur', () => {
+                this.setState({
+                    listAre: []
+                })
+            }
+        );
+    }
+
+    componentWillUnmount() {
+        this.removeWillFocusListener();
+        this.removeWillBlurListener();
     }
 
     getAreaData(){
-        axios.get(path + "/getArea")
-            .then((response)=>{
-                this.setState({
-                    isLoading: false,
-                    data: response.data
-                })
+        this.props.doGetListArea({userId: this.props.user.user.id}).then(data => {
+            this.setState({
+                listAre: data
             })
-            .catch((error => {
-                console.log(error);
-            }));
+        })
     }
 
-    updateArea(id_kt){
-        this.props.navigation.navigate("UpdateArea", {
-            id_kt: id_kt,
-            refresh: () => {this.refreshList()}
-        });
+    updateArea(area) {
+        this.props.navigation.navigate("UpdateArea", {area: area});
     }
 
     _renderItem = ({item, index}) => {
         return(
             <View
+                key={index}
                 style={[
                     width.w_100,
                     {
@@ -122,7 +121,7 @@ export default class AreaListScreen extends Component{
                                 text_color.primary
                             ]}
                         >
-                            {item.ten_kt}
+                            {item.areaName}
                         </Text>
                         <View
                             style={[
@@ -143,7 +142,7 @@ export default class AreaListScreen extends Component{
                                     {marginLeft: 4}
                                 ]}
                             >
-                                {item.diachi}
+                                {item.address}
                             </Text>
                         </View>
                     </View>
@@ -157,7 +156,7 @@ export default class AreaListScreen extends Component{
                         style={[
                             {marginRight: 10}
                         ]}
-                        onPress={() => this.deleteArea(item.id_kt)}
+                        onPress={() => this.deleteArea(item.id)}
                     >
                         <Icon
                             name= {"trash-alt"}
@@ -167,7 +166,7 @@ export default class AreaListScreen extends Component{
                         />
                     </TouchableOpacity>
                     <TouchableOpacity
-                        onPress={() => this.updateArea(item.id_kt)}
+                        onPress={() => this.updateArea(item)}
                     >
                         <Icon
                             name= {"pencil-alt"}
@@ -208,8 +207,19 @@ export default class AreaListScreen extends Component{
                         onPress = { () => this.viewAddArea() }
                     />
                 </View>
-                <FlatList data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()}/>
+                <FlatList showsVerticalScrollIndicator={false} data={this.state.listAre} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()}/>
             </SafeAreaView>
         );
     }
 }
+
+const mapStateToProps = ({area, user}) => {
+    return {area, user};
+};
+
+const mapDispatchToProps = {
+    doGetListArea,
+    doDeleteArea
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AreaListScreen)

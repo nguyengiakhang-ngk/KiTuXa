@@ -1,56 +1,95 @@
 import React, { Component } from 'react';
 import {
-    SafeAreaView,
     Text,
     StyleSheet,
     View,
     Image,
     TouchableOpacity,
-    FlatList
+    FlatList,
+    
 } from 'react-native';
 import { color_primary } from "../../../utils/theme/Color";
-
-export default class PersonalScreen extends Component {
-
-    listFunction =
-        [
-            {
-                id: 1,
-                name: 'Thông tin cá nhân',
-                onPress: 'information',
-                icon: require("../../../../assets/icons/information.png"),
-            },
-            {
-                id: 2,
-                name: 'Phòng đã đặt',
-                onPress: "BookTicket",
-                icon: require("../../../../assets/icons/booking.png")
-            },
-            {
-                id: 3,
-                name: 'Đã lưu',
-                onPress: 'love',
-                icon: require("../../../../assets/icons/saved.png")
-            },
-            {
-                id: 4,
-                name: 'Đăng xuất',
-                onPress: 'logout',
-                icon: require("../../../../assets/icons/logout.png")
-            }
-        ]
+import AsyncStorage from "@react-native-community/async-storage";
+import {doLogin, initUser} from "../../../redux/actions/user";
+import {connect} from "react-redux";
+class PersonalScreen extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
             isLoading: true,
+            listFunction: [],
+            dataUser: {}
         };
+    }
+
+    getDataUser = async () => {
+        let user = JSON.parse(await AsyncStorage.getItem('@user'));
+        this.setState({
+            dataUser: user
+        })
+    }
+
+    componentDidMount() {
+        console.log(this.props.user);
+        let tamp = [
+            {
+                id: 1,
+                name: 'Thông tin cá nhân',
+                onPress: 'information',
+                icon: require("../../../../assets/icons/information.png"),
+                navigate: ''
+            },
+            {
+                id: 2,
+                name: 'Chuyển sang giao diện Admin',
+                onPress: 'HomeScreen',
+                icon: require("../../../../assets/icons/admin.png")
+            },
+            {
+                id: 3,
+                name: 'Phòng đã đặt',
+                onPress: 'RoomBookedList',
+                icon: require("../../../../assets/icons/booking.png")
+            },
+            {
+                id: 4,
+                name: 'Đã lưu',
+                onPress: 'SavedRoom',
+                icon: require("../../../../assets/icons/saved.png"),
+                navigate: 'SavedRoom'
+            },
+            {
+                id: 5,
+                name: this.props.user.user ? 'Đăng xuất' : 'Đăng nhập',
+                onPress: this.props.user.user ? 'Welcome' : 'Login',
+                icon: require("../../../../assets/icons/logout.png"),
+                navigate: ''
+            }
+        ];
+        this.setState({
+            listFunction: tamp
+        })
     }
 
     renderFunction = ({ item, index }) => {
         return (
-            <TouchableOpacity style={styles.functionProfile} onPress={() => {   
-                this.props.navigation.navigate(item.onPress);
+            <TouchableOpacity style={styles.functionProfile} onPress={async () => {
+                if (item.onPress === 'Welcome') {
+                    try {
+                        this.props.initUser("");
+                        await AsyncStorage.setItem('@user', '');
+                        return this.props.navigation.replace('Welcome');
+                    } catch (exception) {
+                        console.log(exception);
+                        return false;
+                    }
+                }else if(item.onPress === 'Login'){
+                    this.props.navigation.replace('Login');
+                }else{
+                    this.props.navigation.navigate(item.onPress);
+                }
+                
             }}>
                 <Image style={{
                     width: 28,
@@ -60,7 +99,9 @@ export default class PersonalScreen extends Component {
                     resizeMode={'stretch'}
                     source={item.icon}
                 />
-                <Text style={[styles.textNameFunction, item.id == 4 ? { color: 'red' } : '']}>{item.name}</Text>
+                <Text style={[styles.textNameFunction, 
+                    // item.id === 5 ? {color: 'red'} : ''
+                    ]}>{item.name}</Text>
             </TouchableOpacity>
         )
     }
@@ -80,18 +121,18 @@ export default class PersonalScreen extends Component {
                             source={require("../../../../assets/images/avt_dummy.png")}
                         />
                         <View style={styles.detailContainer}>
-                            <Text style={styles.textName} numberOfLines={1}>Michale Lee</Text>
+                            <Text style={styles.textName} numberOfLines={1}>{this.props.user.user.name}</Text>
                             <View>
-                                <Text style={styles.textDetail}>Email: leekhacnguyen@gmail.com</Text>
-                                <Text style={styles.textDetail}>Phone number: 0969775114</Text>
-                                <Text style={styles.textDetail}>Address: Can Tho, VN</Text>
+                                <Text style={styles.textDetail}>{this.props.user.user.gender == '1' ? "Nam" : "Nữ"}</Text>
+                                <Text style={styles.textDetail}>SĐT: {this.props.user.user.numberPhone}</Text>
+                                <Text style={styles.textDetail}>Địa chỉ: {this.props.user.user.address}</Text>
                             </View>
                         </View>
                     </View>
                 </View>
                 <View style={styles.containerFunction}>
                     <FlatList
-                        data={this.listFunction}
+                        data={this.state.listFunction}
                         renderItem={this.renderFunction}
                         keyExtractor={item => item.id}
                         showsVerticalScrollIndicator={false}
@@ -103,6 +144,16 @@ export default class PersonalScreen extends Component {
         );
     }
 }
+
+const mapStateToProps = ({ user, state }) => {
+    return {user,state};
+};
+
+const mapDispatchToProps = {
+    doLogin, initUser
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(PersonalScreen)
 
 const styles = StyleSheet.create({
     container: {

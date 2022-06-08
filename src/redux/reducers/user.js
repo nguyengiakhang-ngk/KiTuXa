@@ -1,4 +1,4 @@
-import { LOGIN, LOGIN_SUCCESS, LOGIN_ERROR } from '../actions/types';
+import { LOGIN, LOGIN_SUCCESS, LOGIN_ERROR, SIGN_UP, SIGN_UP_SUCCESS, SIGN_UP_ERROR } from '../actions/types';
 
 const INITIAL_STATE = {
     user: '',
@@ -10,19 +10,31 @@ export default (preState = INITIAL_STATE, action) => {
         case LOGIN:
             return {
                 ...preState,
-                user: '',
-                error: ''
+                ...INITIAL_STATE
             }
         case LOGIN_SUCCESS:
             return {
                 ...preState,
                 user: action.user,
-                error:''
             }
         case LOGIN_ERROR:
             return {
                 ...preState,
-                user: '',
+                error: action.error
+            }
+        case SIGN_UP:
+            return {
+                ...preState,
+                error: ''
+            }
+        case SIGN_UP_SUCCESS:
+            return {
+                ...preState,
+                error:''
+            }
+        case SIGN_UP_ERROR:
+            return {
+                ...preState,
                 error: action.error
             }
         default:

@@ -6,11 +6,21 @@ import {
 import {Icon} from "@rneui/base";
 import {background_color, flex, font, font_weight, text_color, text_size} from "../utils/styles/MainStyle";
 import {color_primary} from "../utils/theme/Color";
+import AsyncStorage from "@react-native-community/async-storage";
+import {connect} from "react-redux";
+import {initUser} from "../redux/actions/user";
 
-export default class WelComeScreen extends Component{
-    componentDidMount() {
-        setTimeout(()=>{
-            this.props.navigation.replace("Login");
+class WelComeScreen extends Component{
+    async componentDidMount() {
+        const user = await AsyncStorage.getItem('@user');
+        console.log(user);
+        setTimeout(() => {
+            if(user){
+                this.props.initUser(JSON.parse(user));
+            }else{
+                this.props.initUser("");
+            }
+            this.props.navigation.replace("TabUser", {userData: user});
         }, 2500);
     }
 
@@ -44,3 +54,13 @@ export default class WelComeScreen extends Component{
         );
     }
 }
+
+const mapStateToProps = state => {
+    return state;
+};
+
+const mapDispatchToProps = {
+    initUser
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(WelComeScreen)

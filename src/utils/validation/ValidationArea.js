@@ -7,8 +7,6 @@ export const AreaSchema = Yup.object().shape({
         .required('Địa chỉ rỗng!'),
     totalRoom: Yup.string()
         .required('Số phòng rỗng!'),
-    status: Yup.string()
-        .required('Tình trạng rỗng!'),
     time: Yup.string()
         .required('Giờ đóng-mở cửa rỗng!'),
     content: Yup.string()
