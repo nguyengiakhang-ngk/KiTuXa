@@ -1,16 +1,16 @@
-import React, {Component} from 'react';
-import {FlatList, Text, TouchableOpacity, View} from "react-native";
+import React, { Component } from 'react';
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import axios from "axios";
-import {flex, font, font_weight, height, position, text_color, text_size, width} from "../../../utils/styles/MainStyle";
-import {color_danger, color_primary, color_success} from "../../../utils/theme/Color";
-import {Icon} from "@rneui/base";
+import { flex, font, font_weight, height, position, text_color, text_size, width, background_color } from "../../../utils/styles/MainStyle";
+import { color_danger, color_primary, color_success } from "../../../utils/theme/Color";
+import { Icon } from "@rneui/base";
 import AppFAB from "../../../components/AppFAB";
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
 import moment from "moment/moment";
 import { connect } from "react-redux";
-import {doLoadListBillByContract} from "../../../redux/actions/bill";
+import { doLoadListBillByContract } from "../../../redux/actions/bill";
 
-class BillsComponent extends Component{
+class BillsComponent extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -22,8 +22,8 @@ class BillsComponent extends Component{
 
 
 
-    getBillsData(){
-        this.props.doLoadListBillByContract({contractId: 1}).then(data => {
+    getBillsData() {
+        this.props.doLoadListBillByContract({ contractId: 1 }).then(data => {
             this.setState({
                 data: data
             })
@@ -35,18 +35,18 @@ class BillsComponent extends Component{
         this.getBillsData();
     }
 
-    refresh(){
+    refresh() {
         this.getBillsData();
     }
 
 
-    _renderItem = ({item, index}) => {
+    _renderItem = ({ item, index }) => {
 
-        return(
+        return (
             <View
                 style={[
                     width.w_100,
-                    {borderBottomWidth: 1, marginTop: 10,  paddingBottom: 10},
+                    { borderBottomWidth: 1, marginTop: 10, paddingBottom: 10 },
                     flex.flex_row,
                     flex.justify_content_between,
                     flex.align_items_center
@@ -68,7 +68,7 @@ class BillsComponent extends Component{
                         ]}
                     >
                         <Icon
-                            name= {"file-invoice-dollar"}
+                            name={"file-invoice-dollar"}
                             type='font-awesome-5'
                             size={32}
                             color={'white'}
@@ -83,16 +83,16 @@ class BillsComponent extends Component{
                                 text_color.primary
                             ]}
                         >
-                            Hóa đơn: {item.Ten_HD}
+                            Hóa đơn: {item.nameOfBill}
                         </Text>
                         <View
                             style={[
                                 flex.flex_row,
-                                {marginTop: 2}
+                                { marginTop: 2 }
                             ]}
                         >
                             <Icon
-                                name= {"calendar-day"}
+                                name={"calendar-day"}
                                 type='font-awesome-5'
                                 size={16}
                                 color={color_primary}
@@ -101,32 +101,32 @@ class BillsComponent extends Component{
                                 style={[
                                     text_size.xs,
                                     font.serif,
-                                    {marginLeft: 10}
+                                    { marginLeft: 10 }
                                 ]}
                             >
-                                Ngày Thu: {moment(item.NgayThuTien).format('DD-MM-YYYY')}
+                                Ngày Thu: {moment(item.dateOfPayment).format('DD-MM-YYYY')}
                             </Text>
                         </View>
                         <View
                             style={[
                                 flex.flex_row,
-                                {marginTop: 2}
+                                { marginTop: 2 }
                             ]}
                         >
                             <Icon
-                                name= {item.TinhTrang == 0 ? "circle-notch" : "check-circle"}
+                                name={item.status == 0 ? "circle-notch" : "check-circle"}
                                 type='font-awesome-5'
                                 size={16}
-                                color={item.TinhTrang == 0 ? color_danger : color_success}
+                                color={item.status == 0 ? color_danger : color_success}
                             />
                             <Text
                                 style={[
                                     text_size.xs,
                                     font.serif,
-                                    {marginLeft: 5}
+                                    { marginLeft: 5 }
                                 ]}
                             >
-                                {item.TinhTrang == 0 ? "Chưa thanh toán" : "Đã thanh toán"}
+                                {item.status == 0 ? "Chưa thanh toán" : "Đã thanh toán"}
                             </Text>
                         </View>
                     </View>
@@ -138,35 +138,35 @@ class BillsComponent extends Component{
                 >
                     <TouchableOpacity
                         style={[
-                            {marginRight: 10}
+                            { marginRight: 10 }
                         ]}
-                        onPress={() => item.TinhTrang == 0 ? this.deleteBill(item.ID_HDon) : ""}
+                        onPress={() => item.status == 0 ? this.deleteBill(item.id) : ""}
                     >
                         <Icon
-                            name= {"trash-alt"}
+                            name={"trash-alt"}
                             type='font-awesome-5'
-                            size={item.TinhTrang == 0 ? 22 : 0}
-                            color={item.TinhTrang == 0 ? color_danger : "transparent"}
+                            size={item.status == 0 ? 22 : 0}
+                            color={item.status == 0 ? color_danger : "transparent"}
                         />
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={[
-                            {marginRight: 10}
+                            { marginRight: 10 }
                         ]}
-                        onPress={() => this.updateBill(item.ID_HDon)}
+                        onPress={() => this.updateBill(item.contractId)}
                     >
                         <Icon
-                            name= {"pencil-alt"}
+                            name={"pencil-alt"}
                             type='font-awesome-5'
                             size={item.TinhTrang == 0 ? 22 : 0}
                             color={item.TinhTrang == 0 ? color_success : "transparent"}
                         />
                     </TouchableOpacity>
                     <TouchableOpacity
-                        onPress={() => this.viewBillDetails(item.ID_HDon)}
+                        onPress={() => this.viewBillDetails(item.contractId)}
                     >
                         <Icon
-                            name= {"eye"}
+                            name={"eye"}
                             type='font-awesome-5'
                             size={22}
                             color={color_success}
@@ -178,40 +178,58 @@ class BillsComponent extends Component{
     }
 
 
-    render(){
-        return(
+    render() {
+        return (
             <SafeAreaView
                 style={[
-                    {flex: 1, padding: 5, paddingLeft: 10, paddingRight: 10},
+                    { flex: 1 },
                     height.h_100,
                     position.relative
                 ]}
             >
+                <Text
+                    style={[
+                        text_size.xs,
+                        font.serif,
+                        font_weight.bold,
+                        text_color.white,
+                        width.w_100,
+                        background_color.blue,
+                        {
+                            textAlign: 'center',
+                            paddingVertical: 15,
+                            lineHeight: 20,
+                            letterSpacing: 0,
+                        }
+                    ]}
+                >
+                    Danh sách hóa đơn
+                </Text>
                 <View
                     style={[
                         position.absolute,
                         {
                             bottom: 25,
                             right: 25,
-                            zIndex: 9999
+                            zIndex: 9999,
                         }
                     ]}
                 >
                     <AppFAB
-                        bg = {color_primary}
-                        name = 'plus'
-                        size = {20}
-                        color = {'white'}
-                        onPress = { () => this.viewAddBill(1) }
+                        bg={color_primary}
+                        name='plus'
+                        size={20}
+                        color={'white'}
+                        onPress={() => this.viewAddBill(1)}
                     />
                 </View>
-                <FlatList data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()}/>
+                <FlatList data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()} contentContainerStyle={{paddingHorizontal: 10, paddingVertical: 5}}/>
             </SafeAreaView>
         )
     }
 }
-const mapStateToProps = ({listBillByContract}) => {
-    return {listBillByContract};
+const mapStateToProps = ({ listBillByContract }) => {
+    return { listBillByContract };
 };
 
 const mapDispatchToProps = {

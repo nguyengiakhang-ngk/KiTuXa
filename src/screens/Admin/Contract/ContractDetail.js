@@ -92,11 +92,13 @@ class ContractDetail extends Component{
                         background_color.blue,
                         {
                             textAlign: 'center',
-                            paddingVertical: 15
+                            paddingVertical: 20,
+                            lineHeight: 20,
+                            letterSpacing: 0,
                         }
                     ]}
                 >
-                    Hợp đồng
+                    Chi tiết hợp đồng
                 </Text>
                 <ScrollView
                     style={[background_color.white, width.w_100, {flex:1}]}

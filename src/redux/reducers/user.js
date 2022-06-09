@@ -1,4 +1,14 @@
-import { LOGIN, LOGIN_SUCCESS, LOGIN_ERROR, SIGN_UP, SIGN_UP_SUCCESS, SIGN_UP_ERROR } from '../actions/types';
+import { 
+    LOGIN, 
+    LOGIN_SUCCESS, 
+    LOGIN_ERROR, 
+    SIGN_UP, 
+    SIGN_UP_SUCCESS, 
+    SIGN_UP_ERROR,
+    GET_USER_BY_BOOKTICKET,
+    GET_USER_BY_BOOKTICKET_SUCCESS,
+    GET_USER_BY_BOOKTICKET_ERROR
+} from '../actions/types';
 
 const INITIAL_STATE = {
     user: '',
@@ -30,9 +40,24 @@ export default (preState = INITIAL_STATE, action) => {
         case SIGN_UP_SUCCESS:
             return {
                 ...preState,
-                error:''
+                error: ''
             }
         case SIGN_UP_ERROR:
+            return {
+                ...preState,
+                error: action.error
+            }
+        case GET_USER_BY_BOOKTICKET:
+            return {
+                ...preState,
+                ...INITIAL_STATE
+            }
+        case GET_USER_BY_BOOKTICKET_SUCCESS:
+            return {
+                ...preState,
+                user: action.user,
+            }
+        case GET_USER_BY_BOOKTICKET_ERROR:
             return {
                 ...preState,
                 error: action.error

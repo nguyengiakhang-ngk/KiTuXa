@@ -1,5 +1,15 @@
-import { LOGIN, LOGIN_SUCCESS, LOGIN_ERROR, SIGN_UP, SIGN_UP_SUCCESS, SIGN_UP_ERROR } from "./types";
-import { login, signUp } from "../../api/userAPI";
+import { 
+    LOGIN, 
+    LOGIN_SUCCESS, 
+    LOGIN_ERROR, 
+    SIGN_UP, 
+    SIGN_UP_SUCCESS, 
+    SIGN_UP_ERROR,
+    GET_USER_BY_BOOKTICKET,
+    GET_USER_BY_BOOKTICKET_SUCCESS,
+    GET_USER_BY_BOOKTICKET_ERROR
+ } from "./types";
+import { login, signUp, getUserByBookTicket } from "../../api/userAPI";
 
 export const initUser = (user) => dispatch => {
     if(user) {
@@ -30,6 +40,20 @@ export const doSignUp = (user) => dispatch => {
             })
             .catch(error => {
                 signUpError(error);
+                reject(error);
+            });
+    })
+};
+
+export const doGetUserByBookTicket = (roomId) => dispatch => {
+    return new Promise((resolve, reject) => {
+        getUserByBookTicket(roomId)
+            .then(data => {
+                getUserByBookTicketSuccess(dispatch, data);
+                resolve(data);
+            })
+            .catch(error => {
+                getUserByBookTicketError(error);
                 reject(error);
             });
     })
@@ -70,6 +94,26 @@ const signUpSuccess = () => dispatch => {
 const signUpError = (error) => dispatch => {
     dispatch({
         type: SIGN_UP_ERROR,
+        error: error
+    });
+}
+
+const loadGetUserByBookTicket = () => dispatch => {
+    dispatch({
+        type: GET_USER_BY_BOOKTICKET
+    });
+}
+
+const getUserByBookTicketSuccess = (dispatch, user) => {
+    dispatch({
+        type: GET_USER_BY_BOOKTICKET_SUCCESS,
+        user: user
+    });
+}
+
+const getUserByBookTicketError = (dispatch, user) => {
+    dispatch({
+        type: GET_USER_BY_BOOKTICKET_ERROR,
         error: error
     });
 }

@@ -11,7 +11,7 @@ import {
   TextInput
 } from 'react-native';
 import SafeAreaView from 'react-native/Libraries/Components/SafeAreaView/SafeAreaView';
-import { background_color, flex, font, font_weight, padding, shadow, text_size, width, height } from "../../../utils/styles/MainStyle";
+import { background_color, flex, font, font_weight, padding, shadow, text_size, width, height, text_color } from "../../../utils/styles/MainStyle";
 import AppError from '../../../components/AppError';
 import { Formik } from 'formik';
 import AppInputInf from '../../../components/AppInputInf';
@@ -21,7 +21,11 @@ import axios from 'axios';
 import { path } from '../../../constant/define';
 import { ContractSchema } from '../../../utils/validation/ValidationContract';
 import { AppDatePicker } from '../../../components/AppDatePicker';
+import AppSelectSearch from "../../../components/AppSelectSearch";
 import moment from 'moment';
+import { color_primary } from '../../../utils/theme/Color';
+import { connect } from 'react-redux';
+import { doGetUserByBookTicket } from '../../../redux/actions/user';
 
 const HideKeyboard = ({ children }) => (
   <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -29,7 +33,7 @@ const HideKeyboard = ({ children }) => (
   </TouchableWithoutFeedback>
 );
 
-export default class AddContract extends Component {
+class AddContract extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -37,6 +41,9 @@ export default class AddContract extends Component {
       data: [],
       termList: 0,
       termData: [],
+      selectUser: '',
+      dataP: [],
+      dataK: []
     };
   }
 
@@ -52,8 +59,8 @@ export default class AddContract extends Component {
         this.setState({
           isLoading: false,
           dataP: response.data.map(item => ({
-            key: item.ID_Phong,
-            label: item.TenPhong,
+            key: item.roomId,
+            label: item.name,
           })),
         });
       })
@@ -62,21 +69,12 @@ export default class AddContract extends Component {
       });
   }
   getUserData() {
-    axios
-      .get(path + '/getUser')
-      .then(response => {
-        // alert(JSON.stringify(response));
-        this.setState({
-          isLoading: false,
-          dataK: response.data.map(item => ({
-            key: item.id_tk,
-            label: item.hoten,
-          })),
-        });
+    this.props.doGetUserByBookTicket({ roomId: 1 }).then(data => {
+      this.setState({
+        data: data
       })
-      .catch(error => {
-        console.log(error);
-      });
+    })
+    console.log('chd',this.state.data);
   }
   componentDidMount() {
     this.getPhongData();
@@ -197,162 +195,195 @@ export default class AddContract extends Component {
 
   render() {
     return (
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
-        <Formik
-          initialValues={{
-            TaiKhoan: '',
-            Phong: '',
-            ThoiHan: new Date(),
-            NgayThanhToan: new Date(),
-            ChiSoDien: '',
-            ChiSoNuoc: '',
-            Ngay_vao: new Date(),
-            TinhTrang: 0,
-          }}
-          validationSchema={ContractSchema}
-          onSubmit={values => {
-            this.addContract(values, this.state.termData);
-            // this.state.termData
-            //alert(this.state.date);
-          }}>
-          {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, }) => {
-            return (
-              <HideKeyboard>
-                <SafeAreaView
-                  style={[styles.container, background_color.white, height.h_100]}
-                  onPress={Keyboard.dismiss}>
-                  <View
-                    style={[width.w_100, styles.splitView]}>
-                    <AppDialogSelect
-                      lable={'Khách thuê:'}
-                      data={this.state.dataK}
-                      placeholder={'Vui lòng chọn khách...'}
-                      value={values}
-                      field={'TaiKhoan'}
-                    />
-                    {errors.TaiKhoan && touched.TaiKhoan ? (
-                      <AppError errors={errors.TaiKhoan} />
-                    ) : null}
-                  </View>
-                  <View
-                    style={[width.w_100, styles.splitView]}>
-                    <AppDialogSelect
-                      lable={'Phòng:'}
-                      data={this.state.dataP}
-                      placeholder={'Vui lòng chọn phòng...'}
-                      value={values}
-                      field={'Phong'}
-                    />
-                    {errors.Phong && touched.Phong ? (
-                      <AppError errors={errors.Phong} />
-                    ) : null}
-                  </View>
-
-                  <View
-                    style={[width.w_100, styles.splitView]}>
-                    <AppDatePicker
-                      label={'Ngày Vào:'}
-                      value={values}
-                      field={'Ngay_vao'}
-                      alreadydate={new Date()}
-                    />
-                    {errors.Ngay_vao && touched.Ngay_vao ? (
-                      <AppError errors={errors.Ngay_vao} />
-                    ) : null}
-                  </View>
-
-                  <View
-                    style={[width.w_100, styles.splitView]}>
-                    <AppDatePicker
-                      label={'Thời Hạn:'}
-                      value={values}
-                      field={'ThoiHan'}
-                      alreadydate={new Date()}
-                    />
-                    {errors.ThoiHan && touched.ThoiHan ? (
-                      <AppError errors={errors.ThoiHan} />
-                    ) : null}
-                  </View>
-                  <View
-                    style={[width.w_100, styles.splitView]}>
-                    <AppDatePicker
-                      label={'Ngày Thanh Toán:'}
-                      value={values}
-                      field={'NgayThanhToan'}
-                      alreadydate={new Date()}
-                    />
-                    {errors.NgayThanhToan && touched.NgayThanhToan ? (
-                      <AppError errors={errors.NgayThanhToan} />
-                    ) : null}
-                  </View>
-                  <View style={[flex.flex_row, width.w_100]}>
+      <View style={{ flex: 1 }}>
+        <Text
+          style={[
+            text_size.xs,
+            font.serif,
+            font_weight.bold,
+            text_color.white,
+            width.w_100,
+            background_color.blue,
+            {
+              textAlign: 'center',
+              paddingVertical: 15,
+              lineHeight: 20,
+              letterSpacing: 0,
+            }
+          ]}
+        >
+          Thêm hợp đồng
+        </Text>
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
+          <Formik
+            initialValues={{
+              userId: '',
+              roomId: '',
+              duration: new Date(),
+              dateOfPayment: new Date(),
+              numberOfElectric: '',
+              numberOfWater: '',
+              dayIn: new Date(),
+              status: 0,
+            }}
+            validationSchema={ContractSchema}
+            onSubmit={values => {
+              this.addContract(values, this.state.termData);
+              // this.state.termData
+              //alert(this.state.date);
+            }}>
+            {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, }) => {
+              return (
+                <HideKeyboard>
+                  <SafeAreaView
+                    style={[styles.container, background_color.white, height.h_100]}
+                    onPress={Keyboard.dismiss}>
                     <View
-                      style={[{ flex: 1 }, styles.splitView]}>
-                      <AppInputInf
-                        lable={'Chỉ Số Nước:'}
-                        keyboardType={'numeric'}
-                        secureTextEntry={false}
-                        field={'ChiSoNuoc'}
-                        handleChange={handleChange}
-                        handleBlur={handleBlur}
-                        values={values}
+                      style={[width.w_100, styles.splitView]}>
+                      <AppDialogSelect
+                        lable={'Khách thuê:'}
+                        data={this.state.dataK}
+                        placeholder={'Vui lòng chọn khách...'}
+                        value={values}
+                        field={'TaiKhoan'}
                       />
-                      {errors.ChiSoNuoc && touched.ChiSoNuoc ? (
-                        <AppError errors={errors.ChiSoNuoc} />
+                      {/* <AppSelectSearch
+                        label={'Khách hàng:'}
+                        data={this.state.users}
+                        value={this.state.selectUser}
+                        onSelect={(user) => this.onSelectUser(user)}
+                        displayKey={"name"}
+                        contentStyle={{ height: '85%' }}
+                        itemStyle={{ paddingVertical: 20, borderBottomWidth: 1, borderBottomColor: 'black' }}
+                        placeholder={'Tìm kiếm tên người dùng...'}
+                        selectText={'Vui lòng chọn khách hàng...                   '}
+                        selectButtonTextStyle={[text_size.sm, { opacity: .5, numberOfLines: 1 }]}
+                      /> */}
+                      {errors.TaiKhoan && touched.TaiKhoan ? (
+                        <AppError errors={errors.TaiKhoan} />
                       ) : null}
                     </View>
                     <View
-                      style={[{ flex: 1 }, styles.splitView]}>
-                      <AppInputInf
-                        lable={'Chỉ Số Điện:'}
-                        keyboardType={'numeric'}
-                        secureTextEntry={false}
-                        field={'ChiSoDien'}
-                        handleChange={handleChange}
-                        handleBlur={handleBlur}
-                        values={values}
+                      style={[width.w_100, styles.splitView]}>
+                      <AppDialogSelect
+                        lable={'Phòng:'}
+                        data={this.state.dataP}
+                        placeholder={'Vui lòng chọn phòng...'}
+                        value={values}
+                        field={'Phong'}
                       />
-                      {errors.ChiSoDien && touched.ChiSoDien ? (
-                        <AppError errors={errors.ChiSoDien} />
+                      {errors.Phong && touched.Phong ? (
+                        <AppError errors={errors.Phong} />
                       ) : null}
                     </View>
-                  </View>
-                  <View>
-                    {
-                      this.state.termData.map((item, index) => {
-                        return this._renderTerm(item, index, handleChange, handleBlur, values);
-                      })
-                    }
-                  </View>
-                  <Pressable
-                    onPress={() => {
-                      this.addTerm();
-                    }}>
+
                     <View
-                      style={styles.splitView}>
-                      <Text style={[text_size.md, { color: '#0094cc' }]}>
-                        + Thêm Điều Khoản
-                      </Text>
+                      style={[width.w_100, styles.splitView]}>
+                      <AppDatePicker
+                        label={'Ngày Vào:'}
+                        value={values}
+                        field={'Ngay_vao'}
+                        alreadydate={new Date()}
+                      />
+                      {errors.Ngay_vao && touched.Ngay_vao ? (
+                        <AppError errors={errors.Ngay_vao} />
+                      ) : null}
                     </View>
-                  </Pressable>
-                  <View
-                    style={[width.w_100, { paddingLeft: 15, paddingRight: 15, marginTop: 30 }]}>
-                    <AppButton
-                      disabled={!this.isFormValid(isValid, touched)}
-                      onPress={handleSubmit}
-                      // onPress={() => console.log(this.state.termData)}
-                      title="Thêm"
-                    />
-                  </View>
-                </SafeAreaView>
-              </HideKeyboard>
-            );
-          }}
-        </Formik>
-      </ScrollView>
+
+                    <View
+                      style={[width.w_100, styles.splitView]}>
+                      <AppDatePicker
+                        label={'Thời Hạn:'}
+                        value={values}
+                        field={'ThoiHan'}
+                        alreadydate={new Date()}
+                      />
+                      {errors.ThoiHan && touched.ThoiHan ? (
+                        <AppError errors={errors.ThoiHan} />
+                      ) : null}
+                    </View>
+                    <View
+                      style={[width.w_100, styles.splitView]}>
+                      <AppDatePicker
+                        label={'Ngày Thanh Toán:'}
+                        value={values}
+                        field={'NgayThanhToan'}
+                        alreadydate={new Date()}
+                      />
+                      {errors.NgayThanhToan && touched.NgayThanhToan ? (
+                        <AppError errors={errors.NgayThanhToan} />
+                      ) : null}
+                    </View>
+                    <View style={[flex.flex_row, width.w_100]}>
+                      <View
+                        style={[{ flex: 1 }, styles.splitView]}>
+                        <AppInputInf
+                          lable={'Chỉ Số Nước:'}
+                          keyboardType={'numeric'}
+                          secureTextEntry={false}
+                          field={'ChiSoNuoc'}
+                          handleChange={handleChange}
+                          handleBlur={handleBlur}
+                          values={values}
+                        />
+                        {errors.ChiSoNuoc && touched.ChiSoNuoc ? (
+                          <AppError errors={errors.ChiSoNuoc} />
+                        ) : null}
+                      </View>
+                      <View
+                        style={[{ flex: 1 }, styles.splitView]}>
+                        <AppInputInf
+                          lable={'Chỉ Số Điện:'}
+                          keyboardType={'numeric'}
+                          secureTextEntry={false}
+                          field={'ChiSoDien'}
+                          handleChange={handleChange}
+                          handleBlur={handleBlur}
+                          values={values}
+                        />
+                        {errors.ChiSoDien && touched.ChiSoDien ? (
+                          <AppError errors={errors.ChiSoDien} />
+                        ) : null}
+                      </View>
+                    </View>
+                    <View>
+                      {
+                        this.state.termData.map((item, index) => {
+                          return this._renderTerm(item, index, handleChange, handleBlur, values);
+                        })
+                      }
+                    </View>
+                    <Pressable
+                      onPress={() => {
+                        this.addTerm();
+                      }}>
+                      <View
+                        style={styles.splitView}>
+                        <Text style={[text_size.md, { color: '#0094cc' }]}>
+                          + Thêm Điều Khoản
+                        </Text>
+                      </View>
+                    </Pressable>
+                    <View
+                      style={[width.w_100, { paddingLeft: 15, paddingRight: 15, marginTop: 30 }]}>
+                      <AppButton
+                        disabled={!this.isFormValid(isValid, touched)}
+                        onPress={handleSubmit}
+                        // onPress={() => console.log(this.state.termData)}
+                        title="Thêm"
+                      />
+                    </View>
+                  </SafeAreaView>
+                </HideKeyboard>
+              );
+            }}
+          </Formik>
+        </ScrollView>
+      </View>
     );
   }
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -364,3 +395,13 @@ const styles = StyleSheet.create({
     marginTop: 10
   }
 })
+
+const mapStateToProps = ({user}) => {
+  return { user };
+};
+
+const mapDispatchToProps = {
+  doGetUserByBookTicket
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddContract)

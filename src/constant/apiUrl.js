@@ -5,6 +5,7 @@ export const DELETE_AREA = `/deleteArea`;
 
 export const LOGIN = `/login`;
 export const SIGNUP = `/addUser`;
+export const GET_USER_BY_BOOKTICKET = `/getUserByBookTicket`;
 
 export const GET_LIST_FREE_SERVICE = `/getListFreeService`;
 export const ADD_FREE_SERVICE = `/addFreeService`;

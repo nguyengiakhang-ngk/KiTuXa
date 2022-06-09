@@ -53,6 +53,11 @@ export const SIGN_UP = 'sign_up';
 export const SIGN_UP_SUCCESS = 'sign_up_success';
 export const SIGN_UP_ERROR = 'sign_up_error';
 
+export const GET_USER_BY_BOOKTICKET = 'get_user_by_bookticket';
+export const GET_USER_BY_BOOKTICKET_SUCCESS = 'get_user_by_bookticket_success';
+export const GET_USER_BY_BOOKTICKET_ERROR = 'get_user_by_bookticket_error';
+
+
 export const GET_LIST_CONTRACT_BY_USER = 'get_list_contract_by_user';
 export const GET_LIST_CONTRACT_BY_USER_SUCCESS = 'get_list_contract_by_user_success';
 export const GET_LIST_CONTRACT_BY_USER_FAIL = 'get_list_contract_by_user_error';

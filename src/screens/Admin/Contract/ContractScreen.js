@@ -1,17 +1,18 @@
-import React, {Component} from 'react';
-import {FlatList, Text, TouchableOpacity, View} from "react-native";
+import React, { Component } from 'react';
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import axios from "axios";
-import {path} from "../../../constant/define";
-import {flex, font, font_weight, height, position, text_color, text_size, width} from "../../../utils/styles/MainStyle";
-import {color_danger, color_primary, color_success} from "../../../utils/theme/Color";
-import {Icon} from "@rneui/base";
+import { path } from "../../../constant/define";
+import { flex, font, font_weight, height, position, text_color, text_size, width, background_color } from "../../../utils/styles/MainStyle";
+import { color_danger, color_primary, color_success } from "../../../utils/theme/Color";
+import { Icon } from "@rneui/base";
 import AppFAB from "../../../components/AppFAB";
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
 import moment from "moment";
 import { connect } from "react-redux";
-import {doLoadListContractByRoom} from "../../../redux/actions/contract";
+import { doLoadListContractByRoom } from "../../../redux/actions/contract";
 
-class ContractScreen extends Component{
+
+class ContractScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -19,22 +20,29 @@ class ContractScreen extends Component{
             data: [],
         }
     }
-    viewContractDetail(id){
+
+    viewContractDetail(id) {
         this.props.navigation.navigate("ContractDetail", {
-            id:id
+            id: id
         });
     }
 
-    viewAddContract(ID_TK){
+    onSelectUser = (user) => {
+        this.setState({
+            selectUser: user
+        })
+    }
+
+    viewAddContract(userId) {
         this.props.navigation.navigate("AddContract",
             {
-                ID_TK:ID_TK,
+                userId:userId,
                 //refresh: () => {this.refresh()}
             });
     }
 
-    getContractData(){
-        this.props.doLoadListContractByRoom({roomId: 1}).then(data => {
+    getContractData() {
+        this.props.doLoadListContractByRoom({ roomId: 1 }).then(data => {
             this.setState({
                 data: data
             })
@@ -73,12 +81,12 @@ class ContractScreen extends Component{
     //     this.getContractData();
     // }
 
-    _renderItem = ({item, index}) => {
-        return(
+    _renderItem = ({ item, index }) => {
+        return (
             <View
                 style={[
                     width.w_100,
-                    {borderBottomWidth: 1, marginTop: 10,  paddingBottom: 10},
+                    { borderBottomWidth: 1, marginTop: 10, paddingBottom: 10 },
                     flex.flex_row,
                     flex.justify_content_between,
                     flex.align_items_center
@@ -100,7 +108,7 @@ class ContractScreen extends Component{
                         ]}
                     >
                         <Icon
-                            name= {"file-contract"}
+                            name={"file-contract"}
                             type='font-awesome-5'
                             size={32}
                             color={'white'}
@@ -120,11 +128,11 @@ class ContractScreen extends Component{
                         <View
                             style={[
                                 flex.flex_row,
-                                {marginTop: 2}
+                                { marginTop: 2 }
                             ]}
                         >
                             <Icon
-                                name= {"calendar-day"}
+                                name={"calendar-day"}
                                 type='font-awesome-5'
                                 size={16}
                                 color={new Date(item.ThoiHan).getTime() < new Date().getTime() ? color_danger : color_primary}
@@ -133,7 +141,7 @@ class ContractScreen extends Component{
                                 style={[
                                     text_size.xs,
                                     font.serif,
-                                    {marginLeft: 10, color: new Date(item.ThoiHan).getTime() < new Date().getTime() ? color_danger : 'black'}
+                                    { marginLeft: 10, color: new Date(item.ThoiHan).getTime() < new Date().getTime() ? color_danger : 'black' }
                                 ]}
                             >
                                 Thời hạn: {moment(item.ThoiHan).format('DD-MM-YYYY')}
@@ -142,11 +150,11 @@ class ContractScreen extends Component{
                         <View
                             style={[
                                 flex.flex_row,
-                                {marginTop: 2}
+                                { marginTop: 2 }
                             ]}
                         >
                             <Icon
-                                name= {item.TinhTrang == 0 ? "circle-notch" : "check-circle"}
+                                name={item.TinhTrang == 0 ? "circle-notch" : "check-circle"}
                                 type='font-awesome-5'
                                 size={16}
                                 color={item.TinhTrang == 0 ? color_danger : color_success}
@@ -155,7 +163,7 @@ class ContractScreen extends Component{
                                 style={[
                                     text_size.xs,
                                     font.serif,
-                                    {marginLeft: 5}
+                                    { marginLeft: 5 }
                                 ]}
                             >
                                 {item.TinhTrang == 0 ? "Chưa được duyệt" : "Đã được duyệt"}
@@ -170,12 +178,12 @@ class ContractScreen extends Component{
                 >
                     <TouchableOpacity
                         style={[
-                            {marginRight: 10}
+                            { marginRight: 10 }
                         ]}
                         onPress={() => this.deleteContract(item.ID_HD)}
                     >
                         <Icon
-                            name= {"trash-alt"}
+                            name={"trash-alt"}
                             type='font-awesome-5'
                             size={item.TinhTrang == 0 ? 22 : 0}
                             color={item.TinhTrang == 0 ? color_danger : "transparent"}
@@ -185,7 +193,7 @@ class ContractScreen extends Component{
                         onPress={() => this.viewContractDetail(item.id)}
                     >
                         <Icon
-                            name= {"eye"}
+                            name={"eye"}
                             type='font-awesome-5'
                             size={22}
                             color={color_success}
@@ -197,15 +205,33 @@ class ContractScreen extends Component{
     }
 
 
-    render(){
-        return(
+    render() {
+        return (
             <SafeAreaView
                 style={[
-                    {flex: 1, padding: 5, paddingLeft: 10, paddingRight: 10},
+                    { flex: 1 },
                     height.h_100,
                     position.relative
                 ]}
             >
+                <Text
+                    style={[
+                        text_size.xs,
+                        font.serif,
+                        font_weight.bold,
+                        text_color.white,
+                        width.w_100,
+                        background_color.blue,
+                        {
+                            textAlign: 'center',
+                            paddingVertical: 15,
+                            lineHeight: 20,
+                            letterSpacing: 0,
+                        }
+                    ]}
+                >
+                    Danh sách hợp đồng
+                </Text>
                 <View
                     style={[
                         position.absolute,
@@ -217,21 +243,21 @@ class ContractScreen extends Component{
                     ]}
                 >
                     <AppFAB
-                        bg = {color_primary}
-                        name = 'plus'
-                        size = {20}
-                        color = {'white'}
-                        onPress = { () => this.viewAddContract(1) }
+                        bg={color_primary}
+                        name='plus'
+                        size={20}
+                        color={'white'}
+                        onPress={() => this.viewAddContract(1)}
                     />
                 </View>
-                <FlatList data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()}/>
+                <FlatList data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()} contentContainerStyle={{ marginHorizontal: 10, paddingVertical: 10 }} />
             </SafeAreaView>
         )
     }
 }
 
-const mapStateToProps = ({listContractByRoom}) => {
-    return {listContractByRoom};
+const mapStateToProps = ({ listContractByRoom }) => {
+    return { listContractByRoom };
 };
 
 const mapDispatchToProps = {

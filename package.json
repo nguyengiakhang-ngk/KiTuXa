@@ -27,6 +27,7 @@
     "react-native": "0.68.2",
     "react-native-elements": "github:react-native-elements/react-native-elements#dist",
     "react-native-image-crop-picker": "^0.37.2",
+    "react-native-lookup-modal": "^2.0.0",
     "react-native-modal-selector": "^2.1.0",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.13.1",

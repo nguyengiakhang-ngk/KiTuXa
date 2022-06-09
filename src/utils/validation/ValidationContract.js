@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 
 export const ContractSchema = Yup.object().shape({
-    Phong: Yup.string()
+    roomId: Yup.string()
         .required('Chưa chọn phòng!'),
     ThoiHan: Yup.string()
         .required('Vui lòng nhập thời hạn!'),
