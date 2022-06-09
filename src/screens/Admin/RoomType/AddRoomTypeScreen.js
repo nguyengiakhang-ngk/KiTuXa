@@ -21,17 +21,11 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {Icon} from "@rneui/base";
 import {color_danger, color_primary, color_success, color_white} from "../../../utils/theme/Color";
 import AppButtonActionInf from "../../../components/AppButtonActionInf";
-import {
-    doAddFreeService,
-    doDeleteFreeService,
-    doGetListFreeService,
-    doUpdateFreeService
-} from "../../../redux/actions/freeService";
 import {connect} from "react-redux";
 import {doAddTypeOfRoom} from "../../../redux/actions/typeOfRoom";
+import {doAddImageOfTypeRoom} from "../../../redux/actions/imageTypeOfRoom";
 import AppDialogSelect from "../../../components/AppDialogSelect";
 import {doGetListArea} from "../../../redux/actions/area";
-
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         {children}
@@ -361,8 +355,6 @@ class AddRoomTypeScreen extends Component {
     }
 
     addRoomType = (values) => {
-        // const date = new Date();
-        // let data = new FormData();
         let typeOfRoom = {
             name: values.roomTypeName,
             stretch: values.acreage,
@@ -381,7 +373,9 @@ class AddRoomTypeScreen extends Component {
         // })
         // data.append("typeOfRoom", typeOfRoom);
         this.props.doAddTypeOfRoom(typeOfRoom).then(data => {
-            alert(JSON.stringify(data));
+            if(data) {
+                this.mapImageRoomType(data);
+            }
         })
     }
 
@@ -427,26 +421,24 @@ class AddRoomTypeScreen extends Component {
             }));
     }
 
-    mapImageRoomType = (id_loai) => {
-        this.state.imageList.map( (item, index) => {
-            this.uploadImageRoomType(item, index, id_loai);
+    mapImageRoomType = (typeOfRoomId) => {
+        this.state.imageList.map( (item) => {
+            this.uploadImageRoomType(item, typeOfRoomId);
         });
     }
 
-    uploadImageRoomType = (item, index, id_loai) => {
+    uploadImageRoomType = (item, typeOfRoomId) => {
+        const date = new Date();
         let dataImage = new FormData();
         dataImage.append("image", {
             uri: item.path,
             type: "image/jpeg",
-            name: item.filename || `temp_image_${index}.jpg`
+            name: item.filename || `temp_image_${date.getMilliseconds()}.jpg`
         });
-        axios.put(path + `/photos/uploadImgRoom/${id_loai}`, dataImage)
-            .then((response)=>{
-
-            })
-            .catch((error => {
-                console.log(error);
-            }));
+        dataImage.append("imageOfTypeRoom", JSON.stringify({typeOfRoomId: typeOfRoomId}));
+        this.props.doAddImageOfTypeRoom(dataImage).then(data => {
+            console.log(data)
+        })
     }
 
     render() {
@@ -1022,6 +1014,7 @@ const mapStateToProps = ({user, area}) => {
 
 const mapDispatchToProps = {
     doAddTypeOfRoom,
+    doAddImageOfTypeRoom,
     doGetListArea
 };
 

@@ -45,6 +45,10 @@ export const ADD_TYPE_OF_ROOM = 'add_type_of_room';
 export const ADD_TYPE_OF_ROOM_SUCCESS = 'add_type_of_room_success';
 export const ADD_TYPE_OF_ROOM_FAIL = 'add_type_of_room_fail';
 
+export const ADD_IMAGE_TYPE_OF_ROOM = 'add_image_type_of_room';
+export const ADD_IMAGE_TYPE_OF_ROOM_SUCCESS = 'add_image_type_of_room_success';
+export const ADD_IMAGE_TYPE_OF_ROOM_FAIL = 'add_image_type_of_room_fail';
+
 export const SIGN_UP = 'sign_up';
 export const SIGN_UP_SUCCESS = 'sign_up_success';
 export const SIGN_UP_ERROR = 'sign_up_error';

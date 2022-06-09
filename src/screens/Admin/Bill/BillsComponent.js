@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import {FlatList, Text, TouchableOpacity, View} from "react-native";
 import axios from "axios";
-import {path} from "../../../constant/define";
 import {flex, font, font_weight, height, position, text_color, text_size, width} from "../../../utils/styles/MainStyle";
 import {color_danger, color_primary, color_success} from "../../../utils/theme/Color";
 import {Icon} from "@rneui/base";
@@ -9,7 +8,7 @@ import AppFAB from "../../../components/AppFAB";
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
 import moment from "moment/moment";
 import { connect } from "react-redux";
-import {doLoadListContractByRoom} from "../../../redux/actions/contract";
+import {doLoadListBillByContract} from "../../../redux/actions/bill";
 
 class BillsComponent extends Component{
     constructor(props) {
@@ -19,41 +18,9 @@ class BillsComponent extends Component{
             data: [],
         }
     }
-    viewBillDetails(ID_HDon){
-        this.props.navigation.navigate("BillDetails", {
-            ID_HDon: ID_HDon
-        });
-    }
 
-    viewAddBill(ID_HD){
-        this.props.navigation.navigate("AddBill",
-            {
-                ID_HD: ID_HD,
-                refresh: () => {this.refresh()}
-            });
-    }
-    deleteBill(ID_HDon) {
-        axios.delete(path + `/deleteBill/${ID_HDon}`)
-            .then((response)=>{
-                if(response.data){
-                    this.setState({
-                        isLoading: true,
-                        data: []
-                    });
-                    this.getBillsData();
-                }
-            })
-            .catch((error => {
-                console.log(error);
-            }));
-    }
 
-    updateBill(ID_HDon){
-        this.props.navigation.navigate("UpdateBill", {
-            ID_HDon: ID_HDon,
-            refresh: () => {this.refresh()}
-        });
-    }
+
 
     getBillsData(){
         this.props.doLoadListBillByContract({contractId: 1}).then(data => {

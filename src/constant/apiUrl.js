@@ -22,3 +22,5 @@ export const GET_LIST_CONTRACT_BY_ROOM = `/getContractByRoom`;
 export const GET_LIST_CONTRACT_BY_ID = `/getContractById`;
 
 export const GET_BILL_BY_CONTRACT = `/getBill`;
+
+export const ADD_IMAGE_TYPE_ROOM = `/addImageofroom`;

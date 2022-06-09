@@ -228,6 +228,8 @@ class HomeScreen extends Component{
                             color = {'white'}
                             colorText = {'black'}
                             label = {'Hóa đơn'}
+                            onPress = {() => this.routeScreen("BillsComponent") }
+
                         />
                     </View>
                     <View
