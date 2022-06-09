@@ -11,42 +11,58 @@ import {
 import {Icon} from "@rneui/base";
 import {background_color, flex, font, font_weight, text_color, text_size} from "../../../utils/styles/MainStyle";
 import {color_primary} from "../../../utils/theme/Color";
+import AsyncStorage from "@react-native-community/async-storage";
 
 export default class PersonalScreen extends Component {
 
-    listFunction =
-        [
-            {
-                id: 1,
-                name: 'Thông tin cá nhân',
-                onPress: 'information',
-                icon: require("../../../../assets/icons/information.png"),
-            },
-            {
-                id: 2,
-                name: 'Phòng đã đặt',
-                onPress: 'roombook',
-                icon: require("../../../../assets/icons/booking.png")
-            },
-            {
-                id: 3,
-                name: 'Đã lưu',
-                onPress: 'love',
-                icon: require("../../../../assets/icons/saved.png")
-            },
-            {
-                id: 4,
-                name: 'Đăng xuất',
-                onPress: 'logout',
-                icon: require("../../../../assets/icons/logout.png")
-            }
-        ]
-
     constructor(props) {
         super(props);
+
         this.state = {
+            userId: null,
             isLoading: true,
-        };
+            listFunction: []
+        }
+    }
+
+    async componentDidMount() {
+        try {
+            let user = await AsyncStorage.setItem('@user', JSON.stringify(data));
+            this.setState({
+                userId: user.id
+            })
+        } catch (e) {
+            console.log(e);
+        }
+
+        this.setState({
+            listFunction: [
+                {
+                    id: 1,
+                    name: 'Thông tin cá nhân',
+                    onPress: 'information',
+                    icon: require("../../../../assets/icons/information.png"),
+                },
+                {
+                    id: 2,
+                    name: 'Phòng đã đặt',
+                    onPress: 'roombook',
+                    icon: require("../../../../assets/icons/booking.png")
+                },
+                {
+                    id: 3,
+                    name: 'Đã lưu',
+                    onPress: 'love',
+                    icon: require("../../../../assets/icons/saved.png")
+                },
+                {
+                    id: 4,
+                    name: 'Đăng xuất',
+                    onPress: 'logout',
+                    icon: require("../../../../assets/icons/logout.png")
+                }
+            ]
+        })
     }
 
 
@@ -93,7 +109,7 @@ export default class PersonalScreen extends Component {
                 </View>
                 <View style={styles.containerFunction}>
                     <FlatList
-                        data={this.listFunction}
+                        data={this.state.listFunction}
                         renderItem={this.renderFunction}
                         keyExtractor={item => item.id}
                         showsVerticalScrollIndicator={false}

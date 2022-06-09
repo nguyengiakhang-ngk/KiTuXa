@@ -80,7 +80,6 @@ class FreeServiceListScreen extends Component{
             userId: this.props.user.user.id
         }
         data.append("image", {
-            freeService: freeService,
             uri: this.state.imageFreeService.path,
             type: "image/jpeg",
             name: this.state.imageFreeService.filename || `temp_image_${minutes}.jpg`
@@ -107,7 +106,6 @@ class FreeServiceListScreen extends Component{
         }
         if(this.state.imageFreeService) {
             data.append("image", {
-                freeService: freeService,
                 uri: this.state.imageFreeService.path,
                 type: "image/jpeg",
                 name: this.state.imageFreeService.filename || `temp_image_${minutes}.jpg`

@@ -1,6 +1,8 @@
 import * as Yup from "yup";
 
 export const RoomTypeSchema = Yup.object().shape({
+    areaId: Yup.string()
+        .required('Tên loại phòng rỗng!'),
     roomTypeName: Yup.string()
         .required('Tên loại phòng rỗng!'),
     price:  Yup.string()

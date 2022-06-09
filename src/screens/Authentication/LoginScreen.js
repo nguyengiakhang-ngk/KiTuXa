@@ -24,6 +24,7 @@ const HideKeyboard = ({ children }) => (
 );
 class LoginScreen extends Component {
     state = { checkedRemember: false };
+
     isFormValid(isValid, touched) {
         return isValid && Object.keys(touched).length !== 0;
     }

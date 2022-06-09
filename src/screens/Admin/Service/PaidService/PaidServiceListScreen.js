@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {
-    FlatList, Keyboard, Modal, ScrollView,
+    FlatList, Image, Keyboard, Modal, ScrollView,
     Text, TouchableOpacity, TouchableWithoutFeedback, View
 } from 'react-native';
 import AppFAB from "../../../../components/AppFAB";
@@ -16,17 +16,22 @@ import {
     text_size
 } from "../../../../utils/styles/MainStyle";
 import {color_danger, color_primary, color_success} from "../../../../utils/theme/Color";
-import axios from "axios";
-import {path} from "../../../../constant/define";
+import {path, url} from "../../../../constant/define";
 import { width } from "../../../../utils/styles/MainStyle";
 import {Icon} from "@rneui/base";
 import AppInputInf from "../../../../components/AppInputInf";
 import AppError from "../../../../components/AppError";
-import {AreaSchema} from "../../../../utils/validation/ValidationArea";
 import {Formik} from "formik";
-import {FreeServiceSchema} from "../../../../utils/validation/ValidateFreeService";
-import AppButton from "../../../../components/AppButton";
 import {PaidServiceSchema} from "../../../../utils/validation/ValidatePaidService";
+import AppButtonActionInf from "../../../../components/AppButtonActionInf";
+import ImagePicker from "react-native-image-crop-picker";
+import {
+    doAddPaidService,
+    doDeletePaidService,
+    doGetListPaidService,
+    doUpdatePaidService
+} from "../../../../redux/actions/paidService";
+import {connect} from "react-redux";
 
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -34,36 +39,29 @@ const HideKeyboard = ({ children }) => (
     </TouchableWithoutFeedback>
 );
 
-export default class PaidServiceListScreen extends Component{
+class PaidServiceListScreen extends Component{
     constructor(props) {
         super(props);
         this.state = {
             isLoading: true,
             dataPaidService: [],
-            paidServiceUpdate: "",
+            paidServiceUpdate: null,
             iconAdd: "servicestack",
             isShowModalAdd: false,
-            isShowModalIcon: false,
-            isShowModalUpdate: false,
-            dataIcon: [
-                {
-                    name: 'wifi',
-                    checked: false
-                },
-                {
-                    name: 'fan',
-                    checked: false
-                },
-                {
-                    name: 'parking',
-                    checked: false
-                }
-            ]
+            imagePaidService: null
         }
     }
 
     componentDidMount() {
-        this.getPaidServiceData();
+        this.removeWillFocusListener = this.props.navigation.addListener(
+            'focus', () => {
+                this.getPaidServiceData();
+            }
+        );
+    }
+
+    componentWillUnmount() {
+        this.removeWillFocusListener();
     }
 
     isFormValid = (isValid, touched) => {
@@ -71,229 +69,95 @@ export default class PaidServiceListScreen extends Component{
     }
 
     getPaidServiceData(){
-        axios.get(path + "/getPaidService")
-            .then((response)=>{
-                this.setState({
-                    isLoading: false,
-                    dataPaidService: response.data
-                })
-            })
-            .catch((error => {
-                console.log(error);
-            }));
+        this.props.doGetListPaidService({userId: this.props.user.user.id}).then(data =>{
+            console.log(JSON.stringify(data));
+        });
     }
 
-    _renderItemIcon = ({item, index}) => {
-        return(
-            <TouchableOpacity
-                style={[
-                    {
-                        paddingVertical: 10,
-                        borderRadius: 5,
-                        margin: 5,
-                        width: '17%'
-                    },
-                    item.checked ? background_color.light : ''
 
-                ]}
-                onPress={ () => {
-                    this.state.dataIcon.map( (value, i) => {
-                        value.checked = i === index;
-                    });
-                    this.setState({
-                        dataIcon: this.state.dataIcon,
-                        isShowModalIcon: false,
-                        iconAdd: this.state.dataIcon[index].name
-                    });
-                }}
-            >
-                <Icon
-                    name={item.name}
-                    type='font-awesome-5'
-                    color={color_primary}
-                    size={30}/>
-            </TouchableOpacity>
-        )
-    }
-
-    _renderItemPaidService = ({item, index}) => {
-        return(
-            <View
-                style={[
-                    width.w_100,
-                    {
-                        marginTop: 10,
-                        padding: 5,
-                        borderRadius: 5
-                    },
-                    background_color.light,
-                    flex.flex_row,
-                    flex.justify_content_between,
-                    flex.align_items_center
-                ]}
-            >
-                <View
-                    style={[
-                        flex.flex_row
-                    ]}
-                >
-                    <View
-                        style={[
-                            {
-                                backgroundColor: color_primary,
-                                borderRadius: 5,
-                                width: 50,
-                                marginRight: 10
-                            },
-                            flex.justify_content_center
-                        ]}
-                    >
-                        <Icon
-                            name= {item.anh_dd}
-                            type='font-awesome-5'
-                            size={18}
-                            color={'white'}
-                        />
-                    </View>
-                    <View>
-                        <Text
-                            style={[
-                                text_size.sm,
-                                font.serif,
-                                font_weight.bold,
-                                text_color.primary
-                            ]}
-                        >
-                            {item.tendv}
-                        </Text>
-                        <View
-                            style={[
-                                flex.flex_row,
-                                flex.align_items_center,
-                                {marginTop: 2}
-                            ]}
-                        >
-                            <Icon
-                                name= {"circle"}
-                                type='font-awesome-5'
-                                size={10}
-                                color={color_success}
-                            />
-                            <Text
-                                style={[
-                                    text_size.xs,
-                                    font.serif,
-                                    {marginLeft: 4}
-                                ]}
-                            >
-                                Có phí ({item.donvitinh})
-                            </Text>
-                        </View>
-                    </View>
-                </View>
-                <View
-                    style={[
-                        flex.flex_row
-                    ]}
-                >
-                    <TouchableOpacity
-                        style={[
-                            {marginRight: 10}
-                        ]}
-                        onPress={() => this.deletePaidService(item.id_cp)}
-                    >
-                        <Icon
-                            name= {"trash-alt"}
-                            type='font-awesome-5'
-                            size={22}
-                            color={color_danger}
-                        />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => {
-                            this.state.dataIcon.map( (value, i) => {
-                                value.checked = value.name === item.anh_dd;
-                            });
-                            this.setState({
-                                dataIcon: this.state.dataIcon,
-                                isShowModalUpdate: true,
-                                paidServiceUpdate: this.state.dataPaidService[index],
-                                iconAdd: this.state.dataPaidService[index].anh_dd,
-                            });
-                        }}
-                    >
-                        <Icon
-                            name= {"pencil-alt"}
-                            type='font-awesome-5'
-                            size={22}
-                            color={color_success}
-                        />
-                    </TouchableOpacity>
-                </View>
-            </View>
-        )
-    }
-
-    deletePaidService(id_cp) {
-        axios.delete(path + `/deletePaidService/${id_cp}`)
-            .then((response)=>{
-                if(response.data){
-                    this.getPaidServiceData();
-                }
-            })
-            .catch((error => {
-                console.log(error);
-            }));
+    deletePaidService(paidService) {
+        this.props.doDeletePaidService({id: paidService.id, image: paidService.image}).then(data => {
+            if(data) {
+                this.getPaidServiceData();
+            }
+        })
     }
 
     addPaidService = (values) => {
-        axios.post(path + "/addPaidService",{
-            serviceName: values.serviceName,
+        const date = new Date();
+        const minutes = date.getMinutes();
+        let data = new FormData();
+        let paidService = {
+            name: values.serviceName,
             unit: values.unit,
-            icon: this.state.iconAdd
+            userId: this.props.user.user.id
+        }
+        data.append("image", {
+            paidService: paidService,
+            uri: this.state.imagePaidService.path,
+            type: "image/jpeg",
+            name: this.state.imagePaidService.filename || `temp_image_${minutes}.jpg`
+        });
+        data.append("paidService", JSON.stringify(paidService));
+        this.props.doAddPaidService(data).then(data => {
+            if(data) {
+                this.setState({
+                    isShowModalAdd: false,
+                    imagePaidService: null
+                });
+                this.getPaidServiceData();
+            }
         })
-            .then((response)=>{
-                if(response.data){
-                    this.setState({
-                        isShowModalAdd: false
-                    });
-                    this.getPaidServiceData();
-                    this.resetDataIcon();
-                }
-            })
-            .catch((error => {
-                console.log(error);
-            }));
-    }
-
-    resetDataIcon = () => {
-        this.state.dataIcon.map(item => {
-           item.checked = false;
-        });
-        this.setState({
-            dataIcon: this.state.dataIcon,
-            iconAdd: "servicestack"
-        });
     }
 
     updatePaidService = (values) => {
-        axios.put(path + `/updatePaidService/${this.state.paidServiceUpdate.id_cp}`,{
-            serviceName: values.serviceName,
+        const date = new Date();
+        const minutes = date.getMinutes();
+        let data = new FormData();
+        let paidService = {
+            name: values.serviceName,
             unit: values.unit,
-            icon: this.state.iconAdd
-        })
-            .then((response)=>{
-                if(response.data){
-                    this.setState({
-                        isShowModalUpdate: false
-                    });
-                    this.getPaidServiceData();
-                    this.resetDataIcon();
+            image: this.state.paidServiceUpdate.image
+        }
+        if(this.state.imagePaidService) {
+            data.append("image", {
+                uri: this.state.imagePaidService.path,
+                type: "image/jpeg",
+                name: this.state.imagePaidService.filename || `temp_image_${minutes}.jpg`
+            });
+        }
+        data.append("paidService", JSON.stringify(paidService));
+        this.props.doUpdatePaidService(data, {id: this.state.paidServiceUpdate.id}).then(data => {
+            if(data) {
+                this.setState({
+                    isShowModalAdd: false,
+                    imagePaidService: null,
+                    paidServiceUpdate: null
+                });
+                this.getFreeServiceData();
+            }
+        });
+    }
+
+    chooseImage(){
+        ImagePicker.openPicker({
+            multiple: false,
+            waitAnimationEnd: false,
+            includeExif: true,
+            forceJpg: true,
+            compressImageQuality: 0.8,
+            mediaType: "any",
+            includeBase64: true,
+        }).then(res => {
+            console.log('Res: ', res);
+            this.setState({
+                imagePaidService: {
+                    filename: res.filename,
+                    path: res.path,
+                    data: res.data
                 }
-            })
-            .catch((error => {
-                console.log(error);
-            }));
+            });
+        }).catch(error => console.log('Error: ', error.message));
     }
 
     render() {
@@ -334,331 +198,349 @@ export default class PaidServiceListScreen extends Component{
                                 }
                             ]}
                         >
-                            <ScrollView
-                                style={[
-                                    {
-                                        width: '90%',
-                                        backgroundColor: 'white',
-                                        borderRadius: 5,
-                                        maxHeight: 380
-                                    }
-                                ]}
-                            >
-                                <Formik
-                                    initialValues={{serviceName: "", unit: ""}}
-                                    validationSchema={PaidServiceSchema}
-                                    onSubmit={values => {
-                                        this.addPaidService(values);
-                                    }}
-                                >
-                                    {({
-                                          handleChange,
-                                          handleBlur,
-                                          handleSubmit, values,
-                                          errors,
-                                          touched ,
-                                          isValid
-                                    }) => (
-                                        <HideKeyboard>
-                                            <SafeAreaView
-                                                style={[
-                                                    { flex: 1, height: 350, margin: 15},
-                                                    background_color.white,
-                                                    flex.justify_content_between
-                                                ]}
-                                                onPress={Keyboard.dismiss}
-                                            >
-                                                <View
-                                                    style={[
-                                                        width.w_100
-                                                    ]}
-                                                >
-                                                    <View
-                                                        style={[
-                                                            width.w_100
-                                                        ]}
-                                                    >
-                                                        <AppInputInf
-                                                            lable={"Tên dịch vụ:"}
-                                                            secureTextEntry={false}
-                                                            field={"serviceName"}
-                                                            handleChange={handleChange}
-                                                            handleBlur={handleBlur}
-                                                            values={values}
-                                                        />
-                                                        {errors.serviceName && touched.serviceName ? (
-                                                            <AppError errors={ errors.serviceName }/>
-                                                        ) : null}
-                                                    </View>
-                                                    <View
-                                                        style={[
-                                                            width.w_100,
-                                                            {
-                                                                marginTop: 10
-                                                            }
-                                                        ]}
-                                                    >
-                                                        <AppInputInf
-                                                            lable={"Đơn vị tính:"}
-                                                            secureTextEntry={false}
-                                                            field={"unit"}
-                                                            handleChange={handleChange}
-                                                            handleBlur={handleBlur}
-                                                            values={values}
-                                                        />
-                                                        {errors.unit && touched.unit ? (
-                                                            <AppError errors={ errors.unit }/>
-                                                        ) : null}
-                                                    </View>
-                                                    <View
-                                                        style={[
-                                                            width.w_100,
-                                                            flex.flex_row,
-                                                            flex.align_items_center,
-                                                            {
-                                                                marginTop: 10
-                                                            }
-                                                        ]}
-                                                    >
-                                                        <Text
-                                                            style={[
-                                                                font.serif,
-                                                                text_size.sm
-                                                            ]}
-                                                        >
-                                                            Biểu tượng dịch vụ:
-                                                        </Text>
-
-                                                        <TouchableOpacity
-                                                            style={[
-                                                                {
-                                                                    marginLeft: 10,
-                                                                    paddingVertical: 5,
-                                                                    paddingHorizontal: 10,
-                                                                    borderRadius: 5
-                                                                },
-                                                                background_color.light,
-                                                                flex.justify_content_center,
-                                                                flex.align_items_center
-                                                            ]}
-                                                            onPress={ () => this.setState( {isShowModalIcon: true} ) }
-                                                        >
-                                                            <Icon
-                                                                name={this.state.iconAdd}
-                                                                type='font-awesome-5'
-                                                                color={color_primary}
-                                                                size={35}/>
-                                                        </TouchableOpacity>
-                                                    </View>
-                                                </View>
-                                                <View
-                                                    style={[
-                                                        width.w_100
-                                                    ]}
-                                                >
-                                                    <AppButton
-                                                        disabled = { !this.isFormValid(isValid, touched) }
-                                                        onPress = { handleSubmit }
-                                                        title="Thêm"
-                                                    />
-                                                </View>
-                                            </SafeAreaView>
-                                        </HideKeyboard>
-                                    )}
-                                </Formik>
-                            </ScrollView>
-                        </View>
-                    </Modal>
-                    <Modal transparent visible={this.state.isShowModalUpdate}>
-                        <View
-                            style={[
-                                {
-                                    flex: 1,
-                                    backgroundColor: 'rgba(0,0,0,0.5)',
-                                    justifyContent: "center",
-                                    alignItems: "center"
-                                }
-                            ]}
-                        >
-                            <ScrollView
-                                style={[
-                                    {
-                                        width: '90%',
-                                        backgroundColor: 'white',
-                                        borderRadius: 5,
-                                        maxHeight: 380
-                                    }
-                                ]}
-                            >
-                                <Formik
-                                    initialValues={{serviceName: this.state.paidServiceUpdate.tendv, unit: this.state.paidServiceUpdate.donvitinh}}
-                                    validationSchema={PaidServiceSchema}
-                                    onSubmit={values => {
-                                        this.updatePaidService(values);
-                                    }}
-                                >
-                                    {({
-                                          handleChange,
-                                          handleBlur,
-                                          handleSubmit, values,
-                                          errors,
-                                          touched ,
-                                          isValid
-                                    }) => (
-                                        <HideKeyboard>
-                                            <SafeAreaView
-                                                style={[
-                                                    { flex: 1, height: 350, margin: 15},
-                                                    background_color.white,
-                                                    flex.justify_content_between
-                                                ]}
-                                                onPress={Keyboard.dismiss}
-                                            >
-                                                <View
-                                                    style={[
-                                                        width.w_100
-                                                    ]}
-                                                >
-                                                    <View
-                                                        style={[
-                                                            width.w_100
-                                                        ]}
-                                                    >
-                                                        <AppInputInf
-                                                            lable={"Tên dịch vụ:"}
-                                                            secureTextEntry={false}
-                                                            field={"serviceName"}
-                                                            handleChange={handleChange}
-                                                            handleBlur={handleBlur}
-                                                            values={values}
-                                                        />
-                                                        {errors.serviceName && touched.serviceName ? (
-                                                            <AppError errors={ errors.serviceName }/>
-                                                        ) : null}
-                                                    </View>
-                                                    <View
-                                                        style={[
-                                                            width.w_100,
-                                                            {
-                                                                marginTop: 10
-                                                            }
-                                                        ]}
-                                                    >
-                                                        <AppInputInf
-                                                            lable={"Đơn vị tính:"}
-                                                            secureTextEntry={false}
-                                                            field={"unit"}
-                                                            handleChange={handleChange}
-                                                            handleBlur={handleBlur}
-                                                            values={values}
-                                                        />
-                                                        {errors.unit && touched.unit ? (
-                                                            <AppError errors={ errors.unit }/>
-                                                        ) : null}
-                                                    </View>
-                                                    <View
-                                                        style={[
-                                                            width.w_100,
-                                                            flex.flex_row,
-                                                            flex.align_items_center,
-                                                            {
-                                                                marginTop: 10
-                                                            }
-                                                        ]}
-                                                    >
-                                                        <Text
-                                                            style={[
-                                                                font.serif,
-                                                                text_size.sm
-                                                            ]}
-                                                        >
-                                                            Biểu tượng dịch vụ:
-                                                        </Text>
-
-                                                        <TouchableOpacity
-                                                            style={[
-                                                                {
-                                                                    marginLeft: 10,
-                                                                    paddingVertical: 5,
-                                                                    paddingHorizontal: 10,
-                                                                    borderRadius: 5
-                                                                },
-                                                                background_color.light,
-                                                                flex.justify_content_center,
-                                                                flex.align_items_center
-                                                            ]}
-                                                            onPress={ () => this.setState( {isShowModalIcon: true} ) }
-                                                        >
-                                                            <Icon
-                                                                name={this.state.iconAdd}
-                                                                type='font-awesome-5'
-                                                                color={color_primary}
-                                                                size={35}/>
-                                                        </TouchableOpacity>
-                                                    </View>
-                                                </View>
-                                                <View
-                                                    style={[
-                                                        width.w_100
-                                                    ]}
-                                                >
-                                                    <AppButton
-                                                        onPress = { handleSubmit }
-                                                        title="Sửa"
-                                                    />
-                                                </View>
-                                            </SafeAreaView>
-                                        </HideKeyboard>
-                                    )}
-                                </Formik>
-                            </ScrollView>
-                        </View>
-                    </Modal>
-                    <Modal transparent visible={this.state.isShowModalIcon}>
-                        <View
-                            style={[
-                                {
-                                    flex: 1,
-                                    justifyContent: "center",
-                                    alignItems: "center"
-                                }
-                            ]}
-                        >
                             <View
                                 style={[
                                     {
                                         width: '90%',
                                         backgroundColor: 'white',
-                                        paddingVertical: 15,
-                                        paddingHorizontal: 15,
-                                        borderRadius: 5,
-                                        height: 380
+                                        borderRadius: 5
                                     }
                                 ]}
                             >
-                                <View
-                                    style={[
-                                        width.w_100,
-                                        flex.align_items_center
-                                    ]}
+                                <Formik
+                                    initialValues={{
+                                        serviceName: this.state.paidServiceUpdate ? this.state.paidServiceUpdate.name : '',
+                                        unit: this.state.paidServiceUpdate ? this.state.paidServiceUpdate.unit : ''
+                                    }}
+                                    validationSchema={PaidServiceSchema}
+                                    onSubmit={values => {
+                                        if(this.state.paidServiceUpdate) {
+                                            this.updatePaidService(values);
+                                        }else {
+                                            this.addPaidService(values);
+                                        }
+                                    }}
                                 >
-                                    <Text
-                                        style={[
-                                            text_size.xl,
-                                            text_color.danger,
-                                            font.serif
-                                        ]}
-                                    >
-                                        Chọn biểu tượng
-                                    </Text>
-                                </View>
-                                <FlatList style={{padding: 5}} numColumns={5} data={this.state.dataIcon} renderItem={this._renderItemIcon} keyExtractor={(item, index) => index.toString()}/>
+                                    {({
+                                          handleChange,
+                                          handleBlur,
+                                          handleSubmit, values,
+                                          errors,
+                                          touched ,
+                                          isValid
+                                    }) => (
+                                        <HideKeyboard>
+                                            <SafeAreaView
+                                                style={[
+                                                    {margin: 15},
+                                                    background_color.white,
+                                                    flex.justify_content_between
+                                                ]}
+                                                onPress={Keyboard.dismiss}
+                                            >
+                                                <View
+                                                    style={[
+                                                        width.w_100
+                                                    ]}
+                                                >
+                                                    <View
+                                                        style={[
+                                                            width.w_100
+                                                        ]}
+                                                    >
+                                                        <AppInputInf
+                                                            lable={"Tên dịch vụ:"}
+                                                            secureTextEntry={false}
+                                                            field={"serviceName"}
+                                                            handleChange={handleChange}
+                                                            handleBlur={handleBlur}
+                                                            values={values}
+                                                        />
+                                                        {errors.serviceName && touched.serviceName ? (
+                                                            <AppError errors={ errors.serviceName }/>
+                                                        ) : null}
+                                                    </View>
+                                                    <View
+                                                        style={[
+                                                            width.w_100,
+                                                            {
+                                                                marginTop: 10
+                                                            }
+                                                        ]}
+                                                    >
+                                                        <AppInputInf
+                                                            lable={"Đơn vị tính:"}
+                                                            secureTextEntry={false}
+                                                            field={"unit"}
+                                                            handleChange={handleChange}
+                                                            handleBlur={handleBlur}
+                                                            values={values}
+                                                        />
+                                                        {errors.unit && touched.unit ? (
+                                                            <AppError errors={ errors.unit }/>
+                                                        ) : null}
+                                                    </View>
+                                                    <View
+                                                        style={[
+                                                            width.w_100,
+                                                            {
+                                                                marginTop: 10
+                                                            }
+                                                        ]}
+                                                    >
+                                                        <AppInputInf
+                                                            lable={"Giá dịch vụ:"}
+                                                            secureTextEntry={false}
+                                                            field={"unit"}
+                                                            handleChange={handleChange}
+                                                            handleBlur={handleBlur}
+                                                            values={values}
+                                                        />
+                                                        {/*{errors.unit && touched.unit ? (*/}
+                                                        {/*    <AppError errors={ errors.unit }/>*/}
+                                                        {/*) : null}*/}
+                                                    </View>
+                                                    <View
+                                                        style={[
+                                                            width.w_100,
+                                                            flex.flex_row,
+                                                            flex.align_items_center,
+                                                            {
+                                                                marginTop: 10
+                                                            }
+                                                        ]}
+                                                    >
+                                                        <TouchableOpacity
+                                                            style={[
+                                                                width.w_100,
+                                                                flex.flex_row,
+                                                                flex.align_items_center,
+                                                            ]}
+                                                            onPress={() => this.chooseImage()}
+                                                        >
+                                                            <Icon
+                                                                name='plus-circle'
+                                                                type='font-awesome-5'
+                                                                size={20}
+                                                                color={color_success}
+                                                            />
+                                                            <Text
+                                                                style={[
+                                                                    text_size.sm,
+                                                                    font.serif,
+                                                                    {
+                                                                        marginLeft: 3
+                                                                    }
+                                                                ]}
+                                                            >
+                                                                Ảnh dịch vụ:
+                                                            </Text>
+                                                        </TouchableOpacity>
+                                                    </View>
+                                                    {
+                                                        (this.state.imagePaidService || this.state.paidServiceUpdate) ?
+                                                            <View
+                                                                style={[
+                                                                    width.w_100
+                                                                ]}
+                                                            >
+                                                                <Image
+                                                                    style={[
+                                                                        width.w_100,
+                                                                        {height: 180}
+                                                                    ]}
+                                                                    source={
+                                                                        {
+                                                                            uri: this.state.imagePaidService ? this.state.imagePaidService.path : `${url}/${this.state.paidServiceUpdate.image}`
+                                                                        }
+                                                                    }
+                                                                />
+                                                            </View>
+                                                            : null
+                                                    }
+                                                </View>
+                                                <View
+                                                    style={[
+                                                        width.w_100,
+                                                        flex.flex_row,
+                                                        {paddingLeft: 15, paddingRight: 15, marginTop: 20}
+                                                    ]}
+                                                >
+                                                    <View
+                                                        style={[
+                                                            {
+                                                                flex: 1,
+                                                                marginRight: 15
+                                                            }
+                                                        ]}
+                                                    >
+                                                        <AppButtonActionInf
+                                                            size={10}
+                                                            textSize={18}
+                                                            bg={color_danger}
+                                                            onPress = { () => {
+                                                                this.setState({
+                                                                    isShowModalAdd: false,
+                                                                    imagePaidService: null,
+                                                                    paidServiceUpdate: null
+                                                                })
+                                                            } }
+                                                            title="Hủy"
+                                                        />
+                                                    </View>
+                                                    <View
+                                                        style={[
+                                                            {
+                                                                flex: 1
+                                                            }
+                                                        ]}
+                                                    >
+                                                        <AppButtonActionInf
+                                                            size={10}
+                                                            textSize={18}
+                                                            bg={color_primary}
+                                                            disabled = { !values.serviceName }
+                                                            onPress = { handleSubmit }
+                                                            title={this.state.paidServiceUpdate ? 'Lưu' : 'Thêm'}
+                                                        />
+                                                    </View>
+                                                </View>
+                                            </SafeAreaView>
+                                        </HideKeyboard>
+                                    )}
+                                </Formik>
                             </View>
                         </View>
                     </Modal>
                 </View>
-                <FlatList data={this.state.dataPaidService} renderItem={this._renderItemPaidService} keyExtractor={(item, index) => index.toString()}/>
+                <FlatList showsVerticalScrollIndicator={true} data={this.props.paidService.paidServiceList} renderItem={this._renderItemPaidService} keyExtractor={(item, index) => index.toString()}/>
             </SafeAreaView>
         );
     }
+
+    _renderItemPaidService = ({item, index}) => {
+        return(
+            <View
+                style={[
+                    width.w_100,
+                    {
+                        marginTop: 10,
+                        padding: 5,
+                        borderRadius: 5
+                    },
+                    background_color.light,
+                    flex.flex_row,
+                    flex.justify_content_between,
+                    flex.align_items_center
+                ]}
+            >
+                <View
+                    style={[
+                        flex.flex_row
+                    ]}
+                >
+                    <View
+                        style={[
+                            {
+                                backgroundColor: color_primary,
+                                borderRadius: 5,
+                                width: 50,
+                                marginRight: 10
+                            },
+                            flex.justify_content_center
+                        ]}
+                    >
+                        <Icon
+                            name= {'servicestack'}
+                            type='font-awesome-5'
+                            size={18}
+                            color={'white'}
+                        />
+                    </View>
+                    <View>
+                        <Text
+                            style={[
+                                text_size.sm,
+                                font.serif,
+                                font_weight.bold,
+                                text_color.primary
+                            ]}
+                        >
+                            {item.name}
+                        </Text>
+                        <View
+                            style={[
+                                flex.flex_row,
+                                flex.align_items_center,
+                                {marginTop: 2}
+                            ]}
+                        >
+                            <Icon
+                                name= {"circle"}
+                                type='font-awesome-5'
+                                size={10}
+                                color={color_success}
+                            />
+                            <Text
+                                style={[
+                                    text_size.xs,
+                                    font.serif,
+                                    {marginLeft: 4}
+                                ]}
+                            >
+                                Có phí ({item.unit})
+                            </Text>
+                        </View>
+                    </View>
+                </View>
+                <View
+                    style={[
+                        flex.flex_row
+                    ]}
+                >
+                    <TouchableOpacity
+                        style={[
+                            {marginRight: 10}
+                        ]}
+                        onPress={() => this.deletePaidService(item)}
+                    >
+                        <Icon
+                            name= {"trash-alt"}
+                            type='font-awesome-5'
+                            size={22}
+                            color={color_danger}
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => {
+                            this.setState({
+                                paidServiceUpdate: item,
+                                isShowModalAdd: true
+                            });
+                        }}
+                    >
+                        <Icon
+                            name= {"pencil-alt"}
+                            type='font-awesome-5'
+                            size={22}
+                            color={color_success}
+                        />
+                    </TouchableOpacity>
+                </View>
+            </View>
+        )
+    }
 }
+
+const mapStateToProps = ({user, paidService}) => {
+    return {user, paidService};
+};
+
+const mapDispatchToProps = {
+    doAddPaidService,
+    doDeletePaidService,
+    doGetListPaidService,
+    doUpdatePaidService
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(PaidServiceListScreen)

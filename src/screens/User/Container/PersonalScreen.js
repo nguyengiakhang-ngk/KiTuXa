@@ -6,7 +6,7 @@ import {
     Image,
     TouchableOpacity,
     FlatList,
-    
+
 } from 'react-native';
 import { color_primary } from "../../../utils/theme/Color";
 import AsyncStorage from "@react-native-community/async-storage";
@@ -19,19 +19,30 @@ class PersonalScreen extends Component {
         this.state = {
             isLoading: true,
             listFunction: [],
-            dataUser: {}
+            dataUser: {},
+            userId: null
         };
     }
 
     getDataUser = async () => {
-        let user = JSON.parse(await AsyncStorage.getItem('@user'));
+        let user = await AsyncStorage.getItem('@user');
         this.setState({
-            dataUser: user
+            dataUser: JSON.parse(user)
         })
     }
 
-    componentDidMount() {
-        console.log(this.props.user);
+    async componentDidMount() {
+        await this.getDataUser();
+
+        try {
+            let user = await AsyncStorage.getItem('@user');
+            this.setState({
+                userId: JSON.parse(user).id
+            });
+        } catch (e) {
+            console.log(e);
+        }
+
         let tamp = [
             {
                 id: 1,
@@ -61,12 +72,13 @@ class PersonalScreen extends Component {
             },
             {
                 id: 5,
-                name: this.props.user.user ? 'Đăng xuất' : 'Đăng nhập',
-                onPress: this.props.user.user ? 'Welcome' : 'Login',
+                name: this.state.userId ? 'Đăng xuất' : 'Đăng nhập',
+                onPress: this.state.userId ? 'Welcome' : 'Login',
                 icon: require("../../../../assets/icons/logout.png"),
                 navigate: ''
             }
         ];
+
         this.setState({
             listFunction: tamp
         })
@@ -77,7 +89,7 @@ class PersonalScreen extends Component {
             <TouchableOpacity style={styles.functionProfile} onPress={async () => {
                 if (item.onPress === 'Welcome') {
                     try {
-                        this.props.initUser("");
+                        this.props.initUser(null);
                         await AsyncStorage.setItem('@user', '');
                         return this.props.navigation.replace('Welcome');
                     } catch (exception) {
@@ -89,7 +101,7 @@ class PersonalScreen extends Component {
                 }else{
                     this.props.navigation.navigate(item.onPress);
                 }
-                
+
             }}>
                 <Image style={{
                     width: 28,
@@ -99,7 +111,7 @@ class PersonalScreen extends Component {
                     resizeMode={'stretch'}
                     source={item.icon}
                 />
-                <Text style={[styles.textNameFunction, 
+                <Text style={[styles.textNameFunction,
                     // item.id === 5 ? {color: 'red'} : ''
                     ]}>{item.name}</Text>
             </TouchableOpacity>
@@ -121,11 +133,11 @@ class PersonalScreen extends Component {
                             source={require("../../../../assets/images/avt_dummy.png")}
                         />
                         <View style={styles.detailContainer}>
-                            <Text style={styles.textName} numberOfLines={1}>{this.props.user.user.name ? this.props.user.user.name : 'Chưa đăng nhập'}</Text>
+                            <Text style={styles.textName} numberOfLines={1}>{this.state.dataUser ? this.state.dataUser.name : 'Chưa đăng nhập'}</Text>
                             <View>
-                                <Text style={styles.textDetail}>{this.props.user.user ? this.props.user.user.gender == '1' ? "Nam" : "Nữ" : ''}</Text>
-                                <Text style={styles.textDetail}>{this.props.user.user ? 'SĐT: '+this.props.user.user.numberPhone : ''}</Text>
-                                <Text style={styles.textDetail}>{this.props.user.user ? 'Địa chỉ: '+this.props.user.user.address : ''}</Text>
+                                <Text style={styles.textDetail}>{this.state.dataUser ? this.state.dataUser.gender === '1' ? "Nam" : "Nữ" : ''}</Text>
+                                <Text style={styles.textDetail}>{this.state.dataUser ? 'SĐT: '+this.state.dataUser.numberPhone : ''}</Text>
+                                <Text style={styles.textDetail}>{this.state.dataUser ? 'Địa chỉ: '+this.state.dataUser.address : ''}</Text>
                             </View>
                         </View>
                     </View>
