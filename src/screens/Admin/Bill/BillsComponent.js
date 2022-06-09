@@ -7,11 +7,11 @@ import {color_danger, color_primary, color_success} from "../../../utils/theme/C
 import {Icon} from "@rneui/base";
 import AppFAB from "../../../components/AppFAB";
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
-import moment from "moment";
+import moment from "moment/moment";
 import { connect } from "react-redux";
 import {doLoadListContractByRoom} from "../../../redux/actions/contract";
 
-class ContractScreen extends Component{
+class BillsComponent extends Component{
     constructor(props) {
         super(props);
         this.state = {
@@ -19,22 +19,44 @@ class ContractScreen extends Component{
             data: [],
         }
     }
-    viewContractDetail(id){
-        this.props.navigation.navigate("ContractDetail", {
-            id:id
+    viewBillDetails(ID_HDon){
+        this.props.navigation.navigate("BillDetails", {
+            ID_HDon: ID_HDon
         });
     }
 
-    viewAddContract(ID_TK){
-        this.props.navigation.navigate("AddContract",
+    viewAddBill(ID_HD){
+        this.props.navigation.navigate("AddBill",
             {
-                ID_TK:ID_TK,
-                //refresh: () => {this.refresh()}
+                ID_HD: ID_HD,
+                refresh: () => {this.refresh()}
             });
     }
+    deleteBill(ID_HDon) {
+        axios.delete(path + `/deleteBill/${ID_HDon}`)
+            .then((response)=>{
+                if(response.data){
+                    this.setState({
+                        isLoading: true,
+                        data: []
+                    });
+                    this.getBillsData();
+                }
+            })
+            .catch((error => {
+                console.log(error);
+            }));
+    }
 
-    getContractData(){
-        this.props.doLoadListContractByRoom({roomId: 1}).then(data => {
+    updateBill(ID_HDon){
+        this.props.navigation.navigate("UpdateBill", {
+            ID_HDon: ID_HDon,
+            refresh: () => {this.refresh()}
+        });
+    }
+
+    getBillsData(){
+        this.props.doLoadListBillByContract({contractId: 1}).then(data => {
             this.setState({
                 data: data
             })
@@ -42,38 +64,17 @@ class ContractScreen extends Component{
         console.log(this.state.data);
     }
 
-
-    // deleteContract(ID_HD) {
-    //     axios.delete(path + `/deleteContract/${ID_HD}`)
-    //         .then((response)=>{
-    //             if(response.data){
-    //                 this.setState({
-    //                     isLoading: true,
-    //                     data: []
-    //                 });
-    //                 this.getContractData();
-    //             }
-    //         })
-    //         .catch((error => {
-    //             console.log(error);
-    //         }));
-    // }
     componentDidMount() {
-        this.getContractData();
-
-        this.focusEventListener = this.props.navigation.addListener(
-            'didFocus',
-            () => {
-                this.getContractData();
-            }
-        )
+        this.getBillsData();
     }
 
-    // refresh(){
-    //     this.getContractData();
-    // }
+    refresh(){
+        this.getBillsData();
+    }
+
 
     _renderItem = ({item, index}) => {
+
         return(
             <View
                 style={[
@@ -100,7 +101,7 @@ class ContractScreen extends Component{
                         ]}
                     >
                         <Icon
-                            name= {"file-contract"}
+                            name= {"file-invoice-dollar"}
                             type='font-awesome-5'
                             size={32}
                             color={'white'}
@@ -115,7 +116,7 @@ class ContractScreen extends Component{
                                 text_color.primary
                             ]}
                         >
-                            Mã HĐ: {item.id}
+                            Hóa đơn: {item.Ten_HD}
                         </Text>
                         <View
                             style={[
@@ -127,16 +128,16 @@ class ContractScreen extends Component{
                                 name= {"calendar-day"}
                                 type='font-awesome-5'
                                 size={16}
-                                color={new Date(item.ThoiHan).getTime() < new Date().getTime() ? color_danger : color_primary}
+                                color={color_primary}
                             />
                             <Text
                                 style={[
                                     text_size.xs,
                                     font.serif,
-                                    {marginLeft: 10, color: new Date(item.ThoiHan).getTime() < new Date().getTime() ? color_danger : 'black'}
+                                    {marginLeft: 10}
                                 ]}
                             >
-                                Thời hạn: {moment(item.ThoiHan).format('DD-MM-YYYY')}
+                                Ngày Thu: {moment(item.NgayThuTien).format('DD-MM-YYYY')}
                             </Text>
                         </View>
                         <View
@@ -158,7 +159,7 @@ class ContractScreen extends Component{
                                     {marginLeft: 5}
                                 ]}
                             >
-                                {item.TinhTrang == 0 ? "Chưa được duyệt" : "Đã được duyệt"}
+                                {item.TinhTrang == 0 ? "Chưa thanh toán" : "Đã thanh toán"}
                             </Text>
                         </View>
                     </View>
@@ -172,7 +173,7 @@ class ContractScreen extends Component{
                         style={[
                             {marginRight: 10}
                         ]}
-                        onPress={() => this.deleteContract(item.ID_HD)}
+                        onPress={() => item.TinhTrang == 0 ? this.deleteBill(item.ID_HDon) : ""}
                     >
                         <Icon
                             name= {"trash-alt"}
@@ -182,7 +183,20 @@ class ContractScreen extends Component{
                         />
                     </TouchableOpacity>
                     <TouchableOpacity
-                        onPress={() => this.viewContractDetail(item.id)}
+                        style={[
+                            {marginRight: 10}
+                        ]}
+                        onPress={() => this.updateBill(item.ID_HDon)}
+                    >
+                        <Icon
+                            name= {"pencil-alt"}
+                            type='font-awesome-5'
+                            size={item.TinhTrang == 0 ? 22 : 0}
+                            color={item.TinhTrang == 0 ? color_success : "transparent"}
+                        />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        onPress={() => this.viewBillDetails(item.ID_HDon)}
                     >
                         <Icon
                             name= {"eye"}
@@ -221,7 +235,7 @@ class ContractScreen extends Component{
                         name = 'plus'
                         size = {20}
                         color = {'white'}
-                        onPress = { () => this.viewAddContract(1) }
+                        onPress = { () => this.viewAddBill(1) }
                     />
                 </View>
                 <FlatList data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()}/>
@@ -229,13 +243,12 @@ class ContractScreen extends Component{
         )
     }
 }
-
-const mapStateToProps = ({listContractByRoom}) => {
-    return {listContractByRoom};
+const mapStateToProps = ({listBillByContract}) => {
+    return {listBillByContract};
 };
 
 const mapDispatchToProps = {
-    doLoadListContractByRoom
+    doLoadListBillByContract
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ContractScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(BillsComponent)
