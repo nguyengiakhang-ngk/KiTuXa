@@ -23,15 +23,7 @@ class PersonalScreen extends Component {
         };
     }
 
-    getDataUser = async () => {
-        let user = JSON.parse(await AsyncStorage.getItem('@user'));
-        this.setState({
-            dataUser: user
-        })
-    }
-
     componentDidMount() {
-        console.log(this.props.user);
         let tamp = [
             {
                 id: 1,
@@ -44,7 +36,8 @@ class PersonalScreen extends Component {
                 id: 2,
                 name: 'Chuyển sang giao diện Admin',
                 onPress: 'HomeScreen',
-                icon: require("../../../../assets/icons/admin.png")
+                icon: require("../../../../assets/icons/admin.png"),
+                params: this.props.user.user
             },
             {
                 id: 3,
@@ -87,7 +80,8 @@ class PersonalScreen extends Component {
                 }else if(item.onPress === 'Login'){
                     this.props.navigation.replace('Login');
                 }else{
-                    this.props.navigation.navigate(item.onPress);
+                    console.log(item.params);
+                    this.props.navigation.navigate(item.onPress, {params: item.params});
                 }
                 
             }}>

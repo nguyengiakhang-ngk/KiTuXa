@@ -31,3 +31,19 @@ export const DELETE_FREE_SERVICE_FAIL = 'delete_free_service_fail';
 export const SIGN_UP = 'sign_up';
 export const SIGN_UP_SUCCESS = 'sign_up_success';
 export const SIGN_UP_ERROR = 'sign_up_error';
+
+export const GET_LIST_CONTRACT_BY_USER = 'get_list_contract_by_user';
+export const GET_LIST_CONTRACT_BY_USER_SUCCESS = 'get_list_contract_by_user_success';
+export const GET_LIST_CONTRACT_BY_USER_FAIL = 'get_list_contract_by_user_error';
+
+export const GET_LIST_CONTRACT_BY_ROOM = 'get_list_contract_by_room';
+export const GET_LIST_CONTRACT_BY_ROOM_SUCCESS = 'get_list_contract_by_room_success';
+export const GET_LIST_CONTRACT_BY_ROOM_FAIL = 'get_list_contract_by_room_error';
+
+export const GET_LIST_CONTRACT_BY_ID = 'get_list_contract_by_id';
+export const GET_LIST_CONTRACT_BY_ID_SUCCESS = 'get_list_contract_by_id_success';
+export const GET_LIST_CONTRACT_BY_ID_FAIL = 'get_list_contract_by_id_error';
+
+export const GET_BILL_BY_CONTRACT = 'get_bill_by_contract';
+export const GET_BILL_BY_CONTRACT_SUCCESS = 'get_bill_by_contract_success';
+export const GET_BILL_BY_CONTRACT_FAIL = 'get_bill_by_contract_error';

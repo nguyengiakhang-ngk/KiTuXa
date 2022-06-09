@@ -124,6 +124,9 @@ export const width = StyleSheet.create({
     },
     w_25: {
         width: '25%'
+    },
+    w_95: {
+        width: '95%'
     }
 });
 

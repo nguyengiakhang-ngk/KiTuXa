@@ -49,6 +49,7 @@ class SignUpScreen extends Component{
         this.props.doSignUp(values).then(data => {
             if(data){
                 alert("Đăng ký thành công!");
+                this.props.navigation.replace('Login');
             }else{
                 alert("Đăng ký thất bại! Vui lòng thử lại!");
             }
@@ -62,7 +63,7 @@ class SignUpScreen extends Component{
                 style={{ flex: 1}} contentContainerStyle={{ flexGrow: 1 }}
             >
                 <Formik
-                    initialValues={{name: '', yearOfBirth: '', gender: 1, address: '', identityNumber: '', numberPhone: '', password: '', rePass: ''}}
+                    initialValues={{name: '', yearOfBirth: '', gender: 1, address: '', identityNumber: '', numberPhone: '', password: '', rePass: '', permission: 0}}
                     validationSchema={SignupSchema}
                     onSubmit={values => {
                         this.signUp(values);

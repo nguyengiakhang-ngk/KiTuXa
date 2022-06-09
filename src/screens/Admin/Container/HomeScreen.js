@@ -20,6 +20,9 @@ class HomeScreen extends Component{
 
     constructor(props) {
         super(props);
+        this.state = {
+            user: this.props.route.params.params
+        }
     }
 
     routeScreen = (title) => {
@@ -66,9 +69,7 @@ class HomeScreen extends Component{
                                 ]}
                         >
                             <Image
-                                source=
-                                       {{
-                                           uri:'https://znews-photo.zadn.vn/w660/Uploaded/mdf_vsxrlu/2021_01_22/meo_3_2.jpg'}}
+                                source={require("../../../../assets/images/avt_dummy.png")}
                                 style={{
                                     width: 80,
                                     height: 80,
@@ -89,7 +90,7 @@ class HomeScreen extends Component{
                                             font_weight.bold
                                         ]}
                                 >
-                                    Nguyễn ABC ABC
+                                    {this.state.user.name}
                                 </Text>
                                 <Text
                                     style=
@@ -320,7 +321,7 @@ class HomeScreen extends Component{
 
 const mapStateToProps = ({user}) => {
     // alert(JSON.stringify(user));
-    return user;
+    return {user};
 };
 
 const mapDispatchToProps = {

@@ -22,12 +22,28 @@ import TabScreenService from "./TabScreenService";
 import TabUserScreen from "./TabUserScreen";
 import UpdateRoomTypeScreen from "../screens/Admin/RoomType/UpdateRoomTypeScreen";
 import SignUpScreen from "../screens/Authentication/SignUpScreen";
-import ContractScreen from '../screens/Admin/Contract/ContractScreen';
-import AddContract from '../screens/Admin/Contract/AddContract';
 import BookTicket from '../screens/User/Container/BookTicket';
 import SavedRoom from '../screens/User/Container/SavedRoomScreen';
 import RoomBookedListScreen from '../screens/User/RoomBooked/RoomBookedListScreen';
-import HomeScreen from '../screens/Admin/Container/HomeScreen'
+import HomeScreen from '../screens/Admin/Container/HomeScreen';
+
+//Contract
+import ContractScreen from '../screens/Admin/Contract/ContractScreen';
+import AddContract from '../screens/Admin/Contract/AddContract';
+import ContractTerms from "../screens/Admin/Contract/ContractTerms";
+import ContractDetail from "../screens/Admin/Contract/ContractDetail";
+
+//Bill
+import BillDetails from "../screens/Admin/Bill/BillDetails";
+import AddBill from "../screens/Admin/Bill/AddBill";
+import BillsComponent from "../screens/Admin/Bill/BillsComponent";
+import UpdateBill from "../screens/Admin/Bill/UpdateBill";
+
+//Receipt
+import ReceiptComponent from "../screens/Admin/Receipt/ReceiptComponent";
+import AddReceipt from "../screens/Admin/Receipt/AddReceipt";
+import ReceiptDetails from "../screens/Admin/Receipt/ReceiptDetails";
+import UpdateReceipt from "../screens/Admin/Receipt/UpdateReceipt";
 const Stack = createNativeStackNavigator();
 const StackScreen: () => Node = () => {
 
@@ -110,6 +126,58 @@ const StackScreen: () => Node = () => {
                 <Stack.Screen
                     name="AddContract"
                     component={AddContract}
+                    options={{ headerShown: false }}
+                /><Stack.Screen
+                    name="ContractDetail"
+                    component={ContractDetail}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="ContractTerms"
+                    component={ContractTerms}
+                    options={{ headerShown: false }}
+                />
+
+                {/* Bill */}
+                <Stack.Screen
+                    name="BillsComponent"
+                    component={BillsComponent}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="BillDetails"
+                    component={BillDetails}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="AddBill"
+                    component={AddBill}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="UpdateBill"
+                    component={UpdateBill}
+                    options={{ headerShown: false }}
+                />
+                {/* Receipt */}
+                <Stack.Screen
+                    name="ReceiptComponent"
+                    component={ReceiptComponent}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="AddReceipt"
+                    component={AddReceipt}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="ReceiptDetails"
+                    component={ReceiptDetails}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="UpdateReceipt"
+                    component={UpdateReceipt}
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
