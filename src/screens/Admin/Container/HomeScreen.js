@@ -376,6 +376,28 @@ class HomeScreen extends Component {
                             color={'white'}
                             colorText={'black'}
                             label={'Hóa đơn vật chất'}
+                            onPress={() => this.routeScreen("billmaterial")}
+                        />
+                    </View>
+                    <View
+                        style={[
+                            {
+                                width: '33.3%',
+                                paddingRight: 0.5,
+                                paddingLeft: 0.5,
+                                paddingTop: 10,
+                                paddingBottom: 5
+                            }
+                        ]}
+                    >
+                        <AppItemHome
+                            bg={'red'}
+                            name='bug'
+                            size={30}
+                            color={'white'}
+                            colorText={'black'}
+                            label={'Nhập vật chất'}
+                            onPress={() => this.routeScreen("inputmaterial")}
                         />
                     </View>
                 </View>

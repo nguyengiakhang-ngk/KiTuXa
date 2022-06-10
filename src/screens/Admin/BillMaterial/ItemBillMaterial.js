@@ -1,11 +1,14 @@
 import { background_color, flex, font, text_size, width } from "../../../utils/styles/MainStyle";
-import { color_danger } from "../../../utils/theme/Color";
+import { color_danger, color_primary } from "../../../utils/theme/Color";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { Icon } from "@rneui/base";
 import TableDateCustom from "../../../components/TableDate";
 
-const ItemBillMaterial = ({ item }) => {
+const ItemBillMaterial = ({ item, navigation }) => {
+    const view = () => {
+        navigation.navigate("billmaterialview", { id: item.id })
+    }
     return (
         <View
             style={[
@@ -17,7 +20,6 @@ const ItemBillMaterial = ({ item }) => {
                 },
                 background_color.light,
                 flex.flex_row,
-                flex.justify_content_between,
                 flex.align_items_center
             ]}
         >
@@ -32,33 +34,27 @@ const ItemBillMaterial = ({ item }) => {
                     Tổng tiền: {item.total} VNĐ
                 </Text>
             </View>
-            <View>
-                <Text
-                    style={[
-                        text_size.xs,
-                        font.serif,
-                        { marginLeft: 4, marginBottom: -1 }
-                    ]}
-                >
-                    <TableDateCustom date={item.createdAt} />
-                </Text>
-            </View>
             <View
                 style={[
-                    flex.flex_row
+                    flex.flex_row,
+                    flex.align_items_center,
+                    { marginLeft: "auto" }
                 ]}
             >
+                <View style={{ marginRight: 10 }}>
+                    <TableDateCustom date={item.createdAt} />
+                </View>
                 <TouchableOpacity
                     style={[
                         { marginRight: 10 }
                     ]}
-                    onPress={() => onDelete(item)}
+                    onPress={() => view()}
                 >
                     <Icon
-                        name={"trash-alt"}
+                        name={"eye"}
                         type='font-awesome-5'
                         size={22}
-                        color={color_danger}
+                        color={color_primary}
                     />
                 </TouchableOpacity>
             </View>
