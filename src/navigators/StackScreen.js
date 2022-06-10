@@ -48,6 +48,10 @@ import MaterialType from '../screens/Admin/MaterialType/MaterialType';
 import MaterialTypeAdd from '../screens/Admin/MaterialType/MaterialTypeAdd';
 import MaterialTypeView from '../screens/Admin/MaterialType/MaterialView';
 import Material from '../screens/Admin/Material/Material';
+import MaterialAdd from '../screens/Admin/Material/MaterialAdd';
+import MaterialView from '../screens/Admin/Material/MaterialView';
+import InputMaterial from '../screens/Admin/InputMaterial/InputMaterial';
+import BillMaterial from '../screens/Admin/BillMaterial/BIllMaterial';
 const Stack = createNativeStackNavigator();
 const StackScreen: () => Node = () => {
 
@@ -215,8 +219,28 @@ const StackScreen: () => Node = () => {
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
+                    name="materialview"
+                    component={MaterialView}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="materialadd"
+                    component={MaterialAdd}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
                     name="material"
                     component={Material}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="inputmaterial"
+                    component={InputMaterial}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="billmaterial"
+                    component={BillMaterial}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

@@ -13,11 +13,12 @@ import { color_danger, color_success } from "../../../utils/theme/Color";
 import { Icon } from "@rneui/base";
 import { PATH } from '../../../constant/define';
 import TableDateCustom from '../../../components/TableDate';
+import { materialAPI } from '../../../api/material.api';
 const ItemMaterial = ({ item, callback, navigation }) => {
 
     const confirmDelete = () => {
         Alert.alert(
-            "Loại vật chất",
+            "Vật chất",
             `Bạn có chắc muốn xóa ${item.name} ?`,
             [
                 {
@@ -31,23 +32,21 @@ const ItemMaterial = ({ item, callback, navigation }) => {
     }
 
     const viewEdit = () => {
-        navigation.navigate("materialtypeview", { id: item.id })
+        navigation.navigate("materialview", { id: item.id })
     }
 
     const handleDelete = async () => {
         try {
-            const { data } = await materialTypeAPI.delete(item.id)
+            const { data } = await materialAPI.delete(item?.id);
             if (data.status) {
-                Alert.alert("Xóa thành công!")
+                Alert.alert("Xóa thành công !")
                 callback();
-                uploadAPI.removeImage(item.media, "materialType")
             } else {
-                Alert.alert("Xóa thất bại !");
+                Alert.alert("Xóa thất bại !")
             }
         } catch (error) {
             Alert.alert(error.message)
         }
-        return false
     }
 
     return (

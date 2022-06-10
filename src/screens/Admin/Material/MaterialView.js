@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+    Alert,
     Image,
     ScrollView, Text, TouchableOpacity, View
 } from 'react-native';
@@ -17,34 +18,73 @@ import { color_primary, color_success } from "../../../utils/theme/Color";
 import AppButtonActionInf from "../../../components/AppButtonActionInf";
 import FormInput from '../../../components/FormInput';
 import { uploadAPI } from '../../../api/uploadAPI';
-import { materialTypeAPI } from "../../../api/material-type.api"
+import { materialTypeAPI } from "../../../api/material-type.api";
+import { materialAPI } from "../../../api/material.api";
 import FormSelect from '../../../components/FormSelect';
-const MaterialTypeAdd = ({ navigation }) => {
+import { PATH } from '../../../constant/define';
+const initMaterial = {
+    idMaterialType: "",
+    name: "",
+    media: "",
+}
 
-    const initMaterialType = {
-        name: "",
-        media: "",
+const MaterialView = ({ navigation, route }) => {
+    const { id } = route.params;
+    const [materialTypes, setMaterialTypes] = useState([]);
+    const [material, setMaterial] = useState(initMaterial);
+    const [image, setImage] = useState();
+    const [file, setFile] = useState();
+    const [isChangeFile, setIsChangeFile] = useState(false);
+
+    const uploadFile = async () => {
+        const { data } = await uploadAPI.uploadImage(file, "material");
+        return data
     }
-    const [materialType, setMaterialType] = useState(initMaterialType);
-    const [image, setImage] = useState()
-    const [file, setFile] = useState()
 
-    const handleAdd = async () => {
+    const fetchMaterial = async () => {
+        try {
+            const { data } = await materialAPI.getById(id);
+            setMaterial({
+                ...data,
+                nameOld: data.name
+            })
+
+            setImage(PATH.MATERIAL + data.media)
+        } catch (error) {
+            Alert.alert(error.message)
+        }
+    }
+
+    const checkValue = () => {
+        if (material?.idMaterialType.length === 0) {
+            Alert.alert("Vui lòng chọn loại vật chất !");
+            return false
+        }
+        if (material?.name.length === 0) {
+            Alert.alert("Vui lòng nhập tên vật chất !");
+            return false
+        }
+        return true
+    }
+
+    const submit = async () => {
         try {
             if (checkValue()) {
-                const upload = await uploadImage();
-                if (upload?.name) {
-                    const { data } = await materialTypeAPI.add({
-                        ...materialType,
-                        media: upload?.name
-                    })
-                    if (data?.error) {
-                        alert(data.message)
-                        await uploadAPI.removeImage(upload?.name, "material");
-                    } else {
-                        alert("Thêm thành công!");
-                        navigation.goBack();
+                let payload = material;
+                if (isChangeFile) {
+                    const upload = await uploadFile();
+                    if (upload?.name) {
+                        uploadAPI.removeImage(material.media, "material");
+                        payload = { ...payload, media: upload.name };
                     }
+                }
+                payload = { ...payload, updatedAt: new Date() }
+                const { data } = await materialAPI.update(payload);
+                if (data?.error) {
+                    Alert.alert(data.message)
+                } else {
+                    Alert.alert("Cập nhật thành công !");
+                    navigation.goBack()
                 }
             }
         } catch (error) {
@@ -52,27 +92,23 @@ const MaterialTypeAdd = ({ navigation }) => {
         }
     }
 
-    const checkValue = () => {
-        if (!file) {
-            alert("Vui lòng chọn hình ảnh !");
-            return false
+    const fetchMaterialType = async () => {
+        try {
+            const { data } = await materialTypeAPI.get();
+            let tmp = [];
+            data.forEach(item => {
+                tmp.push({ key: item.id, label: item.name })
+            })
+            setMaterialTypes(tmp);
+        } catch (error) {
+            alert(error.message);
         }
-        if (materialType.name.length === 0) {
-            alert("Vui lòng nhập tên !")
-            return false
-        }
-        return true
     }
 
-    const uploadImage = async () => {
-        try {
-            const { data } = await uploadAPI.uploadImage(file);
-            return data;
-        } catch (error) {
-            alert(error.message)
-            return
-        }
-    }
+    navigation.addListener('focus', () => {
+        fetchMaterialType();
+        fetchMaterial();
+    });
 
     const chooseImage = () => {
         ImagePicker.openPicker({
@@ -92,7 +128,15 @@ const MaterialTypeAdd = ({ navigation }) => {
                 name: res.filename || "tmp.png",
             }
             setFile(file)
+            setIsChangeFile(true)
         }).catch(error => alert('Error: ', error.message));
+    }
+
+    const onChangeMaterialType = (option) => {
+        setMaterial({
+            ...material,
+            idMaterialType: option.key
+        })
     }
 
     return (
@@ -108,7 +152,8 @@ const MaterialTypeAdd = ({ navigation }) => {
                 style={{ flex: 1, padding: 10 }} contentContainerStyle={{ flexGrow: 1 }}
                 nestedScrollEnabled
             >
-                <FormInput lable={"Tên loại vật chất"} value={materialType.name} onChangeText={e => setMaterialType({ ...materialType, name: e })} />
+                <FormSelect label='Loại vật chất' data={materialTypes} onChange={onChangeMaterialType} selectedKey={material.idMaterialType} />
+                <FormInput lable={"Tên vật chất"} value={material.name} onChangeText={e => setMaterial({ ...material, name: e })} />
                 <View
                     style={[
                         width.w_100,
@@ -171,8 +216,8 @@ const MaterialTypeAdd = ({ navigation }) => {
                         size={10}
                         textSize={16}
                         bg={color_primary}
-                        onPress={handleAdd}
-                        title="Thêm"
+                        onPress={submit}
+                        title="Cập nhật"
                     />
                 </View>
             </ScrollView>
@@ -181,4 +226,4 @@ const MaterialTypeAdd = ({ navigation }) => {
     )
 }
 
-export default MaterialTypeAdd
+export default MaterialView

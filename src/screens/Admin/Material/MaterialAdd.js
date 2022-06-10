@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+    Alert,
     Image,
     ScrollView, Text, TouchableOpacity, View
 } from 'react-native';
@@ -17,62 +18,84 @@ import { color_primary, color_success } from "../../../utils/theme/Color";
 import AppButtonActionInf from "../../../components/AppButtonActionInf";
 import FormInput from '../../../components/FormInput';
 import { uploadAPI } from '../../../api/uploadAPI';
-import { materialTypeAPI } from "../../../api/material-type.api"
+import { materialTypeAPI } from "../../../api/material-type.api";
+import { materialAPI } from "../../../api/material.api";
 import FormSelect from '../../../components/FormSelect';
-const MaterialTypeAdd = ({ navigation }) => {
+const initMaterial = {
+    idMaterialType: "",
+    name: "",
+    media: "",
+}
 
-    const initMaterialType = {
-        name: "",
-        media: "",
-    }
-    const [materialType, setMaterialType] = useState(initMaterialType);
-    const [image, setImage] = useState()
-    const [file, setFile] = useState()
+const MaterialAdd = ({ navigation }) => {
 
-    const handleAdd = async () => {
-        try {
-            if (checkValue()) {
-                const upload = await uploadImage();
-                if (upload?.name) {
-                    const { data } = await materialTypeAPI.add({
-                        ...materialType,
-                        media: upload?.name
-                    })
-                    if (data?.error) {
-                        alert(data.message)
-                        await uploadAPI.removeImage(upload?.name, "material");
-                    } else {
-                        alert("Thêm thành công!");
-                        navigation.goBack();
-                    }
-                }
-            }
-        } catch (error) {
-            alert(error.message)
-        }
+    const [materialTypes, setMaterialTypes] = useState([]);
+    const [material, setMaterial] = useState(initMaterial);
+    const [image, setImage] = useState();
+    const [file, setFile] = useState();
+
+    const uploadFile = async () => {
+        const { data } = await uploadAPI.uploadImage(file, "material");
+        return data
     }
 
     const checkValue = () => {
         if (!file) {
-            alert("Vui lòng chọn hình ảnh !");
+            Alert.alert("Vui lòng chọn hình ảnh !");
             return false
         }
-        if (materialType.name.length === 0) {
-            alert("Vui lòng nhập tên !")
+        if (material?.idMaterialType.length === 0) {
+            Alert.alert("Vui lòng chọn loại vật chất !");
+            return false
+        }
+        if (material?.name.length === 0) {
+            Alert.alert("Vui lòng nhập tên vật chất !");
             return false
         }
         return true
     }
 
-    const uploadImage = async () => {
+    const handleAdd = async () => {
         try {
-            const { data } = await uploadAPI.uploadImage(file);
-            return data;
+            if (checkValue()) {
+                const upload = await uploadFile();
+                if (upload?.name) {
+                    const { data } = await materialAPI.add({
+                        ...material,
+                        media: upload.name
+                    });
+                    if (data?.error) {
+                        Alert.alert(data.message)
+                        await uploadAPI.removeImage(upload?.name, "material");
+                    } else {
+                        Alert.alert("Thêm thành công !");
+                        navigation.goBack();
+                    }
+                } else {
+                    Alert.alert("Upload file thất bại !");
+                }
+            }
         } catch (error) {
-            alert(error.message)
-            return
+            Alert.alert(error.message)
         }
     }
+
+    const fetchMaterialType = async () => {
+        try {
+            const { data } = await materialTypeAPI.get();
+            let tmp = [];
+            data.forEach(item => {
+                tmp.push({ key: item.id, label: item.name })
+            })
+            setMaterialTypes(tmp);
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    navigation.addListener('focus', () => {
+        fetchMaterialType();
+    });
 
     const chooseImage = () => {
         ImagePicker.openPicker({
@@ -95,6 +118,13 @@ const MaterialTypeAdd = ({ navigation }) => {
         }).catch(error => alert('Error: ', error.message));
     }
 
+    const onChangeMaterialType = (option) => {
+        setMaterial({
+            ...material,
+            idMaterialType: option.key
+        })
+    }
+
     return (
         <SafeAreaView
             style={[
@@ -108,7 +138,8 @@ const MaterialTypeAdd = ({ navigation }) => {
                 style={{ flex: 1, padding: 10 }} contentContainerStyle={{ flexGrow: 1 }}
                 nestedScrollEnabled
             >
-                <FormInput lable={"Tên loại vật chất"} value={materialType.name} onChangeText={e => setMaterialType({ ...materialType, name: e })} />
+                <FormSelect label='Loại vật chất' data={materialTypes} onChange={onChangeMaterialType} />
+                <FormInput lable={"Tên vật chất"} value={material.name} onChangeText={e => setMaterial({ ...material, name: e })} />
                 <View
                     style={[
                         width.w_100,
@@ -181,4 +212,4 @@ const MaterialTypeAdd = ({ navigation }) => {
     )
 }
 
-export default MaterialTypeAdd
+export default MaterialAdd
