@@ -44,6 +44,10 @@ import ReceiptComponent from "../screens/Admin/Receipt/ReceiptComponent";
 import AddReceipt from "../screens/Admin/Receipt/AddReceipt";
 import ReceiptDetails from "../screens/Admin/Receipt/ReceiptDetails";
 import UpdateReceipt from "../screens/Admin/Receipt/UpdateReceipt";
+import MaterialType from '../screens/Admin/MaterialType/MaterialType';
+import MaterialTypeAdd from '../screens/Admin/MaterialType/MaterialTypeAdd';
+import MaterialTypeView from '../screens/Admin/MaterialType/MaterialView';
+import Material from '../screens/Admin/Material/Material';
 const Stack = createNativeStackNavigator();
 const StackScreen: () => Node = () => {
 
@@ -193,6 +197,26 @@ const StackScreen: () => Node = () => {
                 <Stack.Screen
                     name="RoomBookedList"
                     component={RoomBookedListScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="materialtypeview"
+                    component={MaterialTypeView}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="materialtypeadd"
+                    component={MaterialTypeAdd}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="materialtype"
+                    component={MaterialType}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="material"
+                    component={Material}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

@@ -100,7 +100,6 @@ class PersonalScreen extends Component {
                 }else if(item.onPress === 'Login'){
                     this.props.navigation.replace('Login');
                 }else{
-                    console.log(item.params);
                     this.props.navigation.navigate(item.onPress, {params: item.params});
                 }
 
