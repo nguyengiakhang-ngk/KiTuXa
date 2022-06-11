@@ -400,6 +400,27 @@ class HomeScreen extends Component {
                             onPress={() => this.routeScreen("inputmaterial")}
                         />
                     </View>
+                    <View
+                        style={[
+                            {
+                                width: '33.3%',
+                                paddingRight: 0.5,
+                                paddingLeft: 0.5,
+                                paddingTop: 10,
+                                paddingBottom: 5
+                            }
+                        ]}
+                    >
+                        <AppItemHome
+                            bg={'red'}
+                            name='bug'
+                            size={30}
+                            color={'white'}
+                            colorText={'black'}
+                            label={'Quét QR Code'}
+                            onPress={() => this.routeScreen("qrcode")}
+                        />
+                    </View>
                 </View>
             </SafeAreaView>
         );

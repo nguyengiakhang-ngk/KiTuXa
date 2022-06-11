@@ -1,7 +1,5 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Image, Alert, } from 'react-native';
-import { materialTypeAPI } from '../../../api/material-type.api';
-import { uploadAPI } from '../../../api/uploadAPI';
 import {
     background_color,
     flex,
@@ -9,7 +7,7 @@ import {
     text_size,
     width
 } from "../../../utils/styles/MainStyle";
-import { color_danger, color_success } from "../../../utils/theme/Color";
+import { color_danger, color_primary, color_success } from "../../../utils/theme/Color";
 import { Icon } from "@rneui/base";
 import { PATH } from '../../../constant/define';
 import TableDateCustom from '../../../components/TableDate';
@@ -29,6 +27,10 @@ const ItemMaterial = ({ item, callback, navigation }) => {
                     text: "Đóng",
                 },
             ])
+    }
+
+    const viewDetail = () => {
+        navigation.navigate("detailmaterial", { id: item.id })
     }
 
     const viewEdit = () => {
@@ -88,6 +90,32 @@ const ItemMaterial = ({ item, callback, navigation }) => {
                 ]}
             >
                 <TouchableOpacity
+                    onPress={viewDetail}
+                    style={{
+                        marginRight: 5
+                    }}
+                >
+                    <Icon
+                        name={"eye"}
+                        type='font-awesome-5'
+                        size={22}
+                        color={color_primary}
+                    />
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={{
+                        marginRight: 5
+                    }}
+                    onPress={viewEdit}
+                >
+                    <Icon
+                        name={"pencil-alt"}
+                        type='font-awesome-5'
+                        size={22}
+                        color={color_success}
+                    />
+                </TouchableOpacity>
+                <TouchableOpacity
                     style={[
                         { marginRight: 10 }
                     ]}
@@ -98,16 +126,6 @@ const ItemMaterial = ({ item, callback, navigation }) => {
                         type='font-awesome-5'
                         size={22}
                         color={color_danger}
-                    />
-                </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={viewEdit}
-                >
-                    <Icon
-                        name={"pencil-alt"}
-                        type='font-awesome-5'
-                        size={22}
-                        color={color_success}
                     />
                 </TouchableOpacity>
             </View>

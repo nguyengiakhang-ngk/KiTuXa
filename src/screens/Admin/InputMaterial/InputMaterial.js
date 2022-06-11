@@ -9,11 +9,9 @@ import ItemInputMaterial from "./ItemInputMaterial";
 import { formatMoney } from "../../../helps/formatMoney";
 import { font, font_weight, text_size } from "../../../utils/styles/MainStyle";
 import { billMaterialAPI } from "../../../api/bill-material.api";
-import QRCode from "qrcode";
 import { uploadAPI } from "../../../api/uploadAPI";
 import RNQRGenerator from 'rn-qr-generator';
 const InputMaterial = ({ navigation }) => {
-    const [loading, setLoading] = useState(false);
     const [statuses, setStatuses] = useState([]);
     const [materials, setMaterials] = useState([]);
     const [data, setData] = useState([]);
@@ -75,6 +73,7 @@ const InputMaterial = ({ navigation }) => {
     navigation.addListener('focus', () => {
         fetchStatus()
         fetchMaterial();
+        setData([]);
     });
 
     const checkValue = () => {
@@ -149,13 +148,12 @@ const InputMaterial = ({ navigation }) => {
                             qr: ""
                         }
                         await RNQRGenerator.generate({
-                            value: 'https://github.com/gevgasparyan/rn-qr-generator',
+                            value: detailMaterial.id,
                             height: 300,
                             width: 300,
                         })
                             .then(async (response) => {
                                 const { uri, width, height, base64 } = response;
-                                console.log(response);
                                 const file = {
                                     uri: uri,
                                     type: "image/png",

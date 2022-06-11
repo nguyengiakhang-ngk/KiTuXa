@@ -53,6 +53,9 @@ import MaterialView from '../screens/Admin/Material/MaterialView';
 import InputMaterial from '../screens/Admin/InputMaterial/InputMaterial';
 import BillMaterial from '../screens/Admin/BillMaterial/BIllMaterial';
 import BillMaterialView from '../screens/Admin/BillMaterial/BillMaterialView';
+import QRCode from '../screens/Admin/QRCode/QRCode';
+import DetailMaterial from '../screens/Admin/DetailMaterial/DetailMaterial';
+import DetailMaterialView from '../screens/Admin/DetailMaterial/DetailMaterialView';
 const Stack = createNativeStackNavigator();
 const StackScreen: () => Node = () => {
 
@@ -235,6 +238,16 @@ const StackScreen: () => Node = () => {
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
+                    name="detailmaterialview"
+                    component={DetailMaterialView}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="detailmaterial"
+                    component={DetailMaterial}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
                     name="inputmaterial"
                     component={InputMaterial}
                     options={{ headerShown: false }}
@@ -247,6 +260,11 @@ const StackScreen: () => Node = () => {
                 <Stack.Screen
                     name="billmaterial"
                     component={BillMaterial}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="qrcode"
+                    component={QRCode}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>
