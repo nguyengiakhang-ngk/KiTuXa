@@ -13,7 +13,7 @@ const QRCode = ({ navigation }) => {
     const [id, setId] = useState("");
     const onView = () => {
         if (id !== "") {
-            navigation.navigate("", { id });
+            navigation.navigate("detailmaterialview", { id });
         } else {
             alert("Không nhận diện được mã qr !");
         }
