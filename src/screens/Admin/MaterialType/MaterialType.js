@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, View } from 'react-native';
+import { FlatList, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { materialTypeAPI } from '../../../api/material-type.api';
 import AppFAB from '../../../components/AppFAB';
+import Header from '../../../components/Header';
 import {
     background_color,
     height,
@@ -34,12 +35,9 @@ const MaterialType = ({ navigation }) => {
     }
     return (
         <SafeAreaView
-            style={[
-                { flex: 1, padding: 2, paddingLeft: 10, paddingRight: 10, paddingBottom: 15 },
-                height.h_100,
-                position.relative,
-                background_color.white
-            ]}
+            style={{
+                height: "100%"
+            }}
         >
             <View
                 style={[
@@ -59,7 +57,12 @@ const MaterialType = ({ navigation }) => {
                     onPress={viewAdd}
                 />
             </View>
-            <FlatList data={materialTypes} renderItem={({ item }) => <ItemMaterialType item={item} callback={fetchMaterialType} navigation={navigation} />} keyExtractor={(item, index) => index.toString()} />
+            <Header>Loại vật chất ({materialTypes.length})</Header>
+            <ScrollView style={{
+                padding: 10
+            }}>
+                <FlatList data={materialTypes} renderItem={({ item }) => <ItemMaterialType item={item} callback={fetchMaterialType} navigation={navigation} />} keyExtractor={(item, index) => index.toString()} />
+            </ScrollView>
         </SafeAreaView>
     )
 }

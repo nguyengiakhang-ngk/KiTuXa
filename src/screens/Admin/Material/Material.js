@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, View } from 'react-native';
+import { FlatList, ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { materialTypeAPI } from '../../../api/material-type.api';
 import ModalSelector from 'react-native-modal-selector';
@@ -13,6 +13,7 @@ import {
 import { color_primary } from "../../../utils/theme/Color";
 import ItemMaterial from './ItemMaterial';
 import FormSelect from '../../../components/FormSelect';
+import Header from '../../../components/Header';
 const initMaterialType = {
     key: "",
     name: "",
@@ -68,12 +69,9 @@ const Material = ({ navigation }) => {
     }
     return (
         <SafeAreaView
-            style={[
-                { flex: 1, padding: 2, paddingLeft: 10, paddingRight: 10, paddingBottom: 15 },
-                height.h_100,
-                position.relative,
-                background_color.white
-            ]}
+            style={{
+                height: "100%"
+            }}
         >
             <View
                 style={[
@@ -93,8 +91,15 @@ const Material = ({ navigation }) => {
                     onPress={viewAdd}
                 />
             </View>
-            <FormSelect label={"Loại vật chất"} data={materialTypes} onChange={onChangeMaterialType} />
-            <FlatList data={materials} renderItem={({ item }) => <ItemMaterial item={item} callback={() => fetchMaterial(initMaterialType)} navigation={navigation} />} keyExtractor={(item, index) => index.toString()} />
+            <Header>Vật chất ({materials.length})</Header>
+            <View style={{ padding: 10 }}>
+                <FormSelect label={"Loại vật chất"} data={materialTypes} onChange={onChangeMaterialType} />
+            </View>
+            <ScrollView style={{
+                padding: 10
+            }}>
+                <FlatList data={materials} renderItem={({ item }) => <ItemMaterial item={item} callback={() => fetchMaterial(initMaterialType)} navigation={navigation} />} keyExtractor={(item, index) => index.toString()} />
+            </ScrollView>
         </SafeAreaView>
     )
 }

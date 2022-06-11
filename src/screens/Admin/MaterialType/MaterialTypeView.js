@@ -20,6 +20,7 @@ import FormInput from '../../../components/FormInput';
 import { uploadAPI } from '../../../api/uploadAPI';
 import { materialTypeAPI } from "../../../api/material-type.api"
 import { PATH } from '../../../constant/define';
+import Header from '../../../components/Header';
 const MaterialTypeView = ({ navigation, route }) => {
     const { id } = route.params;
     const initMaterialType = {
@@ -115,18 +116,9 @@ const MaterialTypeView = ({ navigation, route }) => {
     }
 
     return (
-        <SafeAreaView
-            style={[
-                { flex: 1 },
-                height.h_100,
-                position.relative,
-                background_color.white
-            ]}
-        >
-            <ScrollView
-                style={{ flex: 1, padding: 10 }} contentContainerStyle={{ flexGrow: 1 }}
-                nestedScrollEnabled
-            >
+        <SafeAreaView style={{ height: "100%" }}>
+            <Header>Loại vật chất: {materialType.name}</Header>
+            <ScrollView style={{ padding: 10 }} nestedScrollEnabled>
                 <FormInput lable={"Tên loại vật chất"} value={materialType.name} onChangeText={e => setMaterialType({ ...materialType, name: e })} />
                 <View
                     style={[

@@ -46,7 +46,7 @@ import ReceiptDetails from "../screens/Admin/Receipt/ReceiptDetails";
 import UpdateReceipt from "../screens/Admin/Receipt/UpdateReceipt";
 import MaterialType from '../screens/Admin/MaterialType/MaterialType';
 import MaterialTypeAdd from '../screens/Admin/MaterialType/MaterialTypeAdd';
-import MaterialTypeView from '../screens/Admin/MaterialType/MaterialView';
+import MaterialTypeView from '../screens/Admin/MaterialType/MaterialTypeView';
 import Material from '../screens/Admin/Material/Material';
 import MaterialAdd from '../screens/Admin/Material/MaterialAdd';
 import MaterialView from '../screens/Admin/Material/MaterialView';

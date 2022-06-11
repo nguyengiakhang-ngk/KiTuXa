@@ -329,7 +329,7 @@ class HomeScreen extends Component {
                     >
                         <AppItemHome
                             bg={'red'}
-                            name='bug'
+                            name='artstation'
                             size={30}
                             color={'white'}
                             colorText={'black'}
@@ -349,8 +349,8 @@ class HomeScreen extends Component {
                         ]}
                     >
                         <AppItemHome
-                            bg={'red'}
-                            name='bug'
+                            bg={color_primary}
+                            name='laravel'
                             size={30}
                             color={'white'}
                             colorText={'black'}
@@ -370,8 +370,8 @@ class HomeScreen extends Component {
                         ]}
                     >
                         <AppItemHome
-                            bg={'red'}
-                            name='bug'
+                            bg={'gray'}
+                            name='audible'
                             size={30}
                             color={'white'}
                             colorText={'black'}
@@ -391,8 +391,8 @@ class HomeScreen extends Component {
                         ]}
                     >
                         <AppItemHome
-                            bg={'red'}
-                            name='bug'
+                            bg={'purple'}
+                            name='gg'
                             size={30}
                             color={'white'}
                             colorText={'black'}

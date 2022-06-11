@@ -19,6 +19,7 @@ import FormInput from '../../../components/FormInput';
 import { uploadAPI } from '../../../api/uploadAPI';
 import { materialTypeAPI } from "../../../api/material-type.api"
 import FormSelect from '../../../components/FormSelect';
+import Header from '../../../components/Header';
 const MaterialTypeAdd = ({ navigation }) => {
 
     const initMaterialType = {
@@ -96,18 +97,9 @@ const MaterialTypeAdd = ({ navigation }) => {
     }
 
     return (
-        <SafeAreaView
-            style={[
-                { flex: 1 },
-                height.h_100,
-                position.relative,
-                background_color.white
-            ]}
-        >
-            <ScrollView
-                style={{ flex: 1, padding: 10 }} contentContainerStyle={{ flexGrow: 1 }}
-                nestedScrollEnabled
-            >
+        <SafeAreaView style={{ height: "100%" }}>
+            <Header>Loại vật chất</Header>
+            <ScrollView style={{ padding: 10 }}>
                 <FormInput lable={"Tên loại vật chất"} value={materialType.name} onChangeText={e => setMaterialType({ ...materialType, name: e })} />
                 <View
                     style={[
@@ -176,7 +168,6 @@ const MaterialTypeAdd = ({ navigation }) => {
                     />
                 </View>
             </ScrollView>
-
         </SafeAreaView>
     )
 }

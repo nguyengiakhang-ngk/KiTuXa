@@ -2,16 +2,10 @@ import React, { useState } from 'react';
 import {
     Alert,
     Image,
-    ScrollView, Text, TouchableOpacity, View
+    ScrollView, Text, TouchableOpacity, View, SafeAreaView
 } from 'react-native';
-import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
-import {
-    background_color,
-    flex, font,
-    height, position, text_size,
-    width
-} from "../../../utils/styles/MainStyle";
-
+import { flex, font, text_size, width } from "../../../utils/styles/MainStyle";
+import Header from "../../../components/Header";
 import ImagePicker from 'react-native-image-crop-picker';
 import { Icon } from "@rneui/base";
 import { color_primary, color_success } from "../../../utils/theme/Color";
@@ -140,17 +134,9 @@ const MaterialView = ({ navigation, route }) => {
     }
 
     return (
-        <SafeAreaView
-            style={[
-                { flex: 1 },
-                height.h_100,
-                position.relative,
-                background_color.white
-            ]}
-        >
-            <ScrollView
-                style={{ flex: 1, padding: 10 }} contentContainerStyle={{ flexGrow: 1 }}
-                nestedScrollEnabled
+        <SafeAreaView style={{ height: "100%" }}   >
+            <Header>Vật chất: {material.name}</Header>
+            <ScrollView style={{ padding: 10 }}
             >
                 <FormSelect label='Loại vật chất' data={materialTypes} onChange={onChangeMaterialType} selectedKey={material.idMaterialType} />
                 <FormInput lable={"Tên vật chất"} value={material.name} onChangeText={e => setMaterial({ ...material, name: e })} />
