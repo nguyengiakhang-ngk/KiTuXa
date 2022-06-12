@@ -44,7 +44,7 @@ class ContractDetail extends Component{
     }
 
     getUserData(userId){
-        this.props.doGetUserById({id: userId}).then(data => {
+        this.props.doGetUserById({userId: userId}).then(data => {
             this.setState({
                 dataK: data
             }, () => {console.log(this.state.dataK);})

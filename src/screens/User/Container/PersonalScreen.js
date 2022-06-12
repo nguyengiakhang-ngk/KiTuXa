@@ -8,11 +8,11 @@ import {
     FlatList,
 
 } from 'react-native';
-import {color_dark, color_primary, color_secondary} from "../../../utils/theme/Color";
+import { color_dark, color_primary, color_secondary } from "../../../utils/theme/Color";
 import AsyncStorage from "@react-native-community/async-storage";
-import {doGetUser, doLogin, initUser} from "../../../redux/actions/user";
-import {connect} from "react-redux";
-import {url} from "../../../constant/define";
+import { doGetUser, doLogin, initUser } from "../../../redux/actions/user";
+import { connect } from "react-redux";
+import { url } from "../../../constant/define";
 class PersonalScreen extends Component {
 
     constructor(props) {
@@ -60,7 +60,7 @@ class PersonalScreen extends Component {
                 name: 'Chuyển sang giao diện Admin',
                 onPress: this.state.userId ? 'HomeScreen' : 'Login',
                 icon: require("../../../../assets/icons/admin.png"),
-                params: {params: this.props.user.user}
+                params: { params: this.props.user.user }
             },
             {
                 id: 3,
@@ -79,7 +79,7 @@ class PersonalScreen extends Component {
                 name: 'Báo cáo sự cố',
                 onPress: this.state.userId ? 'AddTrouble' : 'Login',
                 icon: require("../../../../assets/icons/report.png"),
-                params: {id: 1, refresh: () => this.refresh()}
+                params: { id: 1, refresh: () => this.refresh() }
             },
             {
                 id: 6,
@@ -97,11 +97,11 @@ class PersonalScreen extends Component {
     renderFunction = ({ item, index }) => {
         return (
             <TouchableOpacity style={styles.functionProfile} onPress={async () => {
-                if(item.id !== 5) {
-                    if(this.state.dataUser){
-                        this.props.navigation.navigate(item.onPress, {params: item.params});
-                    }else{
-                        alert("Vui lòng đăng nhật để sử dụng!");
+                if (item.id !== 6) {
+                    if (this.state.dataUser) {
+                        this.props.navigation.navigate(item.onPress, item.params);
+                    } else {
+                        alert("Vui lòng đăng nhập để sử dụng!");
                     }
                 } else {
                     if (item.onPress === 'Welcome') {
@@ -113,17 +113,11 @@ class PersonalScreen extends Component {
                             console.log(exception);
                             return false;
                         }
-                    } else {
-                        this.props.navigation.replace('Login');
                     }
-                }else if(item.onPress === 'Login'){
-                    this.props.navigation.replace('Login');
-                }else{
-                    console.log(item.params);
-                    this.props.navigation.navigate(item.onPress, item.params);
                 }
 
-            }}>
+    }
+}>
                 <Image style={{
                     width: 28,
                     height: 28,
@@ -135,73 +129,73 @@ class PersonalScreen extends Component {
                 <Text style={[styles.textNameFunction,
                     // item.id === 5 ? {color: 'red'} : ''
                     ]}>{item.name}</Text>
-            </TouchableOpacity>
+            </TouchableOpacity >
         )
     }
 
-    render() {
-        return (
-            <View style={styles.container}>
-                <View style={styles.informationContainer}>
-                    <View style={styles.avtAndNameContainer}>
-                        {
-                            this.state.dataUser?.image ?
-                                <Image
-                                    style={{
-                                        width: 100,
-                                        height: 100,
-                                        borderRadius: 50,
-                                        borderWidth: 1,
-                                        borderColor: color_secondary
-                                    }}
-                                    resizeMode={'stretch'}
-                                    source={
-                                        {
-                                            uri: `${url}/${this.state.dataUser?.image}`
-                                        }
+render() {
+    return (
+        <View style={styles.container}>
+            <View style={styles.informationContainer}>
+                <View style={styles.avtAndNameContainer}>
+                    {
+                        this.state.dataUser?.image ?
+                            <Image
+                                style={{
+                                    width: 100,
+                                    height: 100,
+                                    borderRadius: 50,
+                                    borderWidth: 1,
+                                    borderColor: color_secondary
+                                }}
+                                resizeMode={'stretch'}
+                                source={
+                                    {
+                                        uri: `${url}/${this.state.dataUser?.image}`
                                     }
-                                />
-                                :
-                                <Image
-                                    style={{
-                                        width: 100,
-                                        height: 100,
-                                        borderRadius: 50,
-                                        borderWidth: 1,
-                                        borderColor: color_secondary
-                                    }}
-                                    resizeMode={'stretch'}
-                                    source={
-                                        require('../../../assets/images/default_avatar.png')
-                                    }
-                                />
-                        }
-                        <View style={styles.detailContainer}>
-                            <Text style={styles.textName} numberOfLines={1}>{this.state.dataUser ? this.state.dataUser.name : 'Chưa đăng nhập'}</Text>
-                            <View>
-                                <Text style={styles.textDetail}>{this.state.dataUser ? this.state.dataUser.gender === '1' ? "Nam" : "Nữ" : ''}</Text>
-                                <Text style={styles.textDetail}>{this.state.dataUser ? 'SĐT: '+this.state.dataUser.numberPhone : ''}</Text>
-                                <Text style={styles.textDetail}>{this.state.dataUser ? 'Địa chỉ: '+this.state.dataUser.address : ''}</Text>
-                            </View>
+                                }
+                            />
+                            :
+                            <Image
+                                style={{
+                                    width: 100,
+                                    height: 100,
+                                    borderRadius: 50,
+                                    borderWidth: 1,
+                                    borderColor: color_secondary
+                                }}
+                                resizeMode={'stretch'}
+                                source={
+                                    require('../../../assets/images/default_avatar.png')
+                                }
+                            />
+                    }
+                    <View style={styles.detailContainer}>
+                        <Text style={styles.textName} numberOfLines={1}>{this.state.dataUser ? this.state.dataUser.name : 'Chưa đăng nhập'}</Text>
+                        <View>
+                            <Text style={styles.textDetail}>{this.state.dataUser ? this.state.dataUser.gender === '1' ? "Nam" : "Nữ" : ''}</Text>
+                            <Text style={styles.textDetail}>{this.state.dataUser ? 'SĐT: ' + this.state.dataUser.numberPhone : ''}</Text>
+                            <Text style={styles.textDetail}>{this.state.dataUser ? 'Địa chỉ: ' + this.state.dataUser.address : ''}</Text>
                         </View>
                     </View>
                 </View>
-                <View style={styles.containerFunction}>
-                    <FlatList
-                        data={this.state.listFunction}
-                        renderItem={this.renderFunction}
-                        keyExtractor={item => item.id}
-                        showsVerticalScrollIndicator={false}
-                        style={{ flex: 1 }}
-                    />
-                </View>
             </View>
-        );
-    }
+            <View style={styles.containerFunction}>
+                <FlatList
+                    data={this.state.listFunction}
+                    renderItem={this.renderFunction}
+                    keyExtractor={item => item.id}
+                    showsVerticalScrollIndicator={false}
+                    style={{ flex: 1 }}
+                />
+            </View>
+        </View>
+    );
+}
 }
 
 const mapStateToProps = ({ user, state }) => {
-    return {user,state};
+    return { user, state };
 };
 
 const mapDispatchToProps = {

@@ -6,13 +6,10 @@ export const DELETE_AREA = `/deleteArea`;
 
 export const LOGIN = `/login`;
 export const SIGNUP = `/addUser`;
-<<<<<<< HEAD
 export const GET_USER_BY_BOOKTICKET = `/getUserByBookTicket`;
 export const GET_USER_BY_ID = `/getUser`;
-=======
 export const UPDATE_USER = `/updateUser`;
 export const GET_USER = `/getUser`;
->>>>>>> 07a9300dacf7e9754eba85257c0c873b9a196d3c
 
 export const GET_LIST_FREE_SERVICE = `/getListFreeService`;
 export const ADD_FREE_SERVICE = `/addFreeService`;
@@ -51,8 +48,6 @@ export const GET_BILL_BY_ID = `/getBillById`;
 export const ADD_BILL = `/addBill`;
 export const UPDATE_BILL = `/updateBill`;
 export const DELETE_BILL = `/deleteBill`;
-
-export const ADD_IMAGE_TYPE_ROOM = `/addImageofroom`;
 
 export const GET_ROOM_BY_AREA = `/getRoomByArea`;
 export const GET_ROOM_BY_ID = `/getRoomById`;

@@ -4,7 +4,6 @@ import {
     SIGNUP, 
     GET_USER_BY_BOOKTICKET, 
     GET_USER_BY_ID, GET_USER, 
-    LOGIN, SIGNUP, 
     UPDATE_USER
 } from '../constant/apiUrl';
 

@@ -6,7 +6,8 @@ import {
     StyleSheet,
     View,
     Image,
-    TouchableOpacity
+    TouchableOpacity,
+    Dimensions
 } from 'react-native';
 import { Icon } from "@rneui/base";
 import { background_color, flex, font, font_weight, text_color, text_size, width } from "../../../utils/styles/MainStyle";
@@ -53,60 +54,70 @@ export default class NotificationScreen extends Component {
 
     _renderItem = ({ item, index }) => {
         return (
-            <TouchableOpacity 
-                style={[styles.ItemNoti, flex.flex_row]}
-                onPress={() => alert('move to: ' + index)}
+            <View style={{backgroundColor: '#FFFFFF', marginHorizontal: 5}}>
+                <TouchableOpacity
+                    style={[flex.align_items_center, styles.ItemNoti]}
+                    onPress={() => alert('move to: ' + index)}
                 >
-                <Icon
-                    name={"bell"}
-                    type='font-awesome-5'
-                    size={48}
-                    color={color_primary}
-                    style={{ marginRight: 15, marginLeft: 5 }}
-                />
-                <View>
-                    {console.log(item.name)}
-                    <Text style={styles.textNotiName}
-                        numberOfLines={2}>
 
-                        Phiếu đặt phòng {item.room} của bạn vừa được
-                        xác nhận với trạng thái 
-                        <Text 
-                        style={
-                            item.status === "Waiting Approve" ? 
-                            {color: '#6c757d'} 
-                            : 
-                            (item.status === "Approved" ? 
-                            {color: '#28a745'}
-                            : 
-                            {color: 'red'})
-                        }
+                    <View style={[flex.flex_row]}>
+                        <View>
+                            {console.log(item.name)}
+                            <Text style={styles.textNotiName}
+                                numberOfLines={2}>
 
-                        > {item.status}</Text></Text>
-                    <Text style={{ fontSize: 12, fontStyle: 'italic', marginTop: 5 }}>"{item.date}"</Text>
-                </View>
-            </TouchableOpacity>
+                                Phiếu đặt phòng {item.room} của bạn vừa được
+                                xác nhận với trạng thái
+                                <Text
+                                    style={
+                                        item.status === "Waiting Approve" ?
+                                            { color: '#6c757d' }
+                                            :
+                                            (item.status === "Approved" ?
+                                                { color: '#28a745' }
+                                                :
+                                                { color: 'red' })
+                                    }
+
+                                > {item.status}</Text></Text>
+                            <Text style={{ 
+                                fontSize: 12, 
+                                fontStyle: 'italic',
+                                marginTop: 5,
+                                marginHorizontal: 15
+                             }}>"{item.date}"</Text>
+                        </View>
+                    </View>
+                </TouchableOpacity>
+            </View>
         )
     }
 
     render() {
         return (
-            <SafeAreaView style={styles.container}>
+            <View style={styles.container}>
                 <Text style={styles.textTitle}>Thông báo</Text>
-                <FlatList
-                    data={this.dataTest}
-                    renderItem={this._renderItem}
-                    keyExtractor={item => item.id}
-                    showsVerticalScrollIndicator={false}
-                    style={{ flex: 1 }}
-                />
-            </SafeAreaView>
+                <View style={{
+                    flex: 1
+                }}>
+                    <FlatList
+                        data={this.dataTest}
+                        renderItem={this._renderItem}
+                        keyExtractor={item => item.id}
+                        showsVerticalScrollIndicator={false}
+                        contentContainerStyle={{
+                            backgroundColor: "#ececec"
+                        }}
+                    />
+                </View>
+            </View>
         );
     }
 }
 
 
 
+const widthSc = Dimensions.get("screen").width
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -118,13 +129,12 @@ const styles = StyleSheet.create({
         textAlignVertical: 'center',
         lineHeight: 20,
         letterSpacing: 0,
-        width: '100%',
+        width: widthSc,
         // height: 30,
-        padding: 20,
+        paddingVertical: 20,
         backgroundColor: color_primary
     },
     containerListNoti: {
-        flex: 1,
         backgroundColor: '#ccc',
         paddingTop: 10,
         justifyContent: 'flex-start',
@@ -132,22 +142,20 @@ const styles = StyleSheet.create({
     },
     ItemNoti: {
         width: '100%',
-        // height: 48,
-        backgroundColor: "#FFFFFF",
-        padding: 10,
-        alignItems: 'center',
-        elevation: 2
+        paddingVertical: 15,
+        elevation: 2,
+        justifyContent: 'space-between',
+        borderBottomWidth: 1,
+        alignItems: 'center'
     },
     textNotiName: {
         fontSize: 14,
         color: 'black',
         lineHeight: 20,
         letterSpacing: 0,
-        width: 350,
-        // height: 30,
         fontWeight: 'bold',
-        overflow: 'hidden',
-        marginRight: 10,
-        textAlign: 'left'
+        flexWrap: 'wrap',
+        textAlign: 'left',
+        marginHorizontal: 8
     }
 })

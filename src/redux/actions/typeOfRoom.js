@@ -9,7 +9,6 @@ import {
     GET_PRICE_OF_ROOM_SUCCESS,
     GET_PRICE_OF_ROOM_FAIL,
     LOAD_LIST_TYPE_OF_ROOM, LOAD_LIST_TYPE_OF_ROOM_SUCCESS, LOAD_LIST_TYPE_OF_ROOM_FAIL,
-    ADD_TYPE_OF_ROOM, ADD_TYPE_OF_ROOM_SUCCESS, ADD_TYPE_OF_ROOM_FAIL,
     UPDATE_TYPE_OF_ROOM, UPDATE_TYPE_OF_ROOM_SUCCESS, UPDATE_TYPE_OF_ROOM_FAIL,
     DELETE_TYPE_OF_ROOM, DELETE_TYPE_OF_ROOM_SUCCESS, DELETE_TYPE_OF_ROOM_FAIL
 } from "./types";
@@ -17,7 +16,6 @@ import {
     addTypeOfRoom, 
     getListTypeOfRoomBySaveRoomTicket, 
     getPriceOfRoom,
-    addTypeOfRoom,
     deleteTypeOfRoom,
     getListTypeOfRoom,
     getListTypeOfRoomNew, getListTypeOfRoomSearch, getListTypeOfRoomSearchAddress,

@@ -71,7 +71,7 @@ class UpdateContract extends Component {
         })
     }
     getUserData(id) {
-        this.props.doGetUserById({ id: id }).then(data => {
+        this.props.doGetUserById({ userId: id }).then(data => {
             this.setState({
                 dataK: data
             })

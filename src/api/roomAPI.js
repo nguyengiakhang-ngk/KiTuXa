@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import {doPost, doGet} from './apiCommon'
 import {
     GET_ROOM_BY_AREA, 

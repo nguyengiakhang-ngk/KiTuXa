@@ -33,12 +33,9 @@
     "react-native-geocoder": "^0.5.0",
     "react-native-get-location": "^2.2.1",
     "react-native-image-crop-picker": "^0.37.2",
-<<<<<<< HEAD
     "react-native-lookup-modal": "^2.0.0",
-=======
     "react-native-image-slider-box": "^1.1.24",
     "react-native-maps": "^0.31.1",
->>>>>>> 07a9300dacf7e9754eba85257c0c873b9a196d3c
     "react-native-modal-selector": "^2.1.0",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.13.1",
