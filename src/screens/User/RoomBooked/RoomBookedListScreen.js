@@ -15,92 +15,11 @@ import { url } from '../../../constant/define';
 import { connect } from "react-redux";
 import { doGetRoomByBookTicket } from "../../../redux/actions/room";
 import { doGetPriceOfRoom } from "../../../redux/actions/typeOfRoom";
+import { doLoadListContractByRoom } from '../../../redux/actions/contract';
 
 class RoomBookedListScreen extends Component {
     constructor(props) {
         super(props);
-        let data = [
-            {
-                id: 1,
-                name: "Hội trường",
-                s: 15,
-                price: 15000,
-                img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
-                createDate: '24/04/2020'
-            },
-            {
-                id: 2,
-                name: "Hội trường",
-                s: 15,
-                price: 15000,
-                img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
-                createDate: '24/04/2020'
-            },
-            {
-                id: 3,
-                name: "Hội trường",
-                s: 15,
-                price: 15000,
-                img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
-                createDate: '24/04/2020'
-            },
-            {
-                id: 4,
-                name: "Hội trường",
-                s: 15,
-                price: 15000,
-                img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
-                createDate: '24/04/2020'
-            },
-            {
-                id: 5,
-                name: "Hội trường",
-                s: 15,
-                price: 15000,
-                img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
-                createDate: '24/04/2020'
-            },
-            {
-                id: 1,
-                name: "Hội trường",
-                s: 15,
-                price: 15000,
-                img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
-                createDate: '24/04/2020'
-            },
-            {
-                id: 2,
-                name: "Hội trường",
-                s: 15,
-                price: 15000,
-                img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
-                createDate: '24/04/2020'
-            },
-            {
-                id: 3,
-                name: "Hội trường",
-                s: 15,
-                price: 15000,
-                img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
-                createDate: '24/04/2020'
-            },
-            {
-                id: 4,
-                name: "Hội trường",
-                s: 15,
-                price: 15000,
-                img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
-                createDate: '24/04/2020'
-            },
-            {
-                id: 5,
-                name: "Hội trường",
-                s: 15,
-                price: 15000,
-                img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
-                createDate: '24/04/2020'
-            }
-        ]
 
         this.state = {
             data: [],
@@ -109,8 +28,12 @@ class RoomBookedListScreen extends Component {
         }
     }
 
+    refresh(){
+        this.getRoomByBookTicket();
+    }
+
     getRoomByBookTicket() {
-        this.props.doGetRoomByBookTicket({ userId: 1 }).then(data => {
+        this.props.doGetRoomByBookTicket({ userId: this.props.user.user.id }).then(data => {
             data.map(item => {
                 this.props.doGetPriceOfRoom({ typeOfRoomId: item.id }).then(dataPrice => {
                     let ls = this.state.listPrice;
@@ -125,6 +48,26 @@ class RoomBookedListScreen extends Component {
             this.setState({ data: data })
         })
     }
+
+    getContractData(id) {
+        this.props.doLoadListContractByRoom({ roomId: id }).then(data => {
+            let check = data.filter(item => {
+                return item.userId === this.props.user.user.id
+            })
+            if(check.length > 0){
+                this.setState({
+                    dataContract: check
+                },() => {
+                    this.props.navigation.navigate("ContractDetail", {
+                        id: this.state.dataContract[0].id,
+                        refresh: () => { this.refresh() }
+                    });
+                })
+            }
+            console.log(">>data>>",data, ">>check>>>", check);
+        })
+    }
+
     componentDidMount() {
         this.getRoomByBookTicket();
     }
@@ -175,7 +118,9 @@ class RoomBookedListScreen extends Component {
 
     _renderItem = ({ item, index }) => {
         return (
-            <View
+            <TouchableOpacity onPress={() => {
+                this.getContractData(item.id)
+            }}
                 style={[
                     shadow.shadow,
                     background_color.white,
@@ -197,7 +142,7 @@ class RoomBookedListScreen extends Component {
                         }
                     ]}
                     source={
-                        { uri: item.image }
+                        { uri: `${url}/${item.image}` }
                     }
                     resizeMode={'stretch'}
                 />
@@ -271,7 +216,7 @@ class RoomBookedListScreen extends Component {
                         </Text>
                     </View>
                 </View>
-            </View>
+            </TouchableOpacity>
         );
     }
 }
@@ -296,7 +241,7 @@ const mapStateToProps = ({ user, state }) => {
 };
 
 const mapDispatchToProps = {
-    doGetRoomByBookTicket, doGetPriceOfRoom
+    doGetRoomByBookTicket, doGetPriceOfRoom, doLoadListContractByRoom
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(RoomBookedListScreen)

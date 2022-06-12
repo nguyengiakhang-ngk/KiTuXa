@@ -10,6 +10,9 @@ import {doLoadListContractById} from "../../../redux/actions/contract";
 import { color_primary } from '../../../utils/theme/Color';
 import { doGetUserById } from '../../../redux/actions/user';
 import { doGetRoomById } from '../../../redux/actions/room';
+import { doApproveContract } from '../../../redux/actions/contract';
+
+
 class ContractDetail extends Component{
     constructor(props) {
         super(props);
@@ -32,6 +35,17 @@ class ContractDetail extends Component{
                 this.getPhong(data.roomId);
                 console.log(this.state.data);
             })
+        })
+    }
+
+    approveContract(){
+        this.props.doApproveContract({status: "1"}, {id: this.props.route.params.id}).then(data => {
+            if(data){
+                alert("Duyệt thành công!");
+                this.getContractData();
+            }else{
+                alert("Duyệt thất bại! Vui lòng thử lại!");
+            }
         })
     }
 
@@ -113,7 +127,7 @@ class ContractDetail extends Component{
                                 }
                             ]}>
                                 <Text style={[text_size.xs, font_weight.bold,{fontStyle: 'italic',paddingBottom: 5}]}>Họ và tên: {this.state.dataK.name ? this.state.dataK.name : 'Nguyễn Văn A'}</Text>
-                                <Text style={[text_size.xs, {fontStyle: 'italic', paddingBottom: 5}]}>Phòng: {this.state.dataP.roomName ? this.state.dataP.roomName : ' Phòng X'}</Text>
+                                <Text style={[text_size.xs, {fontStyle: 'italic', paddingBottom: 5}]}>Phòng: {this.state.dataP.roomName ? this.state.dataP.roomName : ' Phòng 0'}</Text>
                             </View>
                         </View>
                         <Text
@@ -202,18 +216,35 @@ class ContractDetail extends Component{
                                 </View>
                             </View>
                         </View>
+                        <View style={[width.w_90, {paddingTop: 20}]}>
+                           <AppButton
+                                onPress={() => {this.approveContract()}}
+                                disabled={() => {
+                                    if(this.props.user.user.id ===  this.state.data.userId){
+                                        if(this.state.data.status === "1"){
+                                            return true;
+                                        }else{
+                                            return false;
+                                        }
+                                    }else{
+                                        return true;
+                                    }
+                                }}
+                                title={this.state.data.status === "0" ? "Duyệt hợp đồng" : "Đã được duyệt"}
+                            />
+                        </View>
                     </View>
                 </ScrollView>
             </View>
         )
     }
 }
-const mapStateToProps = ({listContractById}) => {
-    return {listContractById};
+const mapStateToProps = ({listContractById, user}) => {
+    return {listContractById, user};
 };
 
 const mapDispatchToProps = {
-    doLoadListContractById, doGetUserById, doGetRoomById
+    doLoadListContractById, doGetUserById, doGetRoomById, doApproveContract
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ContractDetail)

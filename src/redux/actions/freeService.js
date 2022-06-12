@@ -73,6 +73,7 @@ const addFreeServiceFail = (dispatch, error) => {
 // Update Free Service
 export const doUpdateFreeService = (freeService, id) => dispatch => {
     return new Promise((resolve, reject) => {
+        console.log("free>>>",freeService,">>>",id);
         updateFreeService(freeService, id)
             .then(data => {
                 updateFreeServiceSuccess(dispatch);

@@ -59,6 +59,7 @@ export const doAddTrouble = (trouble) => dispatch => {
 
 export const doUpdateTrouble = (trouble, id) => dispatch => {
     return new Promise((resolve, reject) => {
+        console.log("log trouble api>>>", trouble,">>>", id);
         updateTrouble(trouble, id)
             .then(data => {
                 updateTroubleSuccess(dispatch, data);

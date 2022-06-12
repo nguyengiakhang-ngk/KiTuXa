@@ -101,6 +101,7 @@ export const doGetListTypeOfRoomBySave = (userId) => dispatch => {
     }
 // Update Type Of Room
 export const doUpdateTypeOfRoom = (paidService, id) => dispatch => {
+    console.log("log type api>>>", paidService,">>>", id);
     return new Promise((resolve, reject) => {
         updateTypeOfRoom(paidService, id)
             .then(data => {

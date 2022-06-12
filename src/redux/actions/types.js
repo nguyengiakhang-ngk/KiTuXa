@@ -81,6 +81,10 @@ export const DELETE_ROOM = 'delete_room';
 export const DELETE_ROOM_SUCCESS = 'delete_room_success';
 export const DELETE_ROOM_FAIL = 'delete_room_fail';
 
+export const GET_LIST_ROOM_BY_TYPE = 'get_list_room_by_type';
+export const GET_LIST_ROOM_BY_TYPE_SUCCESS = 'get_list_room_by_type_success';
+export const GET_LIST_ROOM_BY_TYPE_FAIL = 'get_list_room_by_type_fail';
+
 export const LOAD_IMAGE_TYPE_OF_ROOM = 'load_image_type_of_room';
 export const LOAD_IMAGE_TYPE_OF_ROOM_SUCCESS = 'load_image_type_of_room_success';
 export const LOAD_IMAGE_TYPE_OF_ROOM_FAIL = 'load_image_type_of_room_fail';
@@ -120,6 +124,10 @@ export const ADD_CONTRACT_FAIL = 'add_contract_error';
 export const UPDATE_CONTRACT = 'update_contract';
 export const UPDATE_CONTRACT_SUCCESS = 'update_contract_success';
 export const UPDATE_CONTRACT_FAIL = 'update_contract_error';
+
+export const APPROVE_CONTRACT = 'approve_contract';
+export const APPROVE_CONTRACT_SUCCESS = 'approve_contract_success';
+export const APPROVE_CONTRACT_FAIL = 'approve_contract_error';
 
 export const DELETE_CONTRACT = 'delete_contract';
 export const DELETE_CONTRACT_SUCCESS = 'delete_contract_success';
@@ -213,3 +221,11 @@ export const ADD_NUMBER_WATER_FAIL = 'add_number_water_error';
 export const GET_BOOKTICKET_BY_ROOM = 'get_bookticket_by_room';
 export const GET_BOOKTICKET_BY_ROOM_SUCCESS = 'get_bookticket_by_room_success';
 export const GET_BOOKTICKET_BY_ROOM_FAIL = 'get_bookticket_by_room_error';
+
+export const APPROVE_BOOKTICKET = 'approve_bookticket';
+export const APPROVE_BOOKTICKET_SUCCESS = 'approve_bookticket_success';
+export const APPROVE_BOOKTICKET_FAIL = 'approve_bookticket_error';
+
+export const ADD_BOOKTICKET = 'add_bookticket';
+export const ADD_BOOKTICKET_SUCCESS = 'add_bookticket_success';
+export const ADD_BOOKTICKET_FAIL = 'add_bookticket_error';

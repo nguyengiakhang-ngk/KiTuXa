@@ -228,8 +228,8 @@ class AddContract extends Component {
                         alreadydate={new Date()}
                         minimumDate={values.dayIn}
                       />
-                      {errors.ThoiHan ? (
-                        <AppError errors={errors.ThoiHan} />
+                      {errors.duration ? (
+                        <AppError errors={errors.duration} />
                       ) : null}
                     </View>
                     <View

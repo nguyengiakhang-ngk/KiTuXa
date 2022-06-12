@@ -28,7 +28,10 @@ import {
     DELETE_ROOM_FAIL,
     GET_BOOKTICKET_BY_ROOM,
     GET_BOOKTICKET_BY_ROOM_SUCCESS,
-    GET_BOOKTICKET_BY_ROOM_FAIL
+    GET_BOOKTICKET_BY_ROOM_FAIL,
+    GET_LIST_ROOM_BY_TYPE,
+    GET_LIST_ROOM_BY_TYPE_SUCCESS,
+    GET_LIST_ROOM_BY_TYPE_FAIL
 } from "./types";
 import { 
     getRoomByArea, 
@@ -40,7 +43,8 @@ import {
     deleteRoom, 
     updateRoom,
     getListRoom,
-    getBookTicketByRoom
+    getBookTicketByRoom,
+    getRoomByType
 } from "../../api/roomAPI";
 
 export const doGetRoomByArea = (areaId) => dispatch => {
@@ -52,6 +56,20 @@ export const doGetRoomByArea = (areaId) => dispatch => {
             })
             .catch(error => {
                 getRoomByAreaError(dispatch, error);
+                reject(error);
+            });
+    })
+};
+
+export const doGetRoomByType = (typeOfRoomId) => dispatch => {
+    return new Promise((resolve, reject) => {
+        getRoomByType(typeOfRoomId)
+            .then(data => {
+                getRoomByTypeSuccess(dispatch, data);
+                resolve(data);
+            })
+            .catch(error => {
+                getRoomByTypeError(dispatch, error);
                 reject(error);
             });
     })
@@ -88,6 +106,18 @@ export const doGetRoomById = (id) => dispatch => {
 const getRoomByAreaAction = () => dispatch => {
     dispatch({
         type: GET_ROOM_BY_AREA
+    });
+}
+
+const getRoomByTypeSuccess = (dispatch) => {
+    dispatch({
+        type: GET_LIST_ROOM_BY_TYPE_SUCCESS,
+    });
+}
+
+const getRoomByTypeError = (dispatch, error) => {
+    dispatch({
+        type: GET_LIST_ROOM_BY_TYPE_FAIL,
     });
 }
 

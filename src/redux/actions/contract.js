@@ -15,7 +15,10 @@ import {
     UPDATE_CONTRACT_SUCCESS,
     UPDATE_CONTRACT_FAIL,
     DELETE_CONTRACT_SUCCESS,
-    DELETE_CONTRACT_FAIL
+    DELETE_CONTRACT_FAIL,
+    APPROVE_CONTRACT,
+    APPROVE_CONTRACT_SUCCESS,
+    APPROVE_CONTRACT_FAIL
  } from "./types";
 import { 
     getListContractByRoom, 
@@ -23,7 +26,8 @@ import {
     getListContractById, 
     addContract, 
     updateContract,
-    deleteContract
+    deleteContract,
+    approveContract
 } from "../../api/contractAPI";
 
 
@@ -83,6 +87,20 @@ export const doUpdateContract = (contract, id) => dispatch => {
     })
 };
 
+export const doApproveContract = (contract, id) => dispatch => {
+    return new Promise((resolve, reject) => {
+        approveContract(contract, id)
+            .then(data => {
+                approveContractSuccess(dispatch, data);
+                resolve(data);
+            })
+            .catch(error => {
+                approveContractError(dispatch, error);
+                reject(error);
+            });
+    })
+};
+
 export const doDeleteContract = (contract, id) => dispatch => {
     return new Promise((resolve, reject) => {
         deleteContract(contract, id)
@@ -97,10 +115,22 @@ export const doDeleteContract = (contract, id) => dispatch => {
     })
 };
 
-const getListContractByRoomSuccess = (dispatch, listContractByRoom) => {
+const approveContractSuccess = (dispatch) => {
+    dispatch({
+        type: APPROVE_CONTRACT_SUCCESS
+    });
+}
+const approveContractError = (dispatch, error) => {
+    dispatch({
+        type: APPROVE_CONTRACT_FAIL,
+        error: error
+    });
+}
+
+const getListContractByRoomSuccess = (dispatch, error) => {
     dispatch({
         type: GET_LIST_CONTRACT_BY_ROOM_SUCCESS,
-        listContractByRoom: listContractByRoom
+        error: error
     });
 }
 

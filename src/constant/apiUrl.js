@@ -32,6 +32,7 @@ export const GET_LIST_TYPE_OF_ROOM_SEARCH_ADDRESS = `/getListTypeRoomSearchAddre
 export const ADD_PRICE_TYPE_OF_ROOM = `/addPriceofroom`;
 
 export const GET_LIST_ROOM = `/getRoom`;
+export const GET_LIST_ROOM_BY_TYPE = `/getRoomByType`;
 export const ADD_ROOM = `/addRoom`;
 export const DELETE_ROOM = `/deleteRoom`;
 export const UPDATE_ROOM = `/updateRoom`;
@@ -41,6 +42,7 @@ export const GET_LIST_CONTRACT_BY_ROOM = `/getContractByRoom`;
 export const GET_LIST_CONTRACT_BY_ID = `/getContractById`;
 export const ADD_CONTRACT = `/addContract`;
 export const UPDATE_CONTRACT = `/updateContract`;
+export const APPROVE_CONTRACT = `/approveContract`;
 export const DELETE_CONTRACT = `/deleteContract`;
 
 export const GET_BILL_BY_CONTRACT = `/getBill`;
@@ -52,7 +54,7 @@ export const DELETE_BILL = `/deleteBill`;
 export const GET_ROOM_BY_AREA = `/getRoomByArea`;
 export const GET_ROOM_BY_ID = `/getRoomById`;
 export const GET_ROOM_BY_BOOKTICKET = `/getRoomByBookTicket`;
-
+export const ADD_BOOKTICKET = `/addBookTicket`;
 
 export const GET_RECEIPT_BY_CONTRACT = `/getReceipt`;
 export const GET_RECEIPT_BY_ID = `/getReceiptById`;
@@ -85,3 +87,5 @@ export const ADD_FREE_TICKET = `/addaddFreeTicket`;
 export const DELETE_ADD_FREE_TICKET = `/deleteaddFreeTicket`;
 
 export const GET_BOOKTICKET_BY_ROOM = `/getBookTicketByRoom`;
+
+export const APPROVE_BOOKTICKET = `/approveBookTicket`;

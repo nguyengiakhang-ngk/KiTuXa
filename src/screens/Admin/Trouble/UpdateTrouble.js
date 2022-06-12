@@ -53,6 +53,16 @@ class UpdateTrouble extends Component {
                     'key': '2',
                     'label': 'Cao'
                 }
+            ],
+            dataTT: [
+                {
+                    'key': 0,
+                    'label': 'Chưa giải quyết'
+                },
+                {
+                    'key': 1,
+                    'label': 'Đã giải quyết'
+                }
             ]
         }
 
@@ -77,6 +87,7 @@ class UpdateTrouble extends Component {
     }
 
     updateTrouble = (values) => {
+        console.log("Values>>>>",JSON.stringify(values));
         const date = new Date();
         const minutes = date.getMinutes();
         let data = new FormData();
@@ -87,7 +98,7 @@ class UpdateTrouble extends Component {
         });
         data.append("trouble", JSON.stringify(values));
         this.props.doUpdateTrouble(data, { id: this.props.route.params.id }).then(data => {
-            console.log(data)
+            console.log("returnData>>>",data);
             if (data) {
                 alert("Cập nhật sự cố thành công!");
                 this.props.navigation.goBack(null);
@@ -239,7 +250,23 @@ class UpdateTrouble extends Component {
                                             />
                                         </Pressable>
                                     </View>
-
+                                    <View
+                                        style={[
+                                            width.w_100,
+                                            { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
+                                        ]}
+                                    >
+                                        <AppDialogSelect
+                                            lable={"Tình trạng:"}
+                                            data={this.state.dataTT}
+                                            placeholder={"Chưa giải quyết"}
+                                            value={values}
+                                            field={"status"}
+                                        />
+                                        {errors.status && touched.status ? (
+                                            <AppError errors={errors.status} />
+                                        ) : null}
+                                    </View>
                                     <View
                                         style={[
                                             { paddingLeft: 15, paddingRight: 10, marginTop: 10 }

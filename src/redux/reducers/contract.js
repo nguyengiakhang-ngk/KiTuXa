@@ -16,7 +16,10 @@ import {
     UPDATE_CONTRACT_FAIL,
     DELETE_CONTRACT,
     DELETE_CONTRACT_SUCCESS,
-    DELETE_CONTRACT_FAIL
+    DELETE_CONTRACT_FAIL,
+    APPROVE_CONTRACT,
+    APPROVE_CONTRACT_SUCCESS,
+    APPROVE_CONTRACT_FAIL
 } from "../actions/types";
 
 const INITIAL_STATE = {
@@ -82,6 +85,20 @@ export default (preState = INITIAL_STATE, action) => {
                 ...preState,
             }
         case UPDATE_CONTRACT_FAIL:
+            return {
+                ...preState,
+                error: action.error
+            }
+        case APPROVE_CONTRACT:
+            return {
+                ...preState,
+                ...INITIAL_STATE
+            }
+        case APPROVE_CONTRACT_SUCCESS:
+            return {
+                ...preState,
+            }
+        case APPROVE_CONTRACT_FAIL:
             return {
                 ...preState,
                 error: action.error

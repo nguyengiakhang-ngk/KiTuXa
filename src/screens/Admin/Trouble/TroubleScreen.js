@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { FlatList, Text, TouchableOpacity, View, Image } from "react-native";
+import { FlatList, Text, TouchableOpacity, View, Image, Modal } from "react-native";
 import axios from "axios";
 import { path } from "../../../constant/define";
 import { flex, font, font_weight, height, position, text_color, text_size, width, background_color } from "../../../utils/styles/MainStyle";
@@ -25,6 +25,7 @@ class TroubleScreen extends Component {
             dataRoom: [],
             filterArea: [],
             filterRoom: [],
+            isVisible: false
         }
     }
 
@@ -44,6 +45,7 @@ class TroubleScreen extends Component {
     }
 
     getPhongData(option) {
+        console.log(this.state.filterArea, 'hello');
         this.props.doGetRoomByArea({ areaId: option.key }).then(data => {
             this.setState({
                 dataRoom: data.map(item => ({
@@ -57,10 +59,8 @@ class TroubleScreen extends Component {
     }
 
 
-    viewTroubleDetails(id) {
-        this.props.navigation.navigate("TroubleDetails", {
-            id: id
-        });
+    viewTroubleDetails(item) {
+        this.setState({isVisible: true})
     }
 
     viewAddTrouble(roomId) {
@@ -96,7 +96,7 @@ class TroubleScreen extends Component {
     }
 
     refresh() {
-        this.getListArea();
+        this.getPhongData(this.state.filterArea.filterArea);
     }
 
 
@@ -178,34 +178,42 @@ class TroubleScreen extends Component {
                         flex.flex_row
                     ]}
                 >
+                    {
+                        item.status == 0
+                            ?
+                            <View style={flex.flex_row}>
+                                <TouchableOpacity
+                                    style={[
+                                        { marginRight: 10 }
+                                    ]}
+                                    onPress={() => this.deleteTrouble(item)}
+                                >
+                                    <Icon
+                                        name={"trash-alt"}
+                                        type='font-awesome-5'
+                                        size={22}
+                                        color={color_danger}
+                                    />
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[
+                                        { marginRight: 10 }
+                                    ]}
+                                    onPress={() => this.updateTrouble(item.id)}
+                                >
+                                    <Icon
+                                        name={"pencil-alt"}
+                                        type='font-awesome-5'
+                                        size={22}
+                                        color={color_success}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                            :
+                            <View />
+                    }
                     <TouchableOpacity
-                        style={[
-                            { marginRight: 10 }
-                        ]}
-                        onPress={() => this.deleteTrouble(item)}
-                    >
-                        <Icon
-                            name={"trash-alt"}
-                            type='font-awesome-5'
-                            size={22}
-                            color={color_danger}
-                        />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[
-                            { marginRight: 10 }
-                        ]}
-                        onPress={() => this.updateTrouble(item.id)}
-                    >
-                        <Icon
-                            name={"pencil-alt"}
-                            type='font-awesome-5'
-                            size={22}
-                            color={color_success}
-                        />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        onPress={() => this.viewTroubleDetails(item.id)}
+                        onPress={() => this.viewTroubleDetails(item)}
                     >
                         <Icon
                             name={"eye"}
@@ -279,6 +287,7 @@ class TroubleScreen extends Component {
                             lable={'Khu:'}
                             data={this.state.dataArea}
                             value={this.state.filterArea}
+                            field={'filterArea'}
                             returnFilter={(key) => this.getPhongData(key)}
                         />
                     </View>
@@ -293,6 +302,7 @@ class TroubleScreen extends Component {
                             lable={'Phòng:'}
                             data={this.state.dataRoom}
                             value={this.state.filterRoom}
+                            field={'filterRoom'}
                             returnFilter={(key) => this.getTroubleData(key)}
                         />
                     </View>

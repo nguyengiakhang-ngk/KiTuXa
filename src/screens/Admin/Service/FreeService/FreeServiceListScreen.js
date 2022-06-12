@@ -124,7 +124,7 @@ class FreeServiceListScreen extends Component{
         });
     }
 
-    R(){
+    chooseImage(){
         ImagePicker.openPicker({
             multiple: false,
             waitAnimationEnd: false,

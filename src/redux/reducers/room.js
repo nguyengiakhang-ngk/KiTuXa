@@ -28,7 +28,10 @@ import {
     DELETE_ROOM_FAIL,
     GET_BOOKTICKET_BY_ROOM,
     GET_BOOKTICKET_BY_ROOM_SUCCESS,
-    GET_BOOKTICKET_BY_ROOM_FAIL
+    GET_BOOKTICKET_BY_ROOM_FAIL,
+    GET_LIST_ROOM_BY_TYPE,
+    GET_LIST_ROOM_BY_TYPE_SUCCESS,
+    GET_LIST_ROOM_BY_TYPE_FAIL
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -63,6 +66,19 @@ export default (preState = INITIAL_STATE, action) => {
                 listRoomByArea: action.listRoomByArea,
             }
         case GET_ROOM_BY_ID_FAIL:
+            return {
+                ...preState,
+                error: action.error
+            }
+        case GET_LIST_ROOM_BY_TYPE:
+            return {
+                ...preState,
+            }
+        case GET_LIST_ROOM_BY_TYPE_SUCCESS:
+            return {
+                ...preState,
+            }
+        case GET_LIST_ROOM_BY_TYPE_FAIL:
             return {
                 ...preState,
                 error: action.error

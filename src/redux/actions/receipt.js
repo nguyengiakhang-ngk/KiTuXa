@@ -61,6 +61,7 @@ export const doAddReceipt = (receipt) => dispatch => {
 };
 
 export const doUpdateReceipt = (receipt, id) => dispatch => {
+    console.log("log receipt api>>>", receipt,">>>", id);
     return new Promise((resolve, reject) => {
         updateReceipt(receipt, id)
             .then(data => {

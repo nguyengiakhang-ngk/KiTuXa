@@ -6,11 +6,16 @@ import {
     ADD_NUMBER_ELECTRIC, 
     ADD_NUMBER_WATER,
     ADD_ROOM, DELETE_ROOM, GET_LIST_ROOM, UPDATE_ROOM,
-    GET_BOOKTICKET_BY_ROOM
+    GET_BOOKTICKET_BY_ROOM,
+    GET_LIST_ROOM_BY_TYPE
 } from '../constant/apiUrl'
 
 export const getRoomByArea = (areaId) => {
     return doGet(GET_ROOM_BY_AREA, areaId);
+}
+
+export const getRoomByType = (typeOfRoomId) => {
+    return doGet(GET_LIST_ROOM_BY_TYPE, typeOfRoomId);
 }
 
 export const getRoomById = (id) => {

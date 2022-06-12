@@ -134,7 +134,8 @@ class BillsComponent extends Component {
                                 backgroundColor: color_primary,
                                 padding: 15,
                                 borderRadius: 10,
-                                marginRight: 10
+                                marginRight: 10,
+                                justifyContent:'center'
                             }
                         ]}
                     >

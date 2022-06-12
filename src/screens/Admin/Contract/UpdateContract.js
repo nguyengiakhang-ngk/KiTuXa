@@ -65,16 +65,21 @@ class UpdateContract extends Component {
 
     getPhongData(id) {
         this.props.doGetRoomById({ id: id }).then(data => {
+            console.log("check",data);
             this.setState({
-                dataP: data
+                dataP: [data]
             })
+
+            console.log(data, "Data P : ")
         })
     }
     getUserData(id) {
         this.props.doGetUserById({ userId: id }).then(data => {
             this.setState({
-                dataK: data
+                dataK: [data]
             })
+
+            console.log(data, "Data K : ")
         })
     }
 
@@ -153,7 +158,7 @@ class UpdateContract extends Component {
                                                     <AppDialogSelect
                                                         lable={'Phòng:'}
                                                         data={this.state.dataP}
-                                                        placeholder={this.state.dataP.roomName}
+                                                        placeholder={this.state.dataP[0]?.roomName}
                                                         value={values}
                                                         field={'roomId'}
                                                     />
@@ -167,7 +172,7 @@ class UpdateContract extends Component {
                                                     <AppDialogSelect
                                                         lable={'Khách thuê:'}
                                                         data={this.state.dataK}
-                                                        placeholder={this.state.dataK.name}
+                                                        placeholder={this.state.dataK[0]?.name}
                                                         value={values}
                                                         field={'userId'}
                                                     />

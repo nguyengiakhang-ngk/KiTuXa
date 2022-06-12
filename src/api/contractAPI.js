@@ -5,7 +5,8 @@ import {
     GET_LIST_CONTRACT_BY_ID, 
     ADD_CONTRACT, 
     UPDATE_CONTRACT,
-    DELETE_CONTRACT
+    DELETE_CONTRACT,
+    APPROVE_CONTRACT
 } from '../constant/apiUrl'
 
 export const getListContractByRoom = (roomId) => {
@@ -26,6 +27,10 @@ export const addContract = (contract) => {
 
 export const updateContract = (contract, id) => {
     return doPut(UPDATE_CONTRACT, contract, id);
+}
+
+export const approveContract = (contract, id) => {
+    return doPut(APPROVE_CONTRACT, contract, id);
 }
 
 export const deleteContract = (id) => {
