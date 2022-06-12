@@ -1,4 +1,4 @@
-import {doPost, doGet} from './apiCommon'
+import {doPost, doGet, doPut, doDelete} from './apiCommon'
 import {
     LOGIN, 
     SIGNUP, 

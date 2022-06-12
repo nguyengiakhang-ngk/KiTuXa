@@ -64,6 +64,9 @@ import UpdateRoomScreen from "../screens/Admin/Room/UpdateRoomScreen";
 import AccountInf from "../screens/User/AccountInf/AccountInf";
 import AccountInfScreen from "../screens/User/AccountInf/AccountInf";
 import DetailRoomScreen from "../screens/User/DetailRoom/DetailRoomScreen";
+
+import ListBookTicketScreen from '../screens/Admin/BookTicket/ListBookTicketScreen';
+
 const Stack = createNativeStackNavigator();
 const StackScreen: () => Node = () => {
 
@@ -236,7 +239,7 @@ const StackScreen: () => Node = () => {
                     component={UpdateTrouble}
                     options={{ headerShown: false }}
                 />
-                
+
                 <Stack.Screen
                     name="ChooseNumber"
                     component={ChooseNumber}
@@ -275,6 +278,11 @@ const StackScreen: () => Node = () => {
                 <Stack.Screen
                     name="DetailRoom"
                     component={DetailRoomScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="ListBookTicket"
+                    component={ListBookTicketScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

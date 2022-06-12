@@ -65,7 +65,7 @@ class AddRoomTypeScreen extends Component {
 
     getFreeServiceData(){
         this.props.doGetListFreeService({userId: this.props.user.user.id}).then(data =>{
-            alert(JSON.stringify(data));
+            // alert(JSON.stringify(data));
             this.setState({
                 dataFreeService: data.map(item => ({id: item.id, name: item.name, checked: false}))
             })

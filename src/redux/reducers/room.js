@@ -25,7 +25,10 @@ import {
     UPDATE_ROOM_FAIL,
     DELETE_ROOM,
     DELETE_ROOM_SUCCESS,
-    DELETE_ROOM_FAIL
+    DELETE_ROOM_FAIL,
+    GET_BOOKTICKET_BY_ROOM,
+    GET_BOOKTICKET_BY_ROOM_SUCCESS,
+    GET_BOOKTICKET_BY_ROOM_FAIL
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -166,6 +169,22 @@ export default (preState = INITIAL_STATE, action) => {
                 error: action.error
             };
 
+        // GET_BOOKTICKET_BY_ROOM,
+        // GET_BOOKTICKET_BY_ROOM_SUCCESS,
+        // GET_BOOKTICKET_BY_ROOM_FAIL
+        case GET_BOOKTICKET_BY_ROOM:
+            return {
+                ...preState
+            }
+        case GET_BOOKTICKET_BY_ROOM_SUCCESS:
+            return {
+                ...preState
+            }
+        case GET_BOOKTICKET_BY_ROOM_FAIL:
+            return {
+                ...preState,
+                error: action.error
+            };
         default:
             return preState;
     }

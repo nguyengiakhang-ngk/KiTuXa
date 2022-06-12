@@ -12,6 +12,7 @@ import {
     text_size,
     width
 } from "../../../utils/styles/MainStyle";
+import AsyncStorage from '@react-native-community/async-storage';
 import AppItemHome from "../../../components/AppItemHome";
 import {color_primary} from "../../../utils/theme/Color";
 import {connect} from "react-redux";
@@ -21,7 +22,17 @@ class HomeScreen extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            user: this.props.route.params.params
+            user: ''
+        }
+    }
+    componentDidMount = async () => {
+        try {
+            let user = await AsyncStorage.getItem('@user');
+            this.setState({
+                user: JSON.parse(user)
+            });
+        } catch (e) {
+            console.log(e);
         }
     }
 
@@ -109,7 +120,6 @@ class HomeScreen extends Component{
                             size={30}
                         />
                     </View>
-
                 </View>
                 <View
                     style={[
@@ -162,11 +172,12 @@ class HomeScreen extends Component{
                     >
                         <AppItemHome
                             bg = {'red'}
-                            name = 'user-graduate'
+                            name = 'calendar-check'
                             size = {30}
                             color = {'white'}
                             colorText = {'black'}
-                            label = {'Sinh viên'}
+                            label = {'Phiếu đặt'}
+                            onPress={() => this.props.navigation.navigate("ListBookTicket")}
                         />
                     </View>
                     <View

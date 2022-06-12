@@ -5,7 +5,8 @@ import {
     GET_ROOM_BY_BOOKTICKET, 
     ADD_NUMBER_ELECTRIC, 
     ADD_NUMBER_WATER,
-    ADD_ROOM, DELETE_ROOM, GET_LIST_ROOM, UPDATE_ROOM
+    ADD_ROOM, DELETE_ROOM, GET_LIST_ROOM, UPDATE_ROOM,
+    GET_BOOKTICKET_BY_ROOM
 } from '../constant/apiUrl'
 
 export const getRoomByArea = (areaId) => {
@@ -43,4 +44,8 @@ export const updateRoom = async (room, id) => {
 
 export const deleteRoom = async (id) => {
     return doDelete(DELETE_ROOM, id);
+}
+
+export const getBookTicketByRoom = async (roomId) => {
+    return doGet(GET_BOOKTICKET_BY_ROOM, roomId);
 }

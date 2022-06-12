@@ -83,3 +83,5 @@ export const DELETE_SAVE = `/deleteSaveRoomTicket`;
 
 export const ADD_FREE_TICKET = `/addaddFreeTicket`;
 export const DELETE_ADD_FREE_TICKET = `/deleteaddFreeTicket`;
+
+export const GET_BOOKTICKET_BY_ROOM = `/getBookTicketByRoom`;

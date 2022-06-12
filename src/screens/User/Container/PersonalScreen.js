@@ -113,6 +113,8 @@ class PersonalScreen extends Component {
                             console.log(exception);
                             return false;
                         }
+                    }else{
+                        this.props.navigation.navigate("Login");
                     }
                 }
 

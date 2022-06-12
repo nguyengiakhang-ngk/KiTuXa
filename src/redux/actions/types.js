@@ -209,3 +209,7 @@ export const ADD_NUMBER_ELECTRIC_FAIL = 'add_number_electric_error';
 export const ADD_NUMBER_WATER = 'add_number_water';
 export const ADD_NUMBER_WATER_SUCCESS = 'add_number_water_success';
 export const ADD_NUMBER_WATER_FAIL = 'add_number_water_error';
+
+export const GET_BOOKTICKET_BY_ROOM = 'get_bookticket_by_room';
+export const GET_BOOKTICKET_BY_ROOM_SUCCESS = 'get_bookticket_by_room_success';
+export const GET_BOOKTICKET_BY_ROOM_FAIL = 'get_bookticket_by_room_error';
