@@ -128,7 +128,7 @@ const InputMaterial = ({ navigation }) => {
 
     const createDetailBill = async (idBill) => {
         try {
-            data.forEach(async (item) => {
+            await data.forEach(async (item) => {
                 const detailBill = {
                     idBill: idBill,
                     idMaterial: item.material,
@@ -144,6 +144,7 @@ const InputMaterial = ({ navigation }) => {
                         i++;
                         let detailMaterial = {
                             id: `${Date.now()}-${item.material}-${item.status}-${item.quantity}-${item.price}-${i}`,
+                            idMaterial: item.material,
                             idDetailBill: rs.data.id,
                             qr: ""
                         }
