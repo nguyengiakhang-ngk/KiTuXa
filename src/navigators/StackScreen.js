@@ -281,6 +281,7 @@ const StackScreen: () => Node = () => {
                     component={QRCode}
                     options={{ headerShown: false }}
                 />
+                {/* Trouble */}
                 <Stack.Screen
                     name="TroubleScreen"
                     component={TroubleScreen}
@@ -301,7 +302,7 @@ const StackScreen: () => Node = () => {
                     component={UpdateTrouble}
                     options={{ headerShown: false }}
                 />
-
+                
                 <Stack.Screen
                     name="ChooseNumber"
                     component={ChooseNumber}

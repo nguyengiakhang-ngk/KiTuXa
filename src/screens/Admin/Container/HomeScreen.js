@@ -254,6 +254,27 @@ class HomeScreen extends Component {
                             label = {'Biên nhận'}
                             onPress = {() => this.routeScreen("ReceiptComponent") }
                         />
+                    </View>
+                    {/* <View
+                        style={[
+                            {
+                                width: '33.3%',
+                                paddingRight: 0.5,
+                                paddingLeft: 0.5,
+                                paddingTop: 10,
+                                paddingBottom: 5
+                            }
+                        ]}
+                    >
+                        <AppItemHome
+                            bg = {'orange'}
+                            name = 'file-invoice-dollar'
+                            size = {25}
+                            color = {'white'}
+                            colorText = {'black'}
+                            label = {'Biên nhận'}
+                            onPress = {() => this.routeScreen("ReceiptComponent") }
+                        />
                     </View> */}
                     <View
                         style={[
@@ -330,6 +351,7 @@ class HomeScreen extends Component {
                         ]}
                     >
                         <AppItemHome
+<<<<<<< HEAD
                             bg={'orangered'}
                             name='bug'
                             size={30}
@@ -442,6 +464,15 @@ class HomeScreen extends Component {
                             colorText={'black'}
                             label={'Quét QR Code'}
                             onPress={() => this.routeScreen("qrcode")}
+=======
+                            bg = {'orangered'}
+                            name = 'bug'
+                            size = {30}
+                            color = {'white'}
+                            colorText = {'black'}
+                            label = {'Sự cố'}
+                            onPress = {() => this.routeScreen("TroubleScreen") }
+>>>>>>> c1ed1ee33201ba6fb40889145448996e5a795f09
                         />
                     </View>
                 </View>
