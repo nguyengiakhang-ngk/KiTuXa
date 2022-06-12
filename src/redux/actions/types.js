@@ -1,6 +1,9 @@
 export const LOGIN = 'login';
 export const LOGIN_SUCCESS = 'login_success';
 export const LOGIN_ERROR = 'login_error';
+export const UPDATE_USER = 'update_user';
+export const UPDATE_USER_SUCCESS = 'update_user_success';
+export const UPDATE_USER_FAIL = 'update_user_fail';
 
 export const LOAD_LIST_AREA = 'load_list_area';
 export const LOAD_LIST_AREA_SUCCESS = 'load_list_area_success';
@@ -41,9 +44,18 @@ export const DELETE_PAID_SERVICE = 'delete_paid_service';
 export const DELETE_PAID_SERVICE_SUCCESS = 'delete_paid_service_success';
 export const DELETE_PAID_SERVICE_FAIL = 'delete_paid_service_fail';
 
+export const LOAD_LIST_TYPE_OF_ROOM = 'load_list_type_of_room';
+export const LOAD_LIST_TYPE_OF_ROOM_SUCCESS = 'load_list_type_of_room_success';
+export const LOAD_LIST_TYPE_OF_ROOM_FAIL = 'load_list_type_of_room_fail';
 export const ADD_TYPE_OF_ROOM = 'add_type_of_room';
 export const ADD_TYPE_OF_ROOM_SUCCESS = 'add_type_of_room_success';
 export const ADD_TYPE_OF_ROOM_FAIL = 'add_type_of_room_fail';
+export const UPDATE_TYPE_OF_ROOM = 'update_type_of_room';
+export const UPDATE_TYPE_OF_ROOM_SUCCESS = 'update_type_of_room_success';
+export const UPDATE_TYPE_OF_ROOM_FAIL = 'update_type_of_room_fail';
+export const DELETE_TYPE_OF_ROOM = 'delete_type_of_room';
+export const DELETE_TYPE_OF_ROOM_SUCCESS = 'delete_type_of_room_success';
+export const DELETE_TYPE_OF_ROOM_FAIL = 'delete_type_of_room_fail';
 
 export const GET_TYPE_OF_ROOM_BY_SAVE = 'get_type_of_room_by_save';
 export const GET_TYPE_OF_ROOM_BY_SAVE_SUCCESS = 'get_type_of_room_by_save_success';
@@ -52,6 +64,32 @@ export const GET_TYPE_OF_ROOM_BY_SAVE_FAIL = 'get_type_of_room_by_save_fail';
 export const ADD_IMAGE_TYPE_OF_ROOM = 'add_image_type_of_room';
 export const ADD_IMAGE_TYPE_OF_ROOM_SUCCESS = 'add_image_type_of_room_success';
 export const ADD_IMAGE_TYPE_OF_ROOM_FAIL = 'add_image_type_of_room_fail';
+export const ADD_PRICE_TYPE_OF_ROOM = 'add_price_type_of_room';
+export const ADD_PRICE_TYPE_OF_ROOM_SUCCESS = 'add_price_type_of_room_success';
+export const ADD_PRICE_TYPE_OF_ROOM_FAIL = 'add_price_type_of_room_fail';
+
+export const LOAD_LIST_ROOM = 'load_list_room';
+export const LOAD_LIST_ROOM_SUCCESS = 'load_list_room_success';
+export const LOAD_LIST_ROOM_FAIL = 'load_list_room_fail';
+export const ADD_ROOM = 'add_room';
+export const ADD_ROOM_SUCCESS = 'add_room_success';
+export const ADD_ROOM_FAIL = 'add_room_fail';
+export const UPDATE_ROOM = 'update_room';
+export const UPDATE_ROOM_SUCCESS = 'update_room_success';
+export const UPDATE_ROOM_FAIL = 'update_room_fail';
+export const DELETE_ROOM = 'delete_room';
+export const DELETE_ROOM_SUCCESS = 'delete_room_success';
+export const DELETE_ROOM_FAIL = 'delete_room_fail';
+
+export const LOAD_IMAGE_TYPE_OF_ROOM = 'load_image_type_of_room';
+export const LOAD_IMAGE_TYPE_OF_ROOM_SUCCESS = 'load_image_type_of_room_success';
+export const LOAD_IMAGE_TYPE_OF_ROOM_FAIL = 'load_image_type_of_room_fail';
+export const ADD_IMAGE_TYPE_OF_ROOM = 'load_image_type_of_room';
+export const ADD_IMAGE_TYPE_OF_ROOM_SUCCESS = 'load_image_type_of_room_success';
+export const ADD_IMAGE_TYPE_OF_ROOM_FAIL = 'load_image_type_of_room_fail';
+export const DELETE_IMAGE_TYPE_OF_ROOM = 'delete_image_type_of_room';
+export const DELETE_IMAGE_TYPE_OF_ROOM_SUCCESS = 'delete_image_type_of_room_success';
+export const DELETE_IMAGE_TYPE_OF_ROOM_FAIL = 'delete_image_type_of_room_fail';
 
 export const SIGN_UP = 'sign_up';
 export const SIGN_UP_SUCCESS = 'sign_up_success';

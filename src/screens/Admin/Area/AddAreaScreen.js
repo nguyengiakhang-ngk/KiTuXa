@@ -18,6 +18,7 @@ import AppButtonActionInf from "../../../components/AppButtonActionInf";
 import {color_danger, color_primary} from "../../../utils/theme/Color";
 import {doAddArea, doGetListArea} from "../../../redux/actions/area";
 import { connect } from "react-redux";
+import GetLocation from "react-native-get-location";
 
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -29,7 +30,7 @@ class AddAreaScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: [],
+            data: []
         }
     }
 
@@ -60,21 +61,34 @@ class AddAreaScreen extends Component {
     // }
 
     addArea = (values) => {
-        let area = {
-            areaName: values.areaName,
-            address: values.address,
-            totalRoom: values.totalRoom,
-            status: true,
-            time: values.time,
-            content: values.content,
-            description: values.description,
-            userId: this.props.user.id
-        }
-        this.props.doAddArea(area).then(data => {
-            if(data){
-                this.props.navigation.goBack();
-            }
+        GetLocation.getCurrentPosition({
+            enableHighAccuracy: true,
+            timeout: 0,
         })
+            .then(location => {
+                let area = {
+                    areaName: values.areaName,
+                    address: values.address,
+                    totalRoom: values.totalRoom,
+                    status: true,
+                    time: values.time,
+                    content: values.content,
+                    description: values.description,
+                    userId: this.props.user.id,
+                    lng: location.longitude,
+                    lat: location.latitude
+                }
+                this.props.doAddArea(area).then(data => {
+                    if(data){
+                        this.props.navigation.goBack();
+                    }
+                })
+            })
+            .catch(error => {
+                const { code, message } = error;
+                console.warn(code, message);
+            })
+
     }
     render() {
         return (

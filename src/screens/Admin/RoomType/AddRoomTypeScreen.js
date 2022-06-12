@@ -26,6 +26,11 @@ import {doAddTypeOfRoom} from "../../../redux/actions/typeOfRoom";
 import {doAddImageOfTypeRoom} from "../../../redux/actions/imageTypeOfRoom";
 import AppDialogSelect from "../../../components/AppDialogSelect";
 import {doGetListArea} from "../../../redux/actions/area";
+import {doAddPriceTypeOfRoom} from "../../../redux/actions/priceTypeOfRoom";
+import {Multiselect} from "multiselect-react-dropdown";
+import {doGetListFreeService} from "../../../redux/actions/freeService";
+import ModalSelectMutiselect from "../../../components/ModalSelectMutiselect";
+import {doAddFreeTicket} from "../../../redux/actions/freeTocket";
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         {children}
@@ -44,7 +49,8 @@ class AddRoomTypeScreen extends Component {
             dataPaidService: [],
             isShowModalIconFree: false,
             isShowModalIconPaid: false,
-            areaData: []
+            areaData: [],
+            initValue: '',
         }
     }
 
@@ -53,7 +59,17 @@ class AddRoomTypeScreen extends Component {
     }
 
     componentDidMount() {
+        this.getFreeServiceData();
         this.getAreaList();
+    }
+
+    getFreeServiceData(){
+        this.props.doGetListFreeService({userId: this.props.user.user.id}).then(data =>{
+            alert(JSON.stringify(data));
+            this.setState({
+                dataFreeService: data.map(item => ({id: item.id, name: item.name, checked: false}))
+            })
+        });
     }
 
     componentWillUnmount() {
@@ -64,199 +80,12 @@ class AddRoomTypeScreen extends Component {
         this.props.doGetListArea({userId: this.props.user.user.id}).then(data => {
             this.setState({
                 areaData: data.map(item => ({key: item.id, label: item.areaName}))
+            },() => {
+                this.setState({
+                    initValue: this.state.areaData[0].label
+                })
             })
         })
-    }
-
-    getFreeService(){
-
-    }
-
-    getPaidService(){
-
-    }
-
-    _renderItemIcon = ({item, index}) => {
-        return(
-            <TouchableOpacity
-                style={[
-                    {
-                        paddingVertical: 10,
-                        borderRadius: 5,
-                        margin: 5,
-                        width: '30%'
-                    },
-                    item.checked ? background_color.light : '',
-                    flex.align_items_center
-                ]}
-                onPress={ () => {
-                    this.state.dataFreeService[index].checked = !this.state.dataFreeService[index].checked;
-                    this.setState({
-                        dataIcon: this.state.dataIcon
-                    });
-                }}
-                onLongPress={ () => {alert(item.label)} }
-            >
-                <Icon
-                    name={item.icon}
-                    type='font-awesome-5'
-                    color={color_primary}
-                    size={30}/>
-                <Text
-                    numberOfLines={1}
-                    style={[
-                        text_size.sm,
-                        font.serif,
-                        {
-                            textAlign: 'center'
-                        }
-                    ]}
-                >
-                    {item.label}
-                </Text>
-            </TouchableOpacity>
-        )
-    }
-
-    _renderItemIconSelection = () => {
-        return this.state.dataFreeServiceSelection.map((item, index) => {
-            return(
-                <TouchableOpacity
-                    style={[
-                        {
-                            paddingVertical: 10,
-                            paddingHorizontal: 5,
-                            borderRadius: 5,
-                            margin: 5,
-                            width: '30.5%'
-                        },
-                        background_color.light,
-                        flex.align_items_center
-                    ]}
-                    onPress={ () => {
-                        this.state.dataFreeService.map(i => {
-                            if(i.key === item.key){
-                                i.checked = false;
-                            }
-                        });
-                        this.state.dataFreeServiceSelection.splice(index, 1);
-                        this.setState({
-                            dataFreeServiceSelection: this.state.dataFreeServiceSelection
-                        });
-                    }}
-                    // onLongPress={ () => {alert(item.label)} }
-                >
-                    <Icon
-                        name={item.icon}
-                        type='font-awesome-5'
-                        color={color_primary}
-                        size={30}/>
-                    <Text
-                        numberOfLines={1}
-                        style={[
-                            text_size.sm,
-                            font.serif,
-                            {
-                                textAlign: 'center'
-                            }
-                        ]}
-                    >
-                        {item.label}
-                    </Text>
-                </TouchableOpacity>
-            )
-        })
-    }
-
-    _renderItemIconPaidSelection = () => {
-        return this.state.dataPaidServiceSelection.map((item, index) => {
-            return(
-                <TouchableOpacity
-                    style={[
-                        {
-                            paddingVertical: 10,
-                            paddingHorizontal: 5,
-                            borderRadius: 5,
-                            margin: 5,
-                            width: '30.5%'
-                        },
-                        background_color.light,
-                        flex.align_items_center
-                    ]}
-                    onPress={ () => {
-                        this.state.dataPaidService.map(i => {
-                            if(i.key === item.key){
-                                i.checked = false;
-                            }
-                        });
-                        this.state.dataPaidServiceSelection.splice(index, 1);
-                        this.setState({
-                            dataPaidServiceSelection: this.state.dataPaidServiceSelection
-                        });
-                    }}
-                    // onLongPress={ () => {alert(item.label)} }
-                >
-                    <Icon
-                        name={item.icon}
-                        type='font-awesome-5'
-                        color={color_primary}
-                        size={30}/>
-                    <Text
-                        numberOfLines={1}
-                        style={[
-                            text_size.sm,
-                            font.serif,
-                            {
-                                textAlign: 'center'
-                            }
-                        ]}
-                    >
-                        {item.label}
-                    </Text>
-                </TouchableOpacity>
-            )
-        })
-    }
-
-    _renderItemIconPaid = ({item, index}) => {
-        return(
-            <TouchableOpacity
-                style={[
-                    {
-                        paddingVertical: 10,
-                        borderRadius: 5,
-                        margin: 5,
-                        width: '30.5%'
-                    },
-                    item.checked ? background_color.light : '',
-                    flex.align_items_center
-                ]}
-                onPress={ () => {
-                    this.state.dataPaidService[index].checked = !this.state.dataPaidService[index].checked;
-                    this.setState({
-                        dataIcon: this.state.dataIcon
-                    });
-                }}
-                onLongPress={ () => {alert(item.label)} }
-            >
-                <Icon
-                    name={item.icon}
-                    type='font-awesome-5'
-                    color={color_primary}
-                    size={30}/>
-                <Text
-                    style={[
-                        text_size.sm,
-                        font.serif,
-                        {
-                            textAlign: 'center'
-                        }
-                    ]}
-                >
-                    {item.label}
-                </Text>
-            </TouchableOpacity>
-        )
     }
 
     chooseImage(){
@@ -363,41 +192,19 @@ class AddRoomTypeScreen extends Component {
             note: values.note,
             areaId: values.areaId
         }
-        // this.state.imageList.map(item => {
-        //     let image = {
-        //         uri: item.path,
-        //         type: "image/jpeg",
-        //         name: item.filename || `temp_image_${date.getMilliseconds()}.jpg`
-        //     }
-        //     data.append("files[]", image)
-        // })
-        // data.append("typeOfRoom", typeOfRoom);
         this.props.doAddTypeOfRoom(typeOfRoom).then(data => {
             if(data) {
-                this.mapImageRoomType(data);
+                let price = values.price.split(".").join("");
+                this.props.doAddPriceTypeOfRoom({price: price, typeOfRoomId: data}).then(data => {
+                    // alert(data);
+                })
+                if(this.state.imageList.length > 0) {
+                    this.mapImageRoomType(data);
+                }else{
+                    this.props.navigation.goBack();
+                }
             }
         })
-    }
-
-    mapFreeService = (id_loai) => {
-        this.state.dataFreeService.map( (item, index) => {
-            if (item.checked){
-                this.addFreeServiceBill(item.key, id_loai);
-            }
-        });
-    }
-
-    addFreeServiceBill = (id_mp, id_loai) => {
-        axios.post(path + `/addFreeServiceBill`, {
-            id_mp: id_mp,
-            id_loai: id_loai
-        })
-            .then((response)=>{
-
-            })
-            .catch((error => {
-                console.log(error);
-            }));
     }
 
     mapPaidService = (id_loai) => {
@@ -422,12 +229,17 @@ class AddRoomTypeScreen extends Component {
     }
 
     mapImageRoomType = (typeOfRoomId) => {
-        this.state.imageList.map( (item) => {
-            this.uploadImageRoomType(item, typeOfRoomId);
+        // this.state.dataFreeService.map(item => {
+        //     this.props.doAddFreeTicket({typeOfRoomId: typeOfRoomId, freeServiceId: item.id}).then(data => {
+        //
+        //     })
+        // })
+        this.state.imageList.map( (item, index) => {
+            this.uploadImageRoomType(item, index, typeOfRoomId);
         });
     }
 
-    uploadImageRoomType = (item, typeOfRoomId) => {
+    uploadImageRoomType = (item, index, typeOfRoomId) => {
         const date = new Date();
         let dataImage = new FormData();
         dataImage.append("image", {
@@ -437,7 +249,9 @@ class AddRoomTypeScreen extends Component {
         });
         dataImage.append("imageOfTypeRoom", JSON.stringify({typeOfRoomId: typeOfRoomId}));
         this.props.doAddImageOfTypeRoom(dataImage).then(data => {
-            console.log(data)
+            if( data && index === (this.state.imageList.length - 1) ){
+                this.props.navigation.goBack();
+            }
         })
     }
 
@@ -491,7 +305,7 @@ class AddRoomTypeScreen extends Component {
                                             field={"areaId"}
                                             value={values}
                                             placeholder={"Vui lòng chọn"}
-                                            initValue={true}
+                                            initValue={this.state.initValue}
                                         />
                                     </View>
                                     <View
@@ -613,100 +427,22 @@ class AddRoomTypeScreen extends Component {
                                             <AppError errors={ errors.note }/>
                                         ) : null}
                                     </View>
-                                    {/*<View*/}
-                                    {/*    style={[*/}
-                                    {/*        width.w_100,*/}
-                                    {/*        {paddingLeft: 15, paddingRight: 15, marginTop: 10}*/}
-                                    {/*    ]}*/}
-                                    {/*>*/}
-                                    {/*    <TouchableOpacity*/}
-                                    {/*        style={[*/}
-                                    {/*            width.w_100,*/}
-                                    {/*            flex.flex_row,*/}
-                                    {/*            flex.align_items_center,*/}
-                                    {/*        ]}*/}
-                                    {/*        onPress={() => {this.setState({*/}
-                                    {/*            isShowModalIconFree: true*/}
-                                    {/*        })}}*/}
-                                    {/*    >*/}
-                                    {/*        <Icon*/}
-                                    {/*            name='plus-circle'*/}
-                                    {/*            type='font-awesome-5'*/}
-                                    {/*            size={20}*/}
-                                    {/*            color={color_success}*/}
-                                    {/*        />*/}
-                                    {/*        <Text*/}
-                                    {/*            style={[*/}
-                                    {/*                text_size.sm,*/}
-                                    {/*                font.serif,*/}
-                                    {/*                {*/}
-                                    {/*                    marginLeft: 3*/}
-                                    {/*                }*/}
-                                    {/*            ]}*/}
-                                    {/*        >*/}
-                                    {/*            Dịch vụ miễn phí:*/}
-                                    {/*        </Text>*/}
-                                    {/*    </TouchableOpacity>*/}
-                                    {/*    <View*/}
-                                    {/*        style={[*/}
-                                    {/*            width.w_100,*/}
-                                    {/*            flex.flex_row,*/}
-                                    {/*            flex.flex_wrap*/}
-                                    {/*        ]}*/}
-                                    {/*    >*/}
-                                    {/*        {*/}
-                                    {/*            this._renderItemIconSelection()*/}
-                                    {/*        }*/}
-                                    {/*        /!*<FlatList scrollEnabled={false} style={{padding: 5}} numColumns={3} data={this.state.dataFreeServiceSelection} renderItem={this._renderItemIconSelection} keyExtractor={(item, index) => index.toString()}/>*!/*/}
-                                    {/*    </View>*/}
-                                    {/*</View>*/}
-                                    {/*<View*/}
-                                    {/*    style={[*/}
-                                    {/*        width.w_100,*/}
-                                    {/*        {paddingLeft: 15, paddingRight: 15, marginTop: 10}*/}
-                                    {/*    ]}*/}
-                                    {/*>*/}
-                                    {/*    <TouchableOpacity*/}
-                                    {/*        style={[*/}
-                                    {/*            width.w_100,*/}
-                                    {/*            flex.flex_row,*/}
-                                    {/*            flex.align_items_center,*/}
-                                    {/*        ]}*/}
-                                    {/*        onPress={() => {this.setState({*/}
-                                    {/*            isShowModalIconPaid: true*/}
-                                    {/*        })}}*/}
-                                    {/*    >*/}
-                                    {/*        <Icon*/}
-                                    {/*            name='plus-circle'*/}
-                                    {/*            type='font-awesome-5'*/}
-                                    {/*            size={20}*/}
-                                    {/*            color={color_success}*/}
-                                    {/*        />*/}
-                                    {/*        <Text*/}
-                                    {/*            style={[*/}
-                                    {/*                text_size.sm,*/}
-                                    {/*                font.serif,*/}
-                                    {/*                {*/}
-                                    {/*                    marginLeft: 3*/}
-                                    {/*                }*/}
-                                    {/*            ]}*/}
-                                    {/*        >*/}
-                                    {/*            Dịch vụ có phí:*/}
-                                    {/*        </Text>*/}
-                                    {/*    </TouchableOpacity>*/}
-                                    {/*    <View*/}
-                                    {/*        style={[*/}
-                                    {/*            width.w_100,*/}
-                                    {/*            flex.flex_row,*/}
-                                    {/*            flex.flex_wrap*/}
-                                    {/*        ]}*/}
-                                    {/*    >*/}
-                                    {/*        {*/}
-                                    {/*            this._renderItemIconPaidSelection()*/}
-                                    {/*        }*/}
-                                    {/*        /!*<FlatList scrollEnabled={false} style={{padding: 5}} numColumns={3} data={this.state.dataFreeServiceSelection} renderItem={this._renderItemIconSelection} keyExtractor={(item, index) => index.toString()}/>*!/*/}
-                                    {/*    </View>*/}
-                                    {/*</View>*/}
+                                    <View
+                                        style={[
+                                            width.w_100,
+                                            {paddingLeft: 15, paddingRight: 15, marginTop: 10}
+                                        ]}
+                                    >
+                                        <ModalSelectMutiselect
+                                            data={this.state.dataFreeService}
+                                            onChangeSelect={(value) => {
+                                                this.state.dataFreeService[value].checked = !this.state.dataFreeService[value].checked;
+                                                this.setState({
+                                                    dataFreeService: this.state.dataFreeService
+                                                })
+                                            }}
+                                        />
+                                    </View>
                                     <View
                                         style={[
                                             width.w_100,
@@ -1015,7 +751,10 @@ const mapStateToProps = ({user, area}) => {
 const mapDispatchToProps = {
     doAddTypeOfRoom,
     doAddImageOfTypeRoom,
-    doGetListArea
+    doGetListArea,
+    doAddPriceTypeOfRoom,
+    doGetListFreeService,
+    doAddFreeTicket
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddRoomTypeScreen)

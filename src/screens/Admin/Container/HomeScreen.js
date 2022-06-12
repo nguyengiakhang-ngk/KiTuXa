@@ -208,6 +208,7 @@ class HomeScreen extends Component{
                             color = {'white'}
                             colorText = {'black'}
                             label = {'Phòng'}
+                            onPress = {() => this.routeScreen("RoomList") }
                         />
                     </View>
                     <View

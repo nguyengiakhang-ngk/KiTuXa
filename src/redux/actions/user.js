@@ -10,9 +10,16 @@ import {
     GET_USER_BY_BOOKTICKET_ERROR,
     GET_USER_BY_ID,
     GET_USER_BY_ID_SUCCESS,
-    GET_USER_BY_ID_ERROR
+    GET_USER_BY_ID_ERROR,
+    UPDATE_USER,
+    UPDATE_USER_SUCCESS,
+    UPDATE_USER_FAIL,
+    UPDATE_TYPE_OF_ROOM_SUCCESS,
+    UPDATE_TYPE_OF_ROOM_FAIL,
+    DELETE_TYPE_OF_ROOM_SUCCESS, DELETE_TYPE_OF_ROOM_FAIL
  } from "./types";
-import { login, signUp, getUserByBookTicket, getUserById } from "../../api/userAPI";
+import { login, signUp, getUserByBookTicket, getUserById, getUser, updateUser } from "../../api/userAPI";
+import {deleteTypeOfRoom, updateTypeOfRoom} from "../../api/typeOfRoomAPI";
 
 export const initUser = (user) => dispatch => {
     if(user) {
@@ -131,6 +138,32 @@ const getUserByBookTicketSuccess = (dispatch, userAddContract) => {
 const getUserByBookTicketError = (dispatch, error) => {
     dispatch({
         type: GET_USER_BY_BOOKTICKET_ERROR,
+    });
+}
+// Update User
+export const doUpdateUser = (user, id) => dispatch => {
+    return new Promise((resolve, reject) => {
+        updateUser(user, id)
+            .then(data => {
+                updateUpdateUserSuccess(dispatch);
+                resolve(data);
+            })
+            .catch(error => {
+                updateUpdateUserFail(dispatch, error);
+                reject(error);
+            });
+    })
+}
+
+const updateUpdateUserSuccess = (dispatch) => {
+    dispatch({
+        type: UPDATE_USER_SUCCESS
+    });
+}
+
+const updateUpdateUserFail = (dispatch, error) => {
+    dispatch({
+        type: UPDATE_USER_FAIL,
         error: error
     });
 }
@@ -144,6 +177,34 @@ const getUserByIdSuccess = (dispatch) => {
 const getUserByIdError = (dispatch, error) => {
     dispatch({
         type: GET_USER_BY_ID_ERROR,
+        error: error
+    });
+}
+// Get User
+export const doGetUser = (userId) => dispatch => {
+    return new Promise((resolve, reject) => {
+        getUser(userId)
+            .then(data => {
+                getUserSuccess(dispatch, data);
+                resolve(data);
+            })
+            .catch(error => {
+                getUserError(dispatch, error);
+                reject(error);
+            });
+    })
+};
+
+const getUserSuccess = (dispatch, user) => {
+    dispatch({
+        type: LOGIN_SUCCESS,
+        user: user
+    });
+}
+
+const getUserError = (dispatch, error) => {
+    dispatch({
+        type: LOGIN_ERROR,
         error: error
     });
 }

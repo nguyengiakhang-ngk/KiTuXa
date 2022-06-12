@@ -10,7 +10,8 @@ import {
     GET_USER_BY_BOOKTICKET_ERROR,
     GET_USER_BY_ID,
     GET_USER_BY_ID_SUCCESS,
-    GET_USER_BY_ID_ERROR
+    GET_USER_BY_ID_ERROR,
+    UPDATE_USER, UPDATE_USER_SUCCESS, UPDATE_USER_FAIL
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -76,6 +77,15 @@ export default (preState = INITIAL_STATE, action) => {
                 ...preState,
             }
         case GET_USER_BY_ID_ERROR:
+        case UPDATE_USER:
+            return {
+                ...preState,
+            }
+        case UPDATE_USER_SUCCESS:
+            return {
+                ...preState
+            }
+        case UPDATE_USER_FAIL:
             return {
                 ...preState,
                 error: action.error

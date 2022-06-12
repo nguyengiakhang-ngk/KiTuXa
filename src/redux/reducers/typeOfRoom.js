@@ -1,4 +1,7 @@
 import {
+    LOAD_LIST_TYPE_OF_ROOM,
+    LOAD_LIST_TYPE_OF_ROOM_SUCCESS,
+    LOAD_LIST_TYPE_OF_ROOM_FAIL,
     ADD_TYPE_OF_ROOM,
     ADD_PAID_SERVICE_SUCCESS,
     ADD_PAID_SERVICE_FAIL,
@@ -8,31 +11,37 @@ import {
     GET_PRICE_OF_ROOM,
     GET_PRICE_OF_ROOM_SUCCESS,
     GET_PRICE_OF_ROOM_FAIL
+    UPDATE_TYPE_OF_ROOM,
+    UPDATE_TYPE_OF_ROOM_SUCCESS,
+    UPDATE_TYPE_OF_ROOM_FAIL,
+    DELETE_TYPE_OF_ROOM,
+    DELETE_TYPE_OF_ROOM_SUCCESS,
+    DELETE_TYPE_OF_ROOM_FAIL
 } from '../actions/types';
 
 const INITIAL_STATE = {
     error: '',
-    paidServiceList: []
+    typeOfRoomList: []
 }
 
 export default (preState = INITIAL_STATE, action) => {
     switch (action.type) {
-        // Load List Paid Service
-        // case LOAD_LIST_PAID_SERVICE:
-        //     return {
-        //         ...preState,
-        //         ...INITIAL_STATE
-        //     }
-        // case LOAD_LIST_PAID_SERVICE_SUCCESS:
-        //     return {
-        //         ...preState,
-        //         paidServiceList: action.paidServiceList
-        //     }
-        // case LOAD_LIST_PAID_SERVICE_FAIL:
-        //     return {
-        //         ...preState,
-        //         error: action.error
-        //     };
+        // Load List Type Of Room
+        case LOAD_LIST_TYPE_OF_ROOM:
+            return {
+                ...preState,
+                ...INITIAL_STATE
+            }
+        case LOAD_LIST_TYPE_OF_ROOM_SUCCESS:
+            return {
+                ...preState,
+                typeOfRoomList: action.typeOfRoomList
+            }
+        case LOAD_LIST_TYPE_OF_ROOM_FAIL:
+            return {
+                ...preState,
+                error: action.error
+            };
 
         // Add Paid Service
         case ADD_TYPE_OF_ROOM:
@@ -104,6 +113,36 @@ export default (preState = INITIAL_STATE, action) => {
         //         ...preState,
         //         error: action.error
         //     };
+
+        // Update Type Of Room
+        case UPDATE_TYPE_OF_ROOM:
+            return {
+                ...preState
+            }
+        case UPDATE_TYPE_OF_ROOM_SUCCESS:
+            return {
+                ...preState
+            }
+        case UPDATE_TYPE_OF_ROOM_FAIL:
+            return {
+                ...preState,
+                error: action.error
+            };
+
+        // Delete Type Of Room
+        case DELETE_TYPE_OF_ROOM:
+            return {
+                ...preState
+            }
+        case DELETE_TYPE_OF_ROOM_SUCCESS:
+            return {
+                ...preState
+            }
+        case DELETE_TYPE_OF_ROOM_FAIL:
+            return {
+                ...preState,
+                error: action.error
+            };
 
         default:
             return preState;

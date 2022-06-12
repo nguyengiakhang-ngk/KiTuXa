@@ -21,11 +21,6 @@ class AppDialogSelect extends Component {
             textInputValue: ''
         }
     }
-    componentDidMount() {
-        // this.setState({
-        //     textInputValue: this.props.data[0]?.label
-        // })
-    }
 
     setText(option) {
         this.setState({ textInputValue: option.label }, () => console.log(option.label))
@@ -36,8 +31,7 @@ class AppDialogSelect extends Component {
         return (
             <View style={[
                 width.w_100,
-                flex.justify_content_center,
-                this.props.style
+                flex.justify_content_center
             ]}>
                 <Text
                     style={[
@@ -87,7 +81,7 @@ class AppDialogSelect extends Component {
                         autoCorrect={false}
                         style={[text_size.sm, font.serif, font_weight.f_500, { color: 'black', width: '95%' }]}
                         placeholder={this.props.placeholder}
-                        value={this.state.textInputValue}
+                        value={this.state.textInputValue ? this.state.textInputValue : this.props.initValue}
                     />
                     <Icon
                         name='caret-down'

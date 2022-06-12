@@ -1,5 +1,12 @@
 import {doPost, doGet} from './apiCommon'
-import {LOGIN, SIGNUP, GET_USER_BY_BOOKTICKET, GET_USER_BY_ID} from '../constant/apiUrl'
+import {
+    LOGIN, 
+    SIGNUP, 
+    GET_USER_BY_BOOKTICKET, 
+    GET_USER_BY_ID, GET_USER, 
+    LOGIN, SIGNUP, 
+    UPDATE_USER
+} from '../constant/apiUrl';
 
 export const login = (user) => {
     return doPost(LOGIN, user);
@@ -15,4 +22,7 @@ export const getUserByBookTicket = (roomId) => {
 
 export const getUserById = (userId) => {
     return doGet(GET_USER_BY_ID, userId);
+}
+export const updateUser = async (user, id) => {
+    return doPut(UPDATE_USER, user, id);
 }

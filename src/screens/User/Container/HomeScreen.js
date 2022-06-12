@@ -1,17 +1,18 @@
-import React, { Component } from 'react';
-import {
-    FlatList, Image,
-    SafeAreaView, Text, View,
-    Dimensions
-} from 'react-native';
-import {
-    background_color,
-    flex, shadow, text_color, text_size
-} from "../../../utils/styles/MainStyle";
-import { color_danger, color_primary } from "../../../utils/theme/Color";
-import { Icon } from "@rneui/base";
+import React, {Component} from 'react';
+import {Dimensions, FlatList, Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {background_color, flex, shadow, text_color, text_size} from "../../../utils/styles/MainStyle";
+import {color_danger, color_primary} from "../../../utils/theme/Color";
+import {Icon} from "@rneui/base";
+import {connect} from "react-redux";
+import {doGetListTypeOfRoomNew} from "../../../redux/actions/typeOfRoom";
+import {url} from "../../../constant/define";
+import {cardExpiry} from "../../../utils/proccess/proccessApp";
+import AppButtonActionInf from "../../../components/AppButtonActionInf";
+import _ from 'lodash';
+import {SliderBox} from "react-native-image-slider-box";
+import BackHandler from "react-native/Libraries/Utilities/BackHandler";
 
-export default class HomeScreen extends Component {
+class HomeScreen extends Component {
     constructor(props) {
         super(props);
 
@@ -20,88 +21,89 @@ export default class HomeScreen extends Component {
                 {
                     id: 1,
                     name: "Nổi bật",
-                    icon: 'ad'
+                    icon: 'ad',
+                    list: [
+
+                    ]
                 },
                 {
                     id: 2,
                     name: "Mới nhất",
-                    icon: 'fire-alt'
-                }
-            ],
-            data: [
-                {
-                    id: 1,
-                    name: "Hội trường",
-                    s: 15,
-                    price: 15000,
-                    img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg"
-                },
-                {
-                    id: 2,
-                    name: "Hội trường",
-                    s: 15,
-                    price: 15000,
-                    img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg"
-                },
-                {
-                    id: 3,
-                    name: "Hội trường",
-                    s: 15,
-                    price: 15000,
-                    img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg"
-                },
-                {
-                    id: 4,
-                    name: "Hội trường",
-                    s: 15,
-                    price: 15000,
-                    img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg"
-                },
-                {
-                    id: 5,
-                    name: "Hội trường",
-                    s: 15,
-                    price: 15000,
-                    img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg"
-                },
-                {
-                    id: 1,
-                    name: "Hội trường",
-                    s: 15,
-                    price: 15000,
-                    img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg"
-                },
-                {
-                    id: 2,
-                    name: "Hội trường",
-                    s: 15,
-                    price: 15000,
-                    img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg"
-                },
-                {
-                    id: 3,
-                    name: "Hội trường",
-                    s: 15,
-                    price: 15000,
-                    img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg"
-                },
-                {
-                    id: 4,
-                    name: "Hội trường",
-                    s: 15,
-                    price: 15000,
-                    img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg"
-                },
-                {
-                    id: 5,
-                    name: "Hội trường",
-                    s: 15,
-                    price: 15000,
-                    img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg"
+                    icon: 'fire-alt',
+                    list: [
+
+                    ]
                 }
             ],
             refreshing: true,
+            dataNewAll: [],
+            dataAll: [],
+            isDataNewAll: false,
+            isDataAll: false
         }
+    }
+
+    componentDidMount() {
+        this.removeWillFocusListener = this.props.navigation.addListener(
+            'focus', () => {
+                this.getTypeRoomNew();
+            }
+        );
+    }
+
+    componentWillUnmount() {
+        this.removeWillFocusListener();
+    }
+
+    backAction = () => {
+        BackHandler.removeEventListener("hardwareBackPress", this.backAction);
+        if(this.state.isDataAll || this.state.isDataNewAll){
+            this.setState({
+                isDataAll: false,
+                isDataNewAll: false
+            })
+            return true;
+        }
+
+        BackHandler.exitApp();
+        return true;
+    }
+
+    getTypeRoomNew = () => {
+        this.setState({
+            isDataAll: false,
+            isDataNewAll: false
+        })
+        this.props.doGetListTypeOfRoomNew().then(data => {
+            let arr = _.cloneDeep( data );
+            arr.map(item => {
+                item.count = 0;
+                item.rooms.map(room => {
+                    item.count = room.booktickets.length;
+                })
+            })
+
+            for (let i = 0; i < arr.length; i++){
+                for (let j = i+1; j < arr.length; j++){
+                    if(arr[i].count < arr[j].count){
+                        let tamp = arr[i];
+                        arr[i] = arr[j];
+                        arr[j] = tamp;
+                    }
+                }
+            }
+
+            this.setState({
+                dataAll: _.cloneDeep( arr ),
+                dataNewAll: _.cloneDeep( data )
+            })
+
+            this.state.dataTitle[0].list = _.cloneDeep( arr ).splice(0, 10);
+            this.state.dataTitle[1].list = _.cloneDeep( data ).splice(0, 10);
+            this.setState({
+                dataTitle: this.state.dataTitle
+            });
+        })
     }
 
     routeScreen = (title) => {
@@ -116,10 +118,23 @@ export default class HomeScreen extends Component {
                         flex: 1,
                         paddingBottom: 60
                     },
-                    flex.justify_content_center,
-                    flex.align_items_center
+                    flex.justify_content_center
                 ]}
             >
+                {
+                    (!this.state.isDataNewAll && !this.state.isDataAll) ?
+                        <SliderBox
+                            autoplay
+                            images={
+                                [
+                                    "http://192.168.1.11:3001/uploads/slide1.jpg",
+                                    "http://192.168.1.11:3001/uploads/slide2.jpg",
+                                    "http://192.168.1.11:3001/uploads/slide3.jpg"
+                                ]
+                            }
+                        />
+                        : null
+                }
                 <FlatList showsVerticalScrollIndicator={false} data={this.state.dataTitle} renderItem={this._renderItemTitle} keyExtractor={item => item.id.toString()} />
             </SafeAreaView>
         );
@@ -127,40 +142,164 @@ export default class HomeScreen extends Component {
 
     _renderItemTitle = ({ item, index }) => {
         return (
-            <View
-                style={
-                    {
-                        flex: 1,
-                        marginTop: 15
-                    }
+            <View>
+                {
+                    this.state.isDataAll && !this.state.isDataNewAll ?
+                        (
+                            item.id === 1 ?
+                                <View
+                                    style={
+                                        {
+                                            flex: 1,
+                                            marginTop: 15
+                                        }
+                                    }
+                                >
+                                    <View
+                                        style={[
+                                            flex.flex_row,
+                                            flex.align_items_center
+                                        ]}
+                                    >
+                                        <Icon
+                                            raised
+                                            name={item.icon}
+                                            type='font-awesome-5'
+                                            color={color_danger}
+                                            size={14}
+                                        />
+                                        <Text
+                                            style={[
+                                                text_color.primary,
+                                                text_size.md,
+                                                {
+                                                    fontWeight: '600'
+                                                }
+                                            ]}
+                                        >
+                                            {item.name}
+                                        </Text>
+                                    </View>
+                                    <FlatList style={{paddingBottom: 10}} showsVerticalScrollIndicator={false} numColumns={2} data={this.state.dataAll} renderItem={this._renderItem} keyExtractor={item => item.id.toString()} />
+                                </View>
+                                : null
+                        )
+                        :
+                        (
+                            !this.state.isDataAll && this.state.isDataNewAll ?
+                                (
+                                    item.id === 2 ?
+                                        <View
+                                            style={
+                                                {
+                                                    flex: 1,
+                                                    marginTop: 15
+                                                }
+                                            }
+                                        >
+                                            <View
+                                                style={[
+                                                    flex.flex_row,
+                                                    flex.align_items_center
+                                                ]}
+                                            >
+                                                <Icon
+                                                    raised
+                                                    name={item.icon}
+                                                    type='font-awesome-5'
+                                                    color={color_danger}
+                                                    size={14}
+                                                />
+                                                <Text
+                                                    style={[
+                                                        text_color.primary,
+                                                        text_size.md,
+                                                        {
+                                                            fontWeight: '600'
+                                                        }
+                                                    ]}
+                                                >
+                                                    {item.name}
+                                                </Text>
+                                            </View>
+                                            <FlatList style={{paddingBottom: 10}} showsVerticalScrollIndicator={false} numColumns={2} data={this.state.dataNewAll} renderItem={this._renderItem} keyExtractor={item => item.id.toString()} />
+                                        </View>
+                                        : null
+                                )
+                                :
+                                <View
+                                    style={
+                                        {
+                                            flex: 1,
+                                            marginTop: 15
+                                        }
+                                    }
+                                >
+                                    <View
+                                        style={[
+                                            flex.flex_row,
+                                            flex.align_items_center
+                                        ]}
+                                    >
+                                        <Icon
+                                            raised
+                                            name={item.icon}
+                                            type='font-awesome-5'
+                                            color={color_danger}
+                                            size={14}
+                                        />
+                                        <Text
+                                            style={[
+                                                text_color.primary,
+                                                text_size.md,
+                                                {
+                                                    fontWeight: '600'
+                                                }
+                                            ]}
+                                        >
+                                            {item.name}
+                                        </Text>
+                                    </View>
+                                    <FlatList style={{paddingBottom: 10}} showsVerticalScrollIndicator={false} numColumns={2} data={item.list} renderItem={this._renderItem} keyExtractor={item => item.id.toString()} />
+                                    {
+                                        item.list.length ?
+                                            <View
+                                                style={[
+                                                    flex.align_items_center
+                                                ]}
+                                            >
+                                                <View
+                                                    style={[
+                                                        {
+                                                            width: '25%',
+                                                            marginBottom: 10
+                                                        }
+                                                    ]}
+                                                >
+                                                    <AppButtonActionInf
+                                                        bg={color_primary}
+                                                        title={'Xem thêm'}
+                                                        size={10}
+                                                        onPress={() => {
+                                                            BackHandler.addEventListener("hardwareBackPress", this.backAction);
+                                                            item.id === 1 ?
+                                                                this.setState({
+                                                                    isDataAll: true
+                                                                })
+                                                                :
+                                                                this.setState({
+                                                                    isDataNewAll: true
+                                                                })
+                                                        }}
+                                                    />
+                                                </View>
+                                            </View>
+                                            : null
+                                    }
+                                </View>
+
+                        )
                 }
-            >
-                <View
-                    style={[
-                        flex.flex_row,
-                        flex.align_items_center
-                    ]}
-                >
-                    <Icon
-                        raised
-                        name={item.icon}
-                        type='font-awesome-5'
-                        color={color_danger}
-                        size={14}
-                    />
-                    <Text
-                        style={[
-                            text_color.primary,
-                            text_size.md,
-                            {
-                                fontWeight: '600'
-                            }
-                        ]}
-                    >
-                        {item.name}
-                    </Text>
-                </View>
-                <FlatList showsVerticalScrollIndicator={false} numColumns={2} data={this.state.data} renderItem={this._renderItem} keyExtractor={item => item.id.toString()} />
             </View>
         )
     }
@@ -168,7 +307,10 @@ export default class HomeScreen extends Component {
     _renderItem = ({ item, index }) => {
         const windowWidth = Dimensions.get('window').width / 2 - 15;
         return (
-            <View
+            <TouchableOpacity
+                onPress={() => {
+                    this.props.navigation.navigate('DetailRoom', {room: item})
+                }}
                 style={[
                     shadow.shadow,
                     background_color.white,
@@ -189,7 +331,7 @@ export default class HomeScreen extends Component {
                         }
                     ]}
                     source={
-                        { uri: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg" }
+                        { uri: item.imageofrooms?.length ? `${url}/${item?.imageofrooms[0].image}` : "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg" }
                     }
                     resizeMode={'stretch'}
                 />
@@ -230,7 +372,7 @@ export default class HomeScreen extends Component {
                             text_color.black
                         ]}
                     >
-                        {item.s} (m3)
+                        {item.stretch} (m3)
                     </Text>
                 </View>
                 <View
@@ -258,10 +400,20 @@ export default class HomeScreen extends Component {
                             text_color.black
                         ]}
                     >
-                        {item.price} (vnđ)
+                        {cardExpiry(item.priceofrooms?.length ? item.priceofrooms[item.priceofrooms.length-1]?.price : 0)} (vnđ)
                     </Text>
                 </View>
-            </View>
+            </TouchableOpacity>
         );
     }
 }
+
+const mapStateToProps = ({user, room}) => {
+    return {user, room};
+};
+
+const mapDispatchToProps = {
+    doGetListTypeOfRoomNew
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen)

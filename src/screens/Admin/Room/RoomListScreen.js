@@ -19,15 +19,13 @@ import {color_danger, color_primary, color_success} from "../../../utils/theme/C
 import { width } from "../../../utils/styles/MainStyle";
 import {Icon} from "@rneui/base";
 import {
-    doGetListTypeOfRoom,
-    doDeleteTypeOfRoom
-} from "../../../redux/actions/typeOfRoom";
-import {
-    doDeleteImageOfTypeRoom
-} from "../../../redux/actions/imageTypeOfRoom";
+    doDeleteRoom,
+    doGetListRoom
+} from "../../../redux/actions/room";
 import {connect} from "react-redux";
+import moment from "moment";
 
-class RoomTypeListScreen extends Component{
+class RoomListScreen extends Component{
     constructor(props) {
         super(props);
         this.state = {
@@ -36,29 +34,20 @@ class RoomTypeListScreen extends Component{
         }
     }
 
-    viewAddRoomType(){
-        this.props.navigation.navigate("AddRoomType");
+    viewAddRoom(){
+        this.props.navigation.navigate("AddRoom");
     }
 
-    deleteTypeRoom(typeOfRoom) {
-        this.props.doDeleteTypeOfRoom({id: typeOfRoom.id}).then(data => {
-            if(data) {
-                typeOfRoom.imageofrooms?.map( (item, index) => {
-                    this.props.doDeleteImageOfTypeRoom({id: item.id, image: item.image}).then(data => {
-                        if(data && index === (typeOfRoom.imageofrooms.length - 1) ) {
-                            this.getTypeRoom();
-                        }
-                    })
-                })
-                this.getTypeRoom();
-            }
+    deleteTypeRoom(id) {
+        this.props.doDeleteRoom({id: id}).then(data => {
+            this.getRoom();
         })
     }
 
     componentDidMount() {
         this.removeWillFocusListener = this.props.navigation.addListener(
             'focus', () => {
-                this.getTypeRoom();
+                this.getRoom();
             }
         );
     }
@@ -67,17 +56,18 @@ class RoomTypeListScreen extends Component{
         this.removeWillFocusListener();
     }
 
-    getTypeRoom(){
-        this.props.doGetListTypeOfRoom({userId: this.props.user.user.id}).then(data => {
+    getRoom(){
+        this.props.doGetListRoom({userId: this.props.user.user.id}).then(data => {
             console.log(data);
         })
     }
 
-    updateTypeRoom(typeOfRoom){
-        this.props.navigation.navigate("UpdateRoomType", {typeOfRoom: typeOfRoom});
+    updateTypeRoom(room){
+        this.props.navigation.navigate("UpdateRoom", {room: room});
     }
 
     _renderItem = ({item, index}) => {
+        let time = new Date(item.updateAt);
         return(
             <View
                 style={[
@@ -124,7 +114,7 @@ class RoomTypeListScreen extends Component{
                                 text_color.primary
                             ]}
                         >
-                            {item.name}
+                            {item.roomName}
                         </Text>
                         <View
                             style={[
@@ -148,7 +138,7 @@ class RoomTypeListScreen extends Component{
                                     {marginLeft: 4, marginBottom: -1}
                                 ]}
                             >
-                                {item.stretch} (m2)
+                                {moment(item.updatedAt).format('DD-MM-YYYY hh:ss')}
                             </Text>
                         </View>
                     </View>
@@ -162,7 +152,7 @@ class RoomTypeListScreen extends Component{
                         style={[
                             {marginRight: 10}
                         ]}
-                        onPress={() => this.deleteTypeRoom(item)}
+                        onPress={() => this.deleteTypeRoom(item.id)}
                     >
                         <Icon
                             name= {"trash-alt"}
@@ -210,23 +200,22 @@ class RoomTypeListScreen extends Component{
                         name = 'plus'
                         size = {20}
                         color = {'white'}
-                        onPress = { () => this.viewAddRoomType() }
+                        onPress = { () => this.viewAddRoom() }
                     />
                 </View>
-                <FlatList showsVerticalScrollIndicator={false} data={this.props.typeOfRoom.typeOfRoomList} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()}/>
+                <FlatList showsVerticalScrollIndicator={false} data={this.props.room.roomList} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()}/>
             </SafeAreaView>
         );
     }
 }
 
-const mapStateToProps = ({user, typeOfRoom}) => {
-    return {user, typeOfRoom};
+const mapStateToProps = ({user, room}) => {
+    return {user, room};
 };
 
 const mapDispatchToProps = {
-    doGetListTypeOfRoom,
-    doDeleteTypeOfRoom,
-    doDeleteImageOfTypeRoom
+    doGetListRoom,
+    doDeleteRoom
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(RoomTypeListScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(RoomListScreen)
