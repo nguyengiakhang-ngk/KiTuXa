@@ -72,6 +72,8 @@ export class AppDatePicker extends Component{
                             mode={this.state.mode}
                             display="default"
                             onChange={this.onChange}
+                            maximumDate={this.props.maximumDate}
+                            minimumDate={this.props.minimumDate}
                         />
                     )}
 

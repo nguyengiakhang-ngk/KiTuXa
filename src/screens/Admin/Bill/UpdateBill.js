@@ -1,7 +1,7 @@
-import React, {Component, useState} from 'react';
+import React, { Component, useState } from 'react';
 import {
     Alert,
-    Keyboard, Pressable, ScrollView, Text, TouchableWithoutFeedback, View
+    Keyboard, Pressable, ScrollView, Text, Touchable, TouchableOpacity, TouchableWithoutFeedback, View
 } from 'react-native';
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
 import {
@@ -11,16 +11,21 @@ import {
     width
 } from "../../../utils/styles/MainStyle";
 import AppError from "../../../components/AppError";
-import {Formik} from "formik";
+import { Formik } from "formik";
 import AppInputInf from "../../../components/AppInputInf";
 import AppDialogSelect from "../../../components/AppDialogSelect";
 import AppButton from "../../../components/AppButton";
 import axios from "axios";
-import {path} from "../../../constant/define";
-import {ContractSchema} from "../../../utils/validation/ValidationContract";
-import {AppDatePicker} from "../../../components/AppDatePicker";
+import { path } from "../../../constant/define";
+import { ContractSchema } from "../../../utils/validation/ValidationContract";
+import { AppDatePicker } from "../../../components/AppDatePicker";
 import moment from "moment";
-import {BillsSchema} from "../../../utils/validation/ValidationBill";
+import { BillsSchema } from "../../../utils/validation/ValidationBill";
+import { doUpdateBill, doLoadBillById } from '../../../redux/actions/bill';
+import { connect } from 'react-redux';
+import { color_danger, color_primary } from '../../../utils/theme/Color';
+import AppButtonActionInf from "../../../components/AppButtonActionInf";
+
 
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -28,29 +33,24 @@ const HideKeyboard = ({ children }) => (
     </TouchableWithoutFeedback>
 );
 
-export default class UpdateBill extends Component {
+class UpdateBill extends Component {
     constructor(props) {
         super(props);
         this.state = {
             isLoading: true,
             data: [],
-            dataTT: [{'key':'0','label':'Chưa thanh toán'},{'key':'1','label':'Đã thanh toán'}].map(item => ({key: item.key, label: item.label}))
+            dataTT: [{ 'key': '0', 'label': 'Chưa thanh toán' }, { 'key': '1', 'label': 'Đã thanh toán' }].map(item => ({ key: item.key, label: item.label }))
 
         }
 
     }
 
-    getBillData(){
-        axios.get(path + `/getBillByID/${this.props.route.params.ID_HDon}`)
-            .then((response)=>{
-                this.setState({
-                    isLoading: false,
-                    data: response.data
-                });
+    getBillData() {
+        this.props.doLoadBillById({ id: this.props.route.params.id }).then(data => {
+            this.setState({
+                data: data
             })
-            .catch((error => {
-                console.log(error);
-            }));
+        })
     }
 
     isFormValid = (isValid, Ten_HD, GiamGia, Phat, Tong, GhiChu) => {
@@ -69,41 +69,31 @@ export default class UpdateBill extends Component {
     }
 
     updateBill = (values) => {
-        axios.put(path + `/updateBill/${this.props.route.params.ID_HDon}`,{
-            Ten_HD: values.Ten_HD,
-            NgayThuTien: moment(values.NgayThuTien).format("YYYY-MM-DD"),
-            GiamGia: values.GiamGia,
-            Phat: values.Phat,
-            Tong: values.Tong,
-            TinhTrang: values.TinhTrang,
-            GhiChu: values.GhiChu
+        this.props.doUpdateBill(values, { id: this.props.route.params.id }).then(data => {
+            if (data) {
+                alert('Cập nhật hóa đơn thành công!');
+                this.props.navigation.goBack(null);
+            }
         })
-            .then((response)=>{
-                if(response.data){
-                    this.props.navigation.goBack();
-                }
-            })
-            .catch((error => {
-                console.log(error);
-            }));
     }
 
     render() {
 
         return (
             <ScrollView
-                style={{ flex: 1}} contentContainerStyle={{ flexGrow: 1 }}
+                style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}
             >
                 <Formik
                     enableReinitialize
-                    initialValues={
-                        {   Ten_HD: this.state.data.Ten_HD,
-                            NgayThuTien: this.state.data.NgayThuTien,
-                            GiamGia: this.state.data.GiamGia,
-                            Phat: this.state.data.Phat,
-                            Tong: String(this.state.data.Tong),
-                            TinhTrang:this.state.data.TinhTrang,
-                            GhiChu:this.state.data.GhiChu}
+                    initialValues={{
+                        nameOfBill: this.state.data.nameOfBill,
+                        dateOfPayment: this.state.data.dateOfPayment,
+                        discount: this.state.data.discount,
+                        forfeit: this.state.data.forfeit,
+                        total: String(this.state.data.total),
+                        status: this.state.data.status,
+                        note: this.state.data.note
+                    }
                     }
                     validationSchema={BillsSchema}
                     onSubmit={values => {
@@ -112,18 +102,18 @@ export default class UpdateBill extends Component {
                     }}
                 >
                     {({
-                          handleChange,
-                          handleBlur,
-                          handleSubmit, values,
-                          errors,
-                          touched ,
-                          isValid
-                      }) => {
+                        handleChange,
+                        handleBlur,
+                        handleSubmit, values,
+                        errors,
+                        touched,
+                        isValid
+                    }) => {
                         return (
                             <HideKeyboard>
                                 <SafeAreaView
                                     style={[
-                                        {flex: 1, paddingBottom: 15},
+                                        { flex: 1, paddingBottom: 15 },
                                         background_color.white,
                                         height.h_100
                                     ]}
@@ -131,35 +121,35 @@ export default class UpdateBill extends Component {
                                 >
                                     <View
                                         style={[
-                                            {paddingLeft: 15, paddingRight: 10, marginTop: 10}
+                                            { paddingLeft: 15, paddingRight: 10, marginTop: 10 }
                                         ]}
                                     >
                                         <AppInputInf
                                             lable={"Tên Hóa Đơn:"}
                                             secureTextEntry={false}
-                                            field={"Ten_HD"}
+                                            field={"nameOfBill"}
                                             handleChange={handleChange}
                                             handleBlur={handleBlur}
                                             values={values}
                                         />
-                                        {errors.Ten_HD? (
-                                            <AppError errors={errors.Ten_HD}/>
+                                        {errors.nameOfBill ? (
+                                            <AppError errors={errors.nameOfBill} />
                                         ) : null}
                                     </View>
                                     <View
                                         style={[
                                             width.w_100,
-                                            {paddingLeft: 15, paddingRight: 15, marginTop: 10}
+                                            { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
                                         ]}
                                     >
                                         <AppDatePicker
                                             label={"Ngày Thu Tiền:"}
                                             value={values}
-                                            field={"NgayThuTien"}
-                                            alreadydate={new Date(values.NgayThuTien)}
+                                            field={"dateOfPayment"}
+                                            alreadydate={new Date(values.dateOfPayment)}
                                         />
-                                        {errors.NgayThuTien? (
-                                            <AppError errors={errors.NgayThuTien}/>
+                                        {errors.dateOfPayment ? (
+                                            <AppError errors={errors.dateOfPayment} />
                                         ) : null}
                                     </View>
                                     <View
@@ -170,12 +160,12 @@ export default class UpdateBill extends Component {
                                     >
                                         <View
                                             style={[
-                                                {paddingLeft: 15, paddingRight: 10, marginTop: 10, flex: 1}
+                                                { paddingLeft: 15, paddingRight: 10, marginTop: 10, flex: 1 }
                                             ]}
                                         >
                                             <AppInputInf
                                                 lable={"Giảm giá(%):"}
-                                                field={"GiamGia"}
+                                                field={"discount"}
                                                 keyboardType={'numeric'}
                                                 secureTextEntry={false}
                                                 handleChange={handleChange}
@@ -183,52 +173,52 @@ export default class UpdateBill extends Component {
                                                 values={values}
                                                 maxLength={3}
                                             />
-                                            {errors.GiamGia? (
-                                                <AppError errors={errors.GiamGia}/>
+                                            {errors.discount ? (
+                                                <AppError errors={errors.discount} />
                                             ) : null}
                                         </View>
                                         <View
                                             style={[
-                                                {paddingLeft: 10, paddingRight: 15, marginTop: 10, flex: 1}
+                                                { paddingLeft: 10, paddingRight: 15, marginTop: 10, flex: 1 }
                                             ]}
                                         >
                                             <AppInputInf
                                                 lable={"Phạt:"}
                                                 keyboardType={'numeric'}
                                                 secureTextEntry={false}
-                                                field={"Phat"}
+                                                field={"forfeit"}
                                                 handleChange={handleChange}
                                                 handleBlur={handleBlur}
                                                 values={values}
                                             />
-                                            {errors.Phat? (
-                                                <AppError errors={errors.Phat}/>
+                                            {errors.forfeit ? (
+                                                <AppError errors={errors.forfeit} />
                                             ) : null}
                                         </View>
                                     </View>
                                     <View
                                         style={[
                                             width.w_100,
-                                            {paddingLeft: 15, paddingRight: 15, marginTop: 10}
+                                            { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
                                         ]}
                                     >
                                         <AppInputInf
                                             lable={"Tổng:"}
                                             keyboardType={'numeric'}
                                             secureTextEntry={false}
-                                            field={"Tong"}
+                                            field={"total"}
                                             handleChange={handleChange}
                                             handleBlur={handleBlur}
                                             values={values}
                                         />
-                                        {errors.Tong? (
-                                            <AppError errors={errors.Tong}/>
+                                        {errors.total ? (
+                                            <AppError errors={errors.total} />
                                         ) : null}
                                     </View>
                                     <View
                                         style={[
                                             width.w_100,
-                                            {paddingLeft: 15, paddingRight: 15, marginTop: 10}
+                                            { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
                                         ]}
                                     >
                                         <AppDialogSelect
@@ -236,46 +226,67 @@ export default class UpdateBill extends Component {
                                             data={this.state.dataTT}
                                             placeholder={""}
                                             value={values}
-                                            field={"TinhTrang"}
-                                            initValue = {
-                                                this.state.data.TinhTrang == 0 ? "Chưa Thanh Toán" : "Đã Thanh Toán"
-                                            }
+                                            field={"status"}
+                                            placeholder={this.state.data.status == 0 ? "Chưa thanh toán" : "Đã thanh toán"}
                                         />
-                                        {errors.TinhTrang? (
-                                            <AppError errors={errors.TinhTrang}/>
+                                        {errors.status ? (
+                                            <AppError errors={errors.status} />
                                         ) : null}
                                     </View>
                                     <View
                                         style={[
                                             width.w_100,
-                                            {paddingLeft: 15, paddingRight: 15, marginTop: 10}
+                                            { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
                                         ]}
                                     >
                                         <AppInputInf
                                             lable={"Ghi Chú:"}
                                             secureTextEntry={false}
-                                            field={"GhiChu"}
+                                            field={"note"}
                                             handleChange={handleChange}
                                             handleBlur={handleBlur}
                                             values={values}
                                             numberOfLines={3}
                                         />
-                                        {errors.GhiChu? (
-                                            <AppError errors={errors.GhiChu}/>
+                                        {errors.note ? (
+                                            <AppError errors={errors.note} />
                                         ) : null}
                                     </View>
                                     <View
                                         style={[
                                             width.w_100,
-                                            {paddingLeft: 15, paddingRight: 15, marginTop: 30}
+                                            flex.flex_row,
+                                            { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
                                         ]}
                                     >
-                                        <AppButton
-                                            disabled={!this.isFormValid(isValid, values.Ten_HD, values.GiamGia, values.Phat, values.Tong, values.GhiChu)}
-                                            onPress={handleSubmit}
-                                            //onPress={() => alert(values.Ten_HD)}
-                                            title="Chỉnh Sửa"
-                                        />
+                                        <View
+                                            style={[
+                                                {
+                                                    flex: 1,
+                                                    marginRight: 15
+                                                }
+                                            ]}
+                                        >
+                                            <AppButtonActionInf
+                                                size={13}
+                                                textSize={18}
+                                                bg={color_danger}
+                                                onPress={() => { this.props.navigation.goBack() }}
+                                                title="Hủy"
+                                            />
+                                        </View>
+                                        <View
+                                            style={{ flex: 1 }}
+                                        >
+                                            <AppButtonActionInf
+                                                size={13}
+                                                textSize={18}
+                                                bg={color_primary}
+                                                disabled={!this.isFormValid(isValid, values.nameOfBill, values.discount, values.forfeit, values.total, values.note)}
+                                                onPress={handleSubmit}
+                                                title="Chỉnh Sửa"
+                                            />
+                                        </View>
                                     </View>
                                 </SafeAreaView>
                             </HideKeyboard>
@@ -287,3 +298,12 @@ export default class UpdateBill extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    return { state };
+};
+
+const mapDispatchToProps = {
+    doUpdateBill, doLoadBillById
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(UpdateBill)

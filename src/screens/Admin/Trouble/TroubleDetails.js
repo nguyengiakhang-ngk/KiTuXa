@@ -15,9 +15,9 @@ import {
 import { color_primary } from '../../../utils/theme/Color';
 import moment from "moment/moment";
 import { connect } from 'react-redux';
-import { doGetReceiptById } from '../../../redux/actions/receipt'
+import { doGetTroubleById } from '../../../redux/actions/trouble'
 
-class ReceiptDetails extends Component{
+class TroubleDetails extends Component{
     constructor(props) {
         super(props);
         this.state = {
@@ -26,13 +26,13 @@ class ReceiptDetails extends Component{
         }
     }
 
-    getReceiptData(){
-        this.props.doGetReceiptById({id: this.props.route.params.id}).then(data => {
+    getTroubleData(){
+        this.props.doGetTroubleById({id: this.props.route.params.id}).then(data => {
             this.setState({data: data})
         })
     }
     componentDidMount() {
-        this.getReceiptData();
+        this.getTroubleData();
         //this.getUserData()
     }
 
@@ -56,7 +56,7 @@ class ReceiptDetails extends Component{
                         }
                     ]}
                 >
-                    Chi tiết biên nhận
+                    Chi tiết sự cố
                 </Text>
                 <ScrollView
                     style={[background_color.white, width.w_100, {flex:1}]}
@@ -73,7 +73,7 @@ class ReceiptDetails extends Component{
                                     color: '#424242'}
                             ]}
                         >
-                            MÃ BIÊN NHẬN: {this.state.data.id}
+                            TÊN SỰ CỐ: {this.state.data.name}
                         </Text>
                         <Text
                             style={[
@@ -85,7 +85,7 @@ class ReceiptDetails extends Component{
                                     color: '#424242'}
                             ]}
                         >
-                            CHI TIẾT BIÊN NHẬN
+                            CHI TIẾT SỰ CỐ
                         </Text>
                         <View style={[
                             width.w_95, background_color.white,
@@ -102,20 +102,29 @@ class ReceiptDetails extends Component{
                                 {paddingLeft: 20, paddingTop: 20, paddingRight: 20}
                             ]}>
                                 <View style={[flex.flex_row, {paddingBottom: 10, borderBottomWidth: 0.5}]}>
-                                    <Text style={[text_size.xs, {fontStyle: 'italic', color: '#424242'}]}>Thời Gian Thu Tiền:</Text>
-                                    <Text style={[text_size.xs, font_weight.bold, {flex:1,textAlign: 'right'}] }>{moment(this.state.data.dateOfPayment).format("DD-MM-YYYY")}</Text>
+                                    <Text style={[text_size.xs, {fontStyle: 'italic', color: '#424242'}]}>Thời Gian Bị:</Text>
+                                    <Text style={[text_size.xs, font_weight.bold, {flex:1,textAlign: 'right'}] }>{moment(this.state.data.dateOfTrouble).format("DD-MM-YYYY")}</Text>
                                 </View>
                                 <View style={[flex.flex_row, {paddingVertical: 10, borderBottomWidth: 0.5}]}>
-                                    <Text style={[text_size.xs, {fontStyle: 'italic', color: '#424242'}]}>Phương Thức Thanh Toán:</Text>
-                                    <Text style={[text_size.xs, font_weight.bold, {flex:1,textAlign: 'right'}] }>{this.state.data.paymentMethod == 0 ? "Tiền Mặt" : "Chuyển Khoản"}</Text>
+                                    <Text style={[text_size.xs, {fontStyle: 'italic', color: '#424242'}]}>Mức Độ:</Text>
+                                    <Text style={[text_size.xs, font_weight.bold, {flex:1,textAlign: 'right'}] }>{this.state.data.level == 0 ? ("Thấp") : (this.state.data.level == 1 ? "Trung bình" : "Cao")}</Text>
                                 </View>
                                 <View style={[flex.flex_row, {paddingVertical: 10, borderBottomWidth: 0.5}]}>
                                     <Text style={[text_size.xs, {fontStyle: 'italic', color: '#424242'}]}>Ghi Chú:</Text>
-                                    <Text style={[text_size.xs, font_weight.bold, {flex:1,textAlign: 'right'}] }>{this.state.data.note}</Text>
+                                    <Text style={[text_size.xs, font_weight.bold, {flex:1,textAlign: 'right'}] }>{this.state.data.describe}</Text>
                                 </View>
+                                {
+                                    this.state.data.status !== "0" ? 
+                                    <View style={[flex.flex_row, {paddingVertical: 10, borderBottomWidth: 0.5}]}>
+                                        <Text style={[text_size.xs, {fontStyle: 'italic', color: '#424242'}]}>Ngày giải quyết:</Text>
+                                        <Text style={[text_size.xs, font_weight.bold, {flex:1,textAlign: 'right'}] }>{moment(this.state.data.dateOfSolve).format("DD-MM-YYYY")}</Text>
+                                    </View>
+                                    :
+                                    <View/>
+                                }
                                 <View style={[flex.flex_row, {paddingVertical: 10}]}>
                                     <Text style={[text_size.xs, {fontStyle: 'italic', color: '#424242'}]}>Tình Trạng:</Text>
-                                    <Text style={[text_size.xs, font_weight.bold, {flex:1,textAlign: 'right'}] }>{this.state.data.status == 0 ? "Chưa thanh toán" : "Đã thanh toán"}</Text>
+                                    <Text style={[text_size.xs, font_weight.bold, {flex:1,textAlign: 'right'}] }>{this.state.data.status == "0" ? "Chưa giải quyết" : "Đã giải quyết"}</Text>
                                 </View>
                             </View>
                         </View>
@@ -131,7 +140,7 @@ class ReceiptDetails extends Component{
                                 }
                             ]}
                         >
-                            ẢNH GIAO DỊCH
+                            ẢNH SỰ CỐ
                         </Text>
                         <View style={[width.w_100,{paddingLeft: 20, paddingRight: 20}]}>
                             <Image
@@ -160,7 +169,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-    doGetReceiptById
+    doGetTroubleById
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ReceiptDetails)
+export default connect(mapStateToProps, mapDispatchToProps)(TroubleDetails)

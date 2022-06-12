@@ -38,12 +38,14 @@ class AppInputInf extends Component {
                     {this.props.lable}
                 </Text>
                 <TextInput
+                    autoCorrect={false}
                     returnKeyType={this.props.returnKeyType}
                     secureTextEntry={this.props.secureTextEntry}
                     placeholder={this.props.placeholder}
                     keyboardType={this.props.keyboardType}
                     multiline={this.props.multiline}
                     numberOfLines={this.props.number}
+                    editable={this.props.editable}
                     style={[
                         text_size.sm,
                         font_weight.f_500,

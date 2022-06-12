@@ -127,12 +127,18 @@ export const width = StyleSheet.create({
     },
     w_95: {
         width: '95%'
+    },
+    w_45: {
+        width: '45%'
     }
 });
 
 export const height = StyleSheet.create({
     h_100: {
         height: '100%'
+    },
+    h_60: {
+        height: '35%'
     },
 });
 

@@ -7,7 +7,9 @@ import moment from "moment/moment";
 import AppButton from "../../../components/AppButton";
 import { connect } from "react-redux";
 import {doLoadListContractById} from "../../../redux/actions/contract";
-
+import { color_primary } from '../../../utils/theme/Color';
+import { doGetUserById } from '../../../redux/actions/user';
+import { doGetRoomById } from '../../../redux/actions/room';
 class ContractDetail extends Component{
     constructor(props) {
         super(props);
@@ -20,58 +22,33 @@ class ContractDetail extends Component{
         }
     }
 
-    viewDieuKhoan(){
-        this.props.navigation.navigate("ContractTerms", {
-            ID_HD: this.props.route.params.ID_HD
-        });
-    }
 
     getContractData(){
         this.props.doLoadListContractById({id: this.props.route.params.id}).then(data => {
             this.setState({
                 data: data
+            }, () => {
+                this.getUserData(data.userId);
+                this.getPhong(data.roomId);
+                console.log(this.state.data);
             })
         })
-        console.log(this.state.data);
-        // axios.get(path + `/getContractByID/${this.props.route.params.ID_HD}`)
-        //     .then((response)=>{
-        //         this.setState({
-        //             isLoading: false,
-        //             data: response.data,
-        //         });
-        //         this.getUserData();
-        //         this.getPhong(this.state.data.ID_Phong);
-        //     })
-        //     .catch((error => {
-        //         console.log(error);
-        //     }));
     }
 
-    getPhong(ID_Phong){
-        axios.get(path + `/getPhongByID/${ID_Phong}`)
-            .then((response)=>{
-                this.setState({
-                    isLoading: false,
-                    dataP: response.data,
-                });
-            })
-            .catch((error => {
-                console.log(error);
-            }));
+    getPhong(roomId){
+        this.props.doGetRoomById({id: roomId}).then(data => {
+            this.setState({
+                dataP: data
+            }, () => {console.log(this.state.dataP);})
+        })
     }
 
-    getUserData(){
-        axios.get(path + `/getUserByID/${this.state.data.ID_TK}`)
-            .then((response)=>{
-                // alert(JSON.stringify(response));
-                this.setState({
-                    isLoading: false,
-                    dataK: response.data
-                })
-            })
-            .catch((error => {
-                console.log(error);
-            }));
+    getUserData(userId){
+        this.props.doGetUserById({id: userId}).then(data => {
+            this.setState({
+                dataK: data
+            }, () => {console.log(this.state.dataK);})
+        })
     }
     componentDidMount() {
         this.getContractData();
@@ -102,13 +79,13 @@ class ContractDetail extends Component{
                 </Text>
                 <ScrollView
                     style={[background_color.white, width.w_100, {flex:1}]}
-                    showsVerticalScrollIndicator={false}
+                    showsVerticalScrollIndicator={true}
                 >
                     <View style={[flex, flex.align_items_center, background_color.white, {flex:1, paddingBottom: 10}]}>
                         <Text
                             style={[
                                 text_size.xs,
-                                font_weight.f_700,
+                                font_weight.bold,
                                 width.w_100,
                                 {textAlign: 'left',
                                     padding: 15,
@@ -122,7 +99,8 @@ class ContractDetail extends Component{
                             {
                                 borderRadius: 10,
                                 borderWidth: 2,
-                                borderColor: '#E0E0E0'
+                                borderColor: color_primary,
+                                elevation: 4
                             }
                         ]}
                         >
@@ -134,14 +112,14 @@ class ContractDetail extends Component{
                                     paddingBottom: 5
                                 }
                             ]}>
-                                <Text style={[text_size.xs, font_weight.bold,{fontStyle: 'italic',paddingBottom: 5}]}>{this.state.dataK.hoten} Nguyễn Văn A</Text>
-                                <Text style={[text_size.xs, {fontStyle: 'italic', paddingBottom: 5}]}>{this.state.dataP.TenPhong} Phòng 1</Text>
+                                <Text style={[text_size.xs, font_weight.bold,{fontStyle: 'italic',paddingBottom: 5}]}>Họ và tên: {this.state.dataK.name ? this.state.dataK.name : 'Nguyễn Văn A'}</Text>
+                                <Text style={[text_size.xs, {fontStyle: 'italic', paddingBottom: 5}]}>Phòng: {this.state.dataP.roomName ? this.state.dataP.roomName : ' Phòng X'}</Text>
                             </View>
                         </View>
                         <Text
                             style={[
                                 text_size.xs,
-                                font_weight.f_700,
+                                font_weight.bold,
                                 width.w_100,
                                 {textAlign: 'left',
                                     padding: 15,
@@ -155,36 +133,37 @@ class ContractDetail extends Component{
                             {
                                 borderRadius: 10,
                                 borderWidth: 2,
-                                borderColor: '#E0E0E0',
+                                borderColor: color_primary,
+                                elevation: 4,
                                 marginHorizontal: 5
                             }
                         ]}
                         >
                             <View style={[
                                 width.w_100,
-                                {paddingLeft: 20, paddingTop: 20, paddingRight: 20, elevation: 4}
+                                {paddingLeft: 20, paddingTop: 20, paddingRight: 20}
                             ]}>
-                                <View style={[flex.flex_row, {paddingBottom: 20}]}>
+                                <View style={[flex.flex_row, {paddingBottom: 10, borderBottomWidth: 0.5}]}>
                                     <Text style={[text_size.xs, {fontStyle: 'italic', color: '#424242'}]}>Mã HĐ:</Text>
                                     <Text style={[text_size.xs, font_weight.bold, {flex:1,textAlign: 'right'}] }>{this.state.data.id}</Text>
                                 </View>
-                                <View style={[flex.flex_row, {paddingBottom: 20}]}>
+                                <View style={[flex.flex_row, {paddingVertical: 10, borderBottomWidth: 0.5}]}>
                                     <Text style={[text_size.xs, {fontStyle: 'italic', color: '#424242'}]}>Ngày Vào:</Text>
                                     <Text style={[text_size.xs, font_weight.bold, {flex:1,textAlign: 'right'}] }>{moment(this.state.data.dayIn).format('DD-MM-YYYY')}</Text>
                                 </View>
-                                <View style={[flex.flex_row, {paddingBottom: 20}]}>
+                                <View style={[flex.flex_row, {paddingVertical: 10, borderBottomWidth: 0.5}]}>
                                     <Text style={[text_size.xs, {fontStyle: 'italic', color: '#424242'}]}>Thời Hạn:</Text>
                                     <Text style={[text_size.xs, font_weight.bold, {flex:1,textAlign: 'right'}] }>{moment(this.state.data.duration).format('DD-MM-YYYY')}</Text>
                                 </View>
-                                <View style={[flex.flex_row, {paddingBottom: 20}]}>
+                                <View style={[flex.flex_row, {paddingVertical: 10, borderBottomWidth: 0.5}]}>
                                     <Text style={[text_size.xs, {fontStyle: 'italic', color: '#424242'}]}>Ngày Thanh Toán:</Text>
                                     <Text style={[text_size.xs,font_weight.bold, {flex:1,textAlign: 'right'}] }>{moment(this.state.data.dateOfPayment).format('DD-MM-YYYY')}</Text>
                                 </View>
-                                <View style={[flex.flex_row, {paddingBottom: 20}]}>
+                                <View style={[flex.flex_row, {paddingVertical: 10, borderBottomWidth: 0.5}]}>
                                     <Text style={[text_size.xs, {fontStyle: 'italic', color: '#424242'}]}>Chỉ Số Điện:</Text>
                                     <Text style={[text_size.xs, font_weight.bold, {flex:1,textAlign: 'right'}] }>{this.state.data.numberOfElectric}</Text>
                                 </View>
-                                <View style={[flex.flex_row, {paddingBottom: 20}]}>
+                                <View style={[flex.flex_row, {paddingVertical: 10}]}>
                                     <Text style={[text_size.xs, {fontStyle: 'italic', color: '#424242'}]}>Chỉ Số Nước:</Text>
                                     <Text style={[text_size.xs, font_weight.bold, {flex:1,textAlign: 'right'}] }>{this.state.data.numberOfWater}</Text>
                                 </View>
@@ -193,7 +172,7 @@ class ContractDetail extends Component{
                         <Text
                             style={[
                                 text_size.xs,
-                                font_weight.f_700,
+                                font_weight.bold,
                                 width.w_100,
                                 {textAlign: 'left',
                                     padding: 15,
@@ -203,11 +182,12 @@ class ContractDetail extends Component{
                             ĐIỀU KHOẢN
                         </Text>
                         <View style={[
-                            width.w_90, background_color.white,
+                            width.w_95, background_color.white,
                             {
                                 borderRadius: 10,
                                 borderWidth: 2,
-                                borderColor: '#E0E0E0',
+                                borderColor: color_primary,
+                                elevation: 4
                             }
                         ]}
                         >
@@ -216,11 +196,8 @@ class ContractDetail extends Component{
                                 {paddingLeft: 20, paddingTop: 20, paddingRight: 20}
                             ]}>
                                 <View style={[flex.flex_row, {paddingBottom: 20}]}>
-                                    <Text style={[text_size.xs, {fontStyle: 'italic', color: '#424242'}]}>
-                                        Điều A:
-                                    </Text>
-                                    <Text style={[text_size.xs,font_weight.bold, {flex:1,textAlign: 'right'}] }>
-                                        ABCDE
+                                    <Text style={[text_size.xs,font_weight.bold, {flex:1}] }>
+                                        {this.state.data.term}
                                     </Text>
                                 </View>
                             </View>
@@ -236,7 +213,7 @@ const mapStateToProps = ({listContractById}) => {
 };
 
 const mapDispatchToProps = {
-    doLoadListContractById
+    doLoadListContractById, doGetUserById, doGetRoomById
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ContractDetail)

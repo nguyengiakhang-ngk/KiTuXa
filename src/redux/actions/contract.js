@@ -7,9 +7,24 @@ import {
     GET_LIST_CONTRACT_BY_ROOM_FAIL,
     GET_LIST_CONTRACT_BY_ID,
     GET_LIST_CONTRACT_BY_ID_SUCCESS,
-    GET_LIST_CONTRACT_BY_ID_FAIL
+    GET_LIST_CONTRACT_BY_ID_FAIL,
+    ADD_CONTRACT,
+    ADD_CONTRACT_SUCCESS,
+    ADD_CONTRACT_FAIL,
+    UPDATE_CONTRACT,
+    UPDATE_CONTRACT_SUCCESS,
+    UPDATE_CONTRACT_FAIL,
+    DELETE_CONTRACT_SUCCESS,
+    DELETE_CONTRACT_FAIL
  } from "./types";
-import { getListContractByRoom, getListContractByUser, getListContractById } from "../../api/contractAPI";
+import { 
+    getListContractByRoom, 
+    getListContractByUser, 
+    getListContractById, 
+    addContract, 
+    updateContract,
+    deleteContract
+} from "../../api/contractAPI";
 
 
 export const doLoadListContractByRoom = (roomId) => dispatch => {
@@ -40,6 +55,47 @@ export const doLoadListContractById = (id) => dispatch => {
     })
 };
 
+export const doAddContract = (contract) => dispatch => {
+    return new Promise((resolve, reject) => {
+        addContract(contract)
+            .then(data => {
+                addContractSuccess(dispatch, data);
+                resolve(data);
+            })
+            .catch(error => {
+                addContractError(dispatch, error);
+                reject(error);
+            });
+    })
+};
+
+export const doUpdateContract = (contract, id) => dispatch => {
+    return new Promise((resolve, reject) => {
+        updateContract(contract, id)
+            .then(data => {
+                updateContractSuccess(dispatch, data);
+                resolve(data);
+            })
+            .catch(error => {
+                updateContractError(dispatch, error);
+                reject(error);
+            });
+    })
+};
+
+export const doDeleteContract = (contract, id) => dispatch => {
+    return new Promise((resolve, reject) => {
+        deleteContract(contract, id)
+            .then(data => {
+                deleteContractSuccess(dispatch, data);
+                resolve(data);
+            })
+            .catch(error => {
+                deleteContractError(dispatch, error);
+                reject(error);
+            });
+    })
+};
 
 const getListContractByRoomSuccess = (dispatch, listContractByRoom) => {
     dispatch({
@@ -69,3 +125,41 @@ const getListContractByIdError = (dispatch, error) => {
     });
 }
 
+const addContractSuccess = (dispatch) => {
+    dispatch({
+        type: ADD_CONTRACT_SUCCESS
+    });
+}
+
+const addContractError = (dispatch, error) => {
+    dispatch({
+        type: ADD_CONTRACT_FAIL,
+        error: error
+    });
+}
+
+const updateContractSuccess = (dispatch) => {
+    dispatch({
+        type: UPDATE_CONTRACT_SUCCESS
+    });
+}
+
+const updateContractError = (dispatch, error) => {
+    dispatch({
+        type: UPDATE_CONTRACT_FAIL,
+        error: error
+    });
+}
+
+const deleteContractSuccess = (dispatch) => {
+    dispatch({
+        type: DELETE_CONTRACT_SUCCESS
+    });
+}
+
+const deleteContractError = (dispatch, error) => {
+    dispatch({
+        type: DELETE_CONTRACT_FAIL,
+        error: error
+    });
+}

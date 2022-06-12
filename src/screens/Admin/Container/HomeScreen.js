@@ -234,6 +234,27 @@ class HomeScreen extends Component {
 
                         />
                     </View>
+                    {/* <View
+                        style={[
+                            {
+                                width: '33.3%',
+                                paddingRight: 0.5,
+                                paddingLeft: 0.5,
+                                paddingTop: 10,
+                                paddingBottom: 5
+                            }
+                        ]}
+                    >
+                        <AppItemHome
+                            bg = {'orange'}
+                            name = 'file-invoice-dollar'
+                            size = {25}
+                            color = {'white'}
+                            colorText = {'black'}
+                            label = {'Biên nhận'}
+                            onPress = {() => this.routeScreen("ReceiptComponent") }
+                        />
+                    </View> */}
                     <View
                         style={[
                             {
@@ -246,12 +267,13 @@ class HomeScreen extends Component {
                         ]}
                     >
                         <AppItemHome
-                            bg={'purple'}
-                            name='tint'
-                            size={30}
-                            color={'white'}
-                            colorText={'black'}
-                            label={'Điện/nước'}
+                            bg = {'purple'}
+                            name = 'tint'
+                            size = {30}
+                            color = {'white'}
+                            colorText = {'black'}
+                            label = {'Điện/nước'}
+                            onPress={() => this.routeScreen("ChooseNumber")}
                         />
                     </View>
                     <View
@@ -314,6 +336,7 @@ class HomeScreen extends Component {
                             color={'white'}
                             colorText={'black'}
                             label={'Sự cố'}
+                            onPress = {() => this.routeScreen("TroubleScreen") }
                         />
                     </View>
                     <View

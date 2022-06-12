@@ -30,7 +30,7 @@ import HomeScreen from '../screens/Admin/Container/HomeScreen';
 //Contract
 import ContractScreen from '../screens/Admin/Contract/ContractScreen';
 import AddContract from '../screens/Admin/Contract/AddContract';
-import ContractTerms from "../screens/Admin/Contract/ContractTerms";
+import UpdateContract from "../screens/Admin/Contract/UpdateContract";
 import ContractDetail from "../screens/Admin/Contract/ContractDetail";
 
 //Bill
@@ -56,6 +56,20 @@ import BillMaterialView from '../screens/Admin/BillMaterial/BillMaterialView';
 import QRCode from '../screens/Admin/QRCode/QRCode';
 import DetailMaterial from '../screens/Admin/DetailMaterial/DetailMaterial';
 import DetailMaterialView from '../screens/Admin/DetailMaterial/DetailMaterialView';
+
+//Trouble
+import TroubleScreen from '../screens/Admin/Trouble/TroubleScreen';
+import AddTrouble from '../screens/Admin/Trouble/AddTrouble';
+import TroubleDetails from '../screens/Admin/Trouble/TroubleDetails';
+import UpdateTrouble from '../screens/Admin/Trouble/UpdateTrouble';
+
+//Electric and water
+import ChooseNumber from '../screens/Admin/ElectricWater/ChooseNumber';
+import AddNumberElectric from '../screens/Admin/ElectricWater/addNumberElectric';
+import AddNumberWater from '../screens/Admin/ElectricWater/addNumberWater';
+
+
+
 const Stack = createNativeStackNavigator();
 const StackScreen: () => Node = () => {
 
@@ -145,8 +159,8 @@ const StackScreen: () => Node = () => {
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
-                    name="ContractTerms"
-                    component={ContractTerms}
+                    name="UpdateContract"
+                    component={UpdateContract}
                     options={{ headerShown: false }}
                 />
 
@@ -265,6 +279,42 @@ const StackScreen: () => Node = () => {
                 <Stack.Screen
                     name="qrcode"
                     component={QRCode}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="TroubleScreen"
+                    component={TroubleScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="AddTrouble"
+                    component={AddTrouble}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="TroubleDetails"
+                    component={TroubleDetails}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="UpdateTrouble"
+                    component={UpdateTrouble}
+                    options={{ headerShown: false }}
+                />
+
+                <Stack.Screen
+                    name="ChooseNumber"
+                    component={ChooseNumber}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="AddElectric"
+                    component={AddNumberElectric}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="AddWater"
+                    component={AddNumberWater}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

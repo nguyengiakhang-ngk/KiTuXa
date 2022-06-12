@@ -1,7 +1,7 @@
-import React, {Component} from 'react';
-import {ScrollView, Text, TouchableOpacity, View} from "react-native";
+import React, { Component } from 'react';
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import axios from "axios";
-import {path} from "../../../constant/define";
+import { path } from "../../../constant/define";
 import {
     background_color,
     border,
@@ -13,27 +13,24 @@ import {
     width
 } from "../../../utils/styles/MainStyle";
 import moment from "moment/moment";
-
-export default class BillDetails extends Component{
+import { connect } from 'react-redux';
+import { doLoadBillById } from '../../../redux/actions/bill';
+import AppButton from '../../../components/AppButton';
+class BillDetails extends Component {
     constructor(props) {
         super(props);
         this.state = {
             isLoading: true,
-            data: []
+            data: {}
         }
     }
 
-    getBillData(){
-        axios.get(path + `/getBillByID/${this.props.route.params.ID_HDon}`)
-            .then((response)=>{
-                this.setState({
-                    isLoading: false,
-                    data: response.data
-                });
-            })
-            .catch((error => {
-                console.log(error);
-            }));
+    getBillData() {
+        this.props.doLoadBillById({ id: this.props.route.params.id }).then(data => {
+            this.setState({
+                data: data
+            }, () => { 'bill: ', console.log(data) })
+        })
     }
     componentDidMount() {
         this.getBillData();
@@ -41,58 +38,66 @@ export default class BillDetails extends Component{
     }
 
 
-    render(){
-        return(
-            <View style={[flex, flex.align_items_center, background_color.white, {flex:1}]}>
+    render() {
+        return (
+            <View style={[flex, flex.align_items_center, background_color.white, { flex: 1 }]}>
                 <Text
                     style={[
-                        text_size.normal,
+                        text_size.xs,
                         font.serif,
                         font_weight.bold,
                         text_color.white,
                         width.w_100,
                         background_color.blue,
-                        {textAlign: 'center',
-                            padding: 5}
+                        {
+                            textAlign: 'center',
+                            padding: 20
+                        }
                     ]}
                 >
-                    HÓA ĐƠN
+                    Chi tiết hóa đơn
                 </Text>
                 <ScrollView
-                    style={[background_color.white, width.w_100, {flex:1}]}
+                    style={[background_color.white, width.w_100, { flex: 1 }]}
                     showsVerticalScrollIndicator={false}
                 >
-                    <View style={[flex, flex.align_items_center, background_color.white, {flex:1, paddingBottom: 10}]}>
+                    <View style={[flex, flex.align_items_center, background_color.white, { flex: 1, paddingBottom: 10 }]}>
                         <Text
                             style={[
                                 text_size.xs,
                                 font_weight.f_700,
                                 width.w_100,
-                                {textAlign: 'left',
+                                {
+                                    textAlign: 'left',
                                     padding: 15,
-                                    color: '#424242'}
+                                    color: '#424242'
+                                }
                             ]}
                         >
                             TÊN HÓA ĐƠN:
                         </Text>
                         <View style={[
-                            width.w_90, background_color.white,
+                            width.w_95, background_color.white,
                             {
                                 borderRadius: 10,
                                 borderWidth: 2,
-                                borderColor: '#E0E0E0'
+                                borderColor: '#E0E0E0',
+                                marginHorizontal: 10
                             }
                         ]}
                         >
                             <View style={[
-                                text_size.sm,width.w_100,
+                                text_size.sm, width.w_100,
                                 {
                                     paddingLeft: 20,
                                     paddingTop: 5,
                                     paddingBottom: 5
                                 }
                             ]}>
-                                <Text style={[text_size.xs, font_weight.bold,{fontStyle: 'italic',paddingBottom: 5}]}>Hóa đơn: {this.state.data.Ten_HD}</Text>
+                                <Text style={[text_size.xs, font_weight.bold, { fontStyle: 'italic', paddingBottom: 5 }]}>
+                                    Hóa đơn: {this.state.data.nameOfBill}</Text>
+                                <Text style={[text_size.xs, font_weight.bold, { fontStyle: 'italic', paddingBottom: 5 }]}>
+                                    Mã hợp đồng: {this.state.data.contractId}</Text>
                             </View>
                         </View>
                         <Text
@@ -100,15 +105,17 @@ export default class BillDetails extends Component{
                                 text_size.xs,
                                 font_weight.f_700,
                                 width.w_100,
-                                {textAlign: 'left',
+                                {
+                                    textAlign: 'left',
                                     padding: 15,
-                                    color: '#424242'}
+                                    color: '#424242'
+                                }
                             ]}
                         >
                             CHI TIẾT HÓA ĐƠN
                         </Text>
                         <View style={[
-                            width.w_90, background_color.white,
+                            width.w_95, background_color.white,
                             {
                                 borderRadius: 10,
                                 borderWidth: 2,
@@ -117,44 +124,55 @@ export default class BillDetails extends Component{
                         ]}
                         >
                             <View style={[
-                                text_size.sm,width.w_100,
-                                {paddingLeft: 20, paddingTop: 20, paddingRight: 20}
+                                text_size.sm, width.w_100,
+                                { paddingLeft: 20, paddingTop: 20, paddingRight: 20 }
                             ]}>
-                                <View style={[flex.flex_row, {paddingBottom: 20}]}>
-                                    <Text style={[text_size.xs, {fontStyle: 'italic', color: '#424242'}]}>Ngày Thu Tiền:</Text>
-                                    <Text style={[text_size.xs, font_weight.bold, {flex:1,textAlign: 'right'}] }>{moment(this.state.data.NgayThuTien).format("DD-MM-YYYY")}</Text>
+                                <View style={[flex.flex_row, { paddingBottom: 10, borderBottomWidth: 0.5 }]}>
+                                    <Text style={[text_size.xs, { fontStyle: 'italic', color: '#424242' }]}>Ngày Thu Tiền:</Text>
+                                    <Text style={[text_size.xs, font_weight.bold, { flex: 1, textAlign: 'right' }]}>{this.state.data !== {} ? (moment(this.state.data.dateOfPayment).format("DD-MM-YYYY")) : ''}</Text>
                                 </View>
-                                <View style={[flex.flex_row, {paddingBottom: 20}]}>
-                                    <Text style={[text_size.xs, {fontStyle: 'italic', color: '#424242'}]}>Giảm Giá:</Text>
-                                    <Text style={[text_size.xs, font_weight.bold, {flex:1,textAlign: 'right'}] }>{this.state.data.GiamGia}</Text>
+                                <View style={[flex.flex_row, { paddingVertical: 10, borderBottomWidth: 0.5 }]}>
+                                    <Text style={[text_size.xs, { fontStyle: 'italic', color: '#424242' }]}>Giảm Giá:</Text>
+                                    <Text style={[text_size.xs, font_weight.bold, { flex: 1, textAlign: 'right' }]}>{this.state.data.discount}%</Text>
                                 </View>
-                                <View style={[flex.flex_row, {paddingBottom: 20}]}>
-                                    <Text style={[text_size.xs, {fontStyle: 'italic', color: '#424242'}]}>Phạt:</Text>
-                                    <Text style={[text_size.xs, font_weight.bold, {flex:1,textAlign: 'right'}] }>{this.state.data.Phat}</Text>
+                                <View style={[flex.flex_row, { paddingVertical: 10, borderBottomWidth: 0.5 }]}>
+                                    <Text style={[text_size.xs, { fontStyle: 'italic', color: '#424242' }]}>Phạt:</Text>
+                                    <Text style={[text_size.xs, font_weight.bold, { flex: 1, textAlign: 'right' }]}>{this.state.data.forfeit}</Text>
                                 </View>
-                                <View style={[flex.flex_row, {paddingBottom: 20}]}>
-                                    <Text style={[text_size.xs, {fontStyle: 'italic', color: '#424242'}]}>Tổng:</Text>
-                                    <Text style={[text_size.xs,font_weight.bold, {flex:1,textAlign: 'right'}] }>{this.state.data.Tong}</Text>
+                                <View style={[flex.flex_row, { paddingVertical: 10, borderBottomWidth: 0.5 }]}>
+                                    <Text style={[text_size.xs, { fontStyle: 'italic', color: '#424242' }]}>Tổng:</Text>
+                                    <Text style={[text_size.xs, font_weight.bold, { flex: 1, textAlign: 'right' }]}>{this.state.data.total}</Text>
                                 </View>
-                                <View style={[flex.flex_row, {paddingBottom: 20}]}>
-                                    <Text style={[text_size.xs, {fontStyle: 'italic', color: '#424242'}]}>Tình Trạng:</Text>
-                                    <Text style={[text_size.xs, font_weight.bold, {flex:1,textAlign: 'right'}] }>{this.state.data.TinhTrang == 0 ? "Chưa thanh toán" : "Đã thanh toán"}</Text>
+                                <View style={[flex.flex_row, { paddingVertical: 10, borderBottomWidth: 0.5 }]}>
+                                    <Text style={[text_size.xs, { fontStyle: 'italic', color: '#424242' }]}>Tình Trạng:</Text>
+                                    <Text style={[text_size.xs, font_weight.bold, { flex: 1, textAlign: 'right' }]}>{this.state.data !== {} ? (this.state.data.status === "0" ? "Chưa thanh toán" : "Đã thanh toán") : ''}</Text>
                                 </View>
-                                <View style={[flex.flex_row,  {paddingBottom: 20}]}>
-                                    <Text style={[text_size.xs, {fontStyle: 'italic', color: '#424242'}]}>Ghi Chú:</Text>
-                                    <Text style={[text_size.xs, font_weight.bold, {flex:1,textAlign: 'right'}] }>{this.state.data.GhiChu}</Text>
+                                <View style={[flex.flex_row, { paddingVertical: 10 }]}>
+                                    <Text style={[text_size.xs, { fontStyle: 'italic', color: '#424242' }]}>Ghi Chú:</Text>
+                                    <Text style={[text_size.xs, font_weight.bold, { flex: 1, textAlign: 'right' }]}>{this.state.data.note}</Text>
                                 </View>
                             </View>
                         </View>
-                        {/*<View style={[width.w_90, {paddingTop: 20}]}>*/}
-                        {/*    <AppButton*/}
-                        {/*        disabled={this.state.data.TinhTrang == 0 ? false : true }*/}
-                        {/*        title={"Thêm biên nhận"}*/}
-                        {/*    />*/}
-                        {/*</View>*/}
+                        <View style={[width.w_90, {paddingTop: 20}]}>
+                           <AppButton
+                                onPress={() => {this.props.navigation.navigate('ReceiptComponent', {billId: this.state.data.id})}}
+                                disabled={this.state.data.status == 0 ? false : true }
+                                title={"Thêm biên nhận"}
+                            />
+                        </View>
                     </View>
                 </ScrollView>
             </View>
         )
     }
 }
+
+const mapStateToProps = state => {
+    return { state };
+};
+
+const mapDispatchToProps = {
+    doLoadBillById
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(BillDetails)
