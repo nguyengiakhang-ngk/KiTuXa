@@ -34,6 +34,7 @@ class AppRadioButton extends Component{
                 >
                     <RadioForm
                         animation={true}
+                        formHorizontal={this.props.formHorizontal}
                     >
                         {
                             this.state.data.map((obj, i) => (

@@ -4,7 +4,7 @@ import {
     UPDATE_AREA, UPDATE_AREA_SUCCESS, UPDATE_AREA_FAIL,
     DELETE_AREA, DELETE_AREA_SUCCESS, DELETE_AREA_FAIL
 } from "./types";
-import {getListArea, addArea, updateArea, deleteArea} from "../../api/areaAPI";
+import {getListArea, addArea, updateArea, deleteArea, getAreaById} from "../../api/areaAPI";
 
 // Load List Area
 const loadGetLArea = (dispatch) => {
@@ -124,4 +124,17 @@ const deleteAreaFail = (dispatch, error) => {
         type: DELETE_AREA_FAIL,
         error: error
     });
+}
+
+// Get Area By Id
+export const doGetAreaById = (areaId) => dispatch => {
+    return new Promise((resolve, reject) => {
+        getAreaById(areaId)
+            .then(data => {
+                resolve(data);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    })
 }

@@ -1,8 +1,8 @@
 import {
-    ADD_IMAGE_TYPE_OF_ROOM, ADD_IMAGE_TYPE_OF_ROOM_SUCCESS, ADD_IMAGE_TYPE_OF_ROOM_FAIL
+    ADD_IMAGE_TYPE_OF_ROOM, ADD_IMAGE_TYPE_OF_ROOM_SUCCESS, ADD_IMAGE_TYPE_OF_ROOM_FAIL,
+    DELETE_IMAGE_TYPE_OF_ROOM, DELETE_IMAGE_TYPE_OF_ROOM_SUCCESS, DELETE_IMAGE_TYPE_OF_ROOM_FAIL
 } from "./types";
-import {getListArea, addArea, updateArea, deleteArea} from "../../api/areaAPI";
-import {addImageTypeOfRoom} from "../../api/imageOfTypeRoomAIP";
+import {addImageTypeOfRoom, deleteImageTypeOfRoom} from "../../api/imageOfTypeRoomAIP";
 
 // Load List Area
 // const loadGetLArea = (dispatch) => {
@@ -40,7 +40,7 @@ import {addImageTypeOfRoom} from "../../api/imageOfTypeRoomAIP";
 //     });
 // }
 
-// Add Image Of Type
+// Add Image Of Type Room
 export const doAddImageOfTypeRoom = (imageTypeOfRoom) => dispatch => {
     return new Promise((resolve, reject) => {
         addImageTypeOfRoom(imageTypeOfRoom)
@@ -96,30 +96,30 @@ const addImageOfTypeRoomFail = (dispatch, error) => {
 //     });
 // }
 
-// Delete Area
-// export const doDeleteArea = (id) => dispatch => {
-//     return new Promise((resolve, reject) => {
-//         deleteArea(id)
-//             .then(data => {
-//                 deleteAreaSuccess(dispatch);
-//                 resolve(data);
-//             })
-//             .catch(error => {
-//                 deleteAreaFail(dispatch, error);
-//                 reject(error);
-//             });
-//     })
-// }
-//
-// const deleteAreaSuccess = (dispatch) => {
-//     dispatch({
-//         type: DELETE_AREA_SUCCESS
-//     });
-// }
-//
-// const deleteAreaFail = (dispatch, error) => {
-//     dispatch({
-//         type: DELETE_AREA_FAIL,
-//         error: error
-//     });
-// }
+// Delete Add Image Of Type Room
+export const doDeleteImageOfTypeRoom = (imageTypeOfRoom) => dispatch => {
+    return new Promise((resolve, reject) => {
+        deleteImageTypeOfRoom(imageTypeOfRoom)
+            .then(data => {
+                deleteDeleteImageOfTypeRoomSuccess(dispatch);
+                resolve(data);
+            })
+            .catch(error => {
+                deleteDeleteImageOfTypeRoomFail(dispatch, error);
+                reject(error);
+            });
+    })
+}
+
+const deleteDeleteImageOfTypeRoomSuccess = (dispatch) => {
+    dispatch({
+        type: DELETE_IMAGE_TYPE_OF_ROOM_SUCCESS
+    });
+}
+
+const deleteDeleteImageOfTypeRoomFail = (dispatch, error) => {
+    dispatch({
+        type: DELETE_IMAGE_TYPE_OF_ROOM_FAIL,
+        error: error
+    });
+}

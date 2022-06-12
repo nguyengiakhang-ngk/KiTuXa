@@ -15,321 +15,63 @@ import AppError from "../../../components/AppError";
 import {Formik} from "formik";
 import AppInputInf from "../../../components/AppInputInf";
 import axios from "axios";
-import {path} from "../../../constant/define";
+import {url} from "../../../constant/define";
 import {RoomTypeSchema} from "../../../utils/validation/ValidationRoomType";
 import ImagePicker from 'react-native-image-crop-picker';
 import {Icon} from "@rneui/base";
 import {color_danger, color_primary, color_success, color_white} from "../../../utils/theme/Color";
 import AppButtonActionInf from "../../../components/AppButtonActionInf";
+import {doGetListArea} from "../../../redux/actions/area";
+import {doUpdateTypeOfRoom} from "../../../redux/actions/typeOfRoom"
+import {doAddPriceTypeOfRoom} from "../../../redux/actions/priceTypeOfRoom";
+import {doAddImageOfTypeRoom, doDeleteImageOfTypeRoom} from "../../../redux/actions/imageTypeOfRoom";
+import {connect} from "react-redux";
+import AppDialogSelect from "../../../components/AppDialogSelect";
 
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         {children}
     </TouchableWithoutFeedback>
 );
-export default class UpdateRoomTypeScreen extends Component {
+class UpdateRoomTypeScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
             isLoading: true,
-            roomType: {},
+            typeOfRoom: this.props.route.params.typeOfRoom,
+            areaData: [],
             data: [],
             imageList: [],
-            dataFreeService: [],
-            dataPaidService: [],
-            dataFreeServiceSelection: [],
-            dataPaidServiceSelection: [],
-            dataImgRoom: [],
-            isShowModalIconFree: false,
-            isShowModalIconPaid: false,
+            initValue: ""
         }
     }
 
-    isFormValid = (isValid, touched) => {
-        return isValid && Object.keys(touched).length !== 0;
+    isFormValid = (isValid) => {
+        return isValid;
     }
 
     componentDidMount() {
-        this.getRoomTypeById();
-        this.getFreeServiceByIdL();
-        this.getPaidServiceByIdL();
-        this.getImgRoomByIdL();
+        this.getAreaList();
     }
 
     componentWillUnmount() {
-        this.props.route.params.refresh();
+
     }
 
-    getRoomTypeById(){
-        axios.get(path + `/getRoomType/${this.props.route.params.id_loai}`)
-            .then((response)=>{
-                this.setState({
-                    isLoading: false,
-                    roomType: response.data
-                });
-            })
-            .catch((error => {
-                console.log(error);
-            }));
-    }
-
-    getFreeServiceByIdL(){
-        axios.get(path + `/getFreeServiceByIdL/${this.props.route.params.id_loai}`)
-            .then((response)=>{
-                this.setState({
-                    dataFreeServiceSelection: response.data.map(item => ({key: item.id_mp, label: item.tendv, icon: item.icon, checked: false}))
-                });
-                this.getFreeService();
-            })
-            .catch((error => {
-                console.log(error);
-            }));
-    }
-
-    getImgRoomByIdL(){
-        axios.get(path + `/getImgRoomByIdL/${this.props.route.params.id_loai}`)
-            .then((response)=>{
-                this.setState({
-                    dataImgRoom: response.data.map(item => ({key: item.id_anh, uri: item.anh_phong}))
-                })
-            })
-            .catch((error => {
-                console.log(error);
-            }));
-    }
-
-    getPaidServiceByIdL(){
-        axios.get(path + `/getPaidServiceByIdL/${this.props.route.params.id_loai}`)
-            .then((response)=>{
-                this.setState({
-                    dataPaidServiceSelection: response.data.map(item => ({key: item.id_cp, label: item.tendv, icon: item.icon, checked: false}))
-                });
-                this.getPaidService();
-            })
-            .catch((error => {
-                console.log(error);
-            }));
-    }
-
-    getFreeService(){
-        axios.get(path + "/getFreeService")
-            .then((response)=>{
-                this.setState({
-                    dataFreeService: response.data.map(item => ({key: item.id_mp, label: item.tendv, icon: item.icon, checked: false}))
-                });
-                this.state.dataFreeServiceSelection.map(item => {
-                   this.state.dataFreeService.map(i => {
-                       if(i.key === item.key){
-                           i.checked = true;
-                       }
-                   });
-                });
-            })
-            .catch((error => {
-                console.log(error);
-            }));
-    }
-
-    getPaidService(){
-        axios.get(path + "/getPaidService")
-            .then((response)=>{
-                this.setState({
-                    dataPaidService: response.data.map(item => ({key: item.id_cp, label: item.tendv, icon: item.icon, checked: false}))
-                });
-                this.state.dataPaidServiceSelection.map(item => {
-                    this.state.dataPaidService.map(i => {
-                        if(i.key === item.key){
-                            i.checked = true;
-                        }
-                    });
-                });
-            })
-            .catch((error => {
-                console.log(error);
-            }));
-    }
-
-    _renderItemIconSelection = () => {
-        return this.state.dataFreeServiceSelection.map((item, index) => {
-            return(
-                <TouchableOpacity
-                    style={[
-                        {
-                            paddingVertical: 10,
-                            paddingHorizontal: 5,
-                            borderRadius: 5,
-                            margin: 5,
-                            width: '30.5%'
-                        },
-                        background_color.light,
-                        flex.align_items_center
-                    ]}
-                    onPress={ () => {
-                        this.state.dataFreeService.map(i => {
-                            if(i.key === item.key){
-                                i.checked = false;
-                            }
-                        });
-                        this.state.dataFreeServiceSelection.splice(index, 1);
+    getAreaList = () => {
+        this.props.doGetListArea({userId: this.props.user.user.id}).then(data => {
+            this.setState({
+                areaData: data.map(item => ({key: item.id, label: item.areaName}))
+            }, () => {
+                data.map(item => {
+                    if (item.id === this.state.typeOfRoom.areaId){
                         this.setState({
-                            dataFreeServiceSelection: this.state.dataFreeServiceSelection
-                        });
-                    }}
-                    // onLongPress={ () => {alert(item.label)} }
-                >
-                    <Icon
-                        name={item.icon}
-                        type='font-awesome-5'
-                        color={color_primary}
-                        size={30}/>
-                    <Text
-                        numberOfLines={1}
-                        style={[
-                            text_size.sm,
-                            font.serif,
-                            {
-                                textAlign: 'center'
-                            }
-                        ]}
-                    >
-                        {item.label}
-                    </Text>
-                </TouchableOpacity>
-            )
+                            initValue: item.areaName
+                        })
+                    }
+                });
+            });
         })
-    }
-
-    _renderItemIcon = ({item, index}) => {
-        return(
-            <TouchableOpacity
-                style={[
-                    {
-                        paddingVertical: 10,
-                        borderRadius: 5,
-                        margin: 5,
-                        width: '30%'
-                    },
-                    item.checked ? background_color.light : '',
-                    flex.align_items_center
-                ]}
-                onPress={ () => {
-                    this.state.dataFreeService[index].checked = !this.state.dataFreeService[index].checked;
-                    this.setState({
-                        dataIcon: this.state.dataIcon
-                    });
-                }}
-                onLongPress={ () => {alert(item.label)} }
-            >
-                <Icon
-                    name={item.icon}
-                    type='font-awesome-5'
-                    color={color_primary}
-                    size={30}/>
-                <Text
-                    numberOfLines={1}
-                    style={[
-                        text_size.sm,
-                        font.serif,
-                        {
-                            textAlign: 'center'
-                        }
-                    ]}
-                >
-                    {item.label}
-                </Text>
-            </TouchableOpacity>
-        )
-    }
-
-    _renderItemIconPaidSelection = () => {
-        return this.state.dataPaidServiceSelection.map((item, index) => {
-            return(
-                <TouchableOpacity
-                    style={[
-                        {
-                            paddingVertical: 10,
-                            paddingHorizontal: 5,
-                            borderRadius: 5,
-                            margin: 5,
-                            width: '30.5%'
-                        },
-                        background_color.light,
-                        flex.align_items_center
-                    ]}
-                    onPress={ () => {
-                        this.state.dataPaidService.map(i => {
-                            if(i.key === item.key){
-                                i.checked = false;
-                            }
-                        });
-                        this.state.dataPaidServiceSelection.splice(index, 1);
-                        this.setState({
-                            dataPaidServiceSelection: this.state.dataPaidServiceSelection
-                        });
-                    }}
-                    // onLongPress={ () => {alert(item.label)} }
-                >
-                    <Icon
-                        name={item.icon}
-                        type='font-awesome-5'
-                        color={color_primary}
-                        size={30}/>
-                    <Text
-                        numberOfLines={1}
-                        style={[
-                            text_size.sm,
-                            font.serif,
-                            {
-                                textAlign: 'center'
-                            }
-                        ]}
-                    >
-                        {item.label}
-                    </Text>
-                </TouchableOpacity>
-            )
-        })
-    }
-
-    _renderItemIconPaid = ({item, index}) => {
-        return(
-            <TouchableOpacity
-                style={[
-                    {
-                        paddingVertical: 10,
-                        borderRadius: 5,
-                        margin: 5,
-                        width: '30.5%'
-                    },
-                    item.checked ? background_color.light : '',
-                    flex.align_items_center
-                ]}
-                onPress={ () => {
-                    this.state.dataPaidService[index].checked = !this.state.dataPaidService[index].checked;
-                    this.setState({
-                        dataIcon: this.state.dataIcon
-                    });
-                }}
-                onLongPress={ () => {alert(item.label)} }
-            >
-                <Icon
-                    name={item.icon}
-                    type='font-awesome-5'
-                    color={color_primary}
-                    size={30}/>
-                <Text
-                    style={[
-                        text_size.sm,
-                        font.serif,
-                        {
-                            textAlign: 'center'
-                        }
-                    ]}
-                >
-                    {item.label}
-                </Text>
-            </TouchableOpacity>
-        )
     }
 
     chooseImage(){
@@ -357,14 +99,27 @@ export default class UpdateRoomTypeScreen extends Component {
         })
             .catch(error => console.log('Error: ', error.message));
     }
+
     removeImage(index){
         this.state.imageList.splice(index, 1);
         this.setState({
            imageList: this.state.imageList
         });
     }
+
+    deleteImageTypeRoom(image, index){
+        this.props.doDeleteImageOfTypeRoom({id: image.id, image: image.image}).then(data => {
+            if(data) {
+                this.state.typeOfRoom.imageofrooms?.splice(index, 1);
+                this.setState({
+                    typeOfRoom: this.state.typeOfRoom
+                })
+            }
+        })
+    }
+
     imageListView() {
-        return this.state.dataImgRoom.map((image, index) => {
+        return this.state.imageList.map((image, index) => {
             return(
                 <View
                     style={[
@@ -376,7 +131,7 @@ export default class UpdateRoomTypeScreen extends Component {
                 >
                     <Image
                         source=
-                            {{uri: `${path}/${image.uri}`}}
+                            {{uri: image.path}}
                         style={{
                             width: '100%',
                             height: 150,
@@ -426,90 +181,119 @@ export default class UpdateRoomTypeScreen extends Component {
         })
     }
 
-    addRoomType = (values) => {
-        axios.post(path + "/addRoomType",{
-            roomTypeName: values.roomTypeName,
-            acreage: values.acreage,
-            totalGuest: values.totalGuest,
-            object: values.object,
-            note: values.note,
-            price: values.price.split(".").join("")
+    renderImageList() {
+        return this.state.typeOfRoom?.imageofrooms.map((image, index) => {
+            return(
+                <View
+                    keys={index}
+                    style={[
+                        {
+                            width: '49%',
+                            marginBottom: 7,
+                        }
+                    ]}
+                >
+                    <Image
+                        source=
+                            {{uri: `${url}/${image.image}`}}
+                        style={{
+                            width: '100%',
+                            height: 150,
+                            borderTopRightRadius: 5,
+                            borderTopLeftRadius: 5,
+                            overflow: 'hidden',
+                        }}
+                    />
+                    <TouchableOpacity
+                        style={[
+                            flex.flex_row,
+                            flex.justify_content_center,
+                            flex.align_items_center,
+                            width.w_100,
+                            {
+                                backgroundColor: color_danger,
+                                marginTop: -0.1,
+                                paddingTop: 2,
+                                paddingBottom: 2,
+                                borderBottomRightRadius: 5,
+                                borderBottomLeftRadius: 5
+                            }
+                        ]}
+                        onPress={() => {
+                            this.deleteImageTypeRoom(image, index)
+                        }}
+                    >
+                        <Icon
+                            name='times-circle'
+                            type='font-awesome-5'
+                            size={18}
+                            color={color_white}
+                        />
+                        <Text
+                            style={[
+                                text_color.white,
+                                font.serif,
+                                text_size.xs,
+                                {
+                                    marginLeft: 3
+                                }
+                            ]}
+                        >
+                            Xóa
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            )
         })
-            .then((response)=>{
-                if(response.data){
-                    this.mapImageRoomType(response.data);
-                    this.mapFreeService(response.data);
-                    this.mapPaidService(response.data);
+    }
+
+    updateRoomType = (values) => {
+        let typeOfRoom = {
+            name: values.roomTypeName,
+            stretch: values.acreage,
+            numberOfCustomer: values.totalGuest,
+            typeOfCustomer: values.object,
+            note: values.note,
+            areaId: values.areaId
+        }
+        this.props.doUpdateTypeOfRoom(typeOfRoom, {id: this.state.typeOfRoom.id}).then(data => {
+            // alert(data);
+            if(data) {
+                let price = values.price.split(".").join("");
+                if(price !== this.state.typeOfRoom.priceofrooms[0].price) {
+                    this.props.doAddPriceTypeOfRoom({price: price, typeOfRoomId: this.state.typeOfRoom.id}).then(data => {
+                        // alert(data);
+                    })
+                }
+                if(this.state.imageList.length > 0) {
+                    this.mapImageRoomType(this.state.typeOfRoom.id);
+                }else{
                     this.props.navigation.goBack();
                 }
-            })
-            .catch((error => {
-                console.log(error);
-            }));
-    }
-
-    mapFreeService = (id_loai) => {
-        this.state.dataFreeService.map( (item, index) => {
-            if (item.checked){
-                this.addFreeServiceBill(item.key, id_loai);
             }
-        });
-    }
-
-    addFreeServiceBill = (id_mp, id_loai) => {
-        axios.post(path + `/addFreeServiceBill`, {
-            id_mp: id_mp,
-            id_loai: id_loai
         })
-            .then((response)=>{
-
-            })
-            .catch((error => {
-                console.log(error);
-            }));
     }
 
-    mapPaidService = (id_loai) => {
-        this.state.dataPaidService.map( (item, index) => {
-            if (item.checked){
-                this.addPaidServiceBill(item.key, id_loai);
-            }
-        });
-    }
-
-    addPaidServiceBill = (id_cp, id_loai) => {
-        axios.post(path + `/addPaidServiceBill`, {
-            id_cp: id_cp,
-            id_loai: id_loai
-        })
-            .then((response)=>{
-
-            })
-            .catch((error => {
-                console.log(error);
-            }));
-    }
-
-    mapImageRoomType = (id_loai) => {
+    mapImageRoomType = (typeOfRoomId) => {
         this.state.imageList.map( (item, index) => {
-            this.uploadImageRoomType(item, index, id_loai);
+            this.uploadImageRoomType(item, index, typeOfRoomId);
         });
     }
 
-    uploadImageRoomType = (item, index, id_loai) => {
+    uploadImageRoomType = (item, index, typeOfRoomId) => {
+        const date = new Date();
         let dataImage = new FormData();
         dataImage.append("image", {
             uri: item.path,
             type: "image/jpeg",
-            name: item.filename || `temp_image_${index}.jpg`
+            name: item.filename || `temp_image_${date.getMilliseconds()}.jpg`
         });
-        axios.put(path + `/photos/uploadImgRoom/${id_loai}`, dataImage)
-            .then((response)=>{
-
-            })
-            .catch((error => {
-                console.log(error);
-            }));
+        dataImage.append("imageOfTypeRoom", JSON.stringify({typeOfRoomId: typeOfRoomId}));
+        this.props.doAddImageOfTypeRoom(dataImage).then(data => {
+            if( data && index === (this.state.imageList.length - 1) ){
+                this.props.navigation.goBack();
+            }
+        })
     }
 
 
@@ -530,17 +314,19 @@ export default class UpdateRoomTypeScreen extends Component {
                     <Formik
                         enableReinitialize
                         initialValues={
-                            {   roomTypeName: this.state.roomType.tenloai,
-                                price: String(this.state.roomType.gia),
-                                acreage: String(this.state.roomType.dientich),
-                                totalGuest: String(this.state.roomType.soluongkhach),
-                                object: this.state.roomType.doituong,
-                                note: this.state.roomType.luuy,
+                            {
+                                roomTypeName: this.state.typeOfRoom.name,
+                                price: String(this.state.typeOfRoom.priceofrooms[0].price),
+                                acreage: String(this.state.typeOfRoom.stretch),
+                                totalGuest: String(this.state.typeOfRoom.numberOfCustomer),
+                                object: this.state.typeOfRoom.typeOfCustomer,
+                                note: this.state.typeOfRoom.note,
+                                areaId: this.state.typeOfRoom.areaId
                             }
                         }
                         validationSchema={RoomTypeSchema}
                         onSubmit={(values) => {
-                            this.addRoomType(values)
+                            this.updateRoomType(values)
                         }}
                     >
                         {({
@@ -560,6 +346,21 @@ export default class UpdateRoomTypeScreen extends Component {
                                     ]}
                                     onPress={Keyboard.dismiss}
                                 >
+                                    <View
+                                        style={[
+                                            width.w_100,
+                                            {paddingLeft: 15, paddingRight: 15, marginTop: 10}
+                                        ]}
+                                    >
+                                        <AppDialogSelect
+                                            lable={"Khu:"}
+                                            data={this.state.areaData}
+                                            field={"areaId"}
+                                            value={values}
+                                            placeholder={"Vui lòng chọn"}
+                                            initValue={ this.state.initValue }
+                                        />
+                                    </View>
                                     <View
                                         style={[
                                             width.w_100,
@@ -691,98 +492,6 @@ export default class UpdateRoomTypeScreen extends Component {
                                                 flex.flex_row,
                                                 flex.align_items_center,
                                             ]}
-                                            onPress={() => {this.setState({
-                                                isShowModalIconFree: true
-                                            })}}
-                                        >
-                                            <Icon
-                                                name='plus-circle'
-                                                type='font-awesome-5'
-                                                size={20}
-                                                color={color_success}
-                                            />
-                                            <Text
-                                                style={[
-                                                    text_size.sm,
-                                                    font.serif,
-                                                    {
-                                                        marginLeft: 3
-                                                    }
-                                                ]}
-                                            >
-                                                Dịch vụ miễn phí:
-                                            </Text>
-                                        </TouchableOpacity>
-                                        <View
-                                            style={[
-                                                width.w_100,
-                                                flex.flex_row,
-                                                flex.flex_wrap
-                                            ]}
-                                        >
-                                            {
-                                                this._renderItemIconSelection()
-                                            }
-                                        </View>
-                                    </View>
-                                    <View
-                                        style={[
-                                            width.w_100,
-                                            {paddingLeft: 15, paddingRight: 15, marginTop: 10}
-                                        ]}
-                                    >
-                                        <TouchableOpacity
-                                            style={[
-                                                width.w_100,
-                                                flex.flex_row,
-                                                flex.align_items_center,
-                                            ]}
-                                            onPress={() => {this.setState({
-                                                isShowModalIconPaid: true
-                                            })}}
-                                        >
-                                            <Icon
-                                                name='plus-circle'
-                                                type='font-awesome-5'
-                                                size={20}
-                                                color={color_success}
-                                            />
-                                            <Text
-                                                style={[
-                                                    text_size.sm,
-                                                    font.serif,
-                                                    {
-                                                        marginLeft: 3
-                                                    }
-                                                ]}
-                                            >
-                                                Dịch vụ có phí:
-                                            </Text>
-                                        </TouchableOpacity>
-                                        <View
-                                            style={[
-                                                width.w_100,
-                                                flex.flex_row,
-                                                flex.flex_wrap
-                                            ]}
-                                        >
-                                            {
-                                                this._renderItemIconPaidSelection()
-                                            }
-                                        </View>
-                                    </View>
-                                    <View
-                                        style={[
-                                            width.w_100,
-                                            {paddingLeft: 15, paddingRight: 15, marginTop: 10}
-                                        ]}
-                                    >
-                                        <TouchableOpacity
-                                            style={[
-                                                width.w_100,
-                                                flex.flex_row,
-                                                flex.align_items_center,
-                                            ]}
                                             onPress={() => this.chooseImage()}
                                         >
                                             <Icon
@@ -814,6 +523,8 @@ export default class UpdateRoomTypeScreen extends Component {
                                                 }
                                             ]}
                                         >
+
+                                            {this.renderImageList()}
                                             {this.imageListView()}
                                         </View>
                                     </View>
@@ -851,9 +562,9 @@ export default class UpdateRoomTypeScreen extends Component {
                                                 size={13}
                                                 textSize={18}
                                                 bg={color_primary}
-                                                disabled = { !this.isFormValid(isValid, touched) }
+                                                disabled = { !this.isFormValid(isValid) }
                                                 onPress = { handleSubmit }
-                                                title="Cập nhật"
+                                                title="Lưu"
                                             />
                                         </View>
                                     </View>
@@ -862,224 +573,22 @@ export default class UpdateRoomTypeScreen extends Component {
                         )}
                     </Formik>
                 </ScrollView>
-                <Modal transparent visible={this.state.isShowModalIconFree}>
-                    <View
-                        style={[
-                            {
-                                flex: 1,
-                                justifyContent: "center",
-                                alignItems: "center",
-                                backgroundColor: 'rgba(0,0,0,0.5)',
-                            }
-                        ]}
-                    >
-                        <View
-                            style={[
-                                {
-                                    width: '90%',
-                                    backgroundColor: 'white',
-                                    paddingVertical: 15,
-                                    paddingHorizontal: 15,
-                                    borderRadius: 5,
-                                    height: 310
-                                }
-                            ]}
-                        >
-                            <View
-                                style={[
-                                    width.w_100,
-                                    flex.align_items_center
-                                ]}
-                            >
-                                <Text
-                                    style={[
-                                        text_size.xl,
-                                        text_color.danger,
-                                        font.serif
-                                    ]}
-                                >
-                                    Chọn dịch vụ
-                                </Text>
-                                <Text
-                                    style={[
-                                        text_size.xs,
-                                        font.serif
-                                    ]}
-                                >
-                                    (Nhấn giữ để xem chi tiết)
-                                </Text>
-                            </View>
-                            <FlatList style={{padding: 5}} numColumns={3} data={this.state.dataFreeService} renderItem={this._renderItemIcon} keyExtractor={(item, index) => index.toString()}/>
-                            <View
-                                style={[
-                                    width.w_100,
-                                    flex.align_items_center,
-                                    {
-                                        marginTop: 20
-                                    }
-                                ]}
-                            >
-                                {/*<View*/}
-                                {/*    style={[*/}
-                                {/*        {*/}
-                                {/*            flex: 1,*/}
-                                {/*            marginRight: 15*/}
-                                {/*        }*/}
-                                {/*    ]}*/}
-                                {/*>*/}
-                                {/*    <AppButtonActionInf*/}
-                                {/*        size={10}*/}
-                                {/*        textSize={16}*/}
-                                {/*        bg={color_danger}*/}
-                                {/*        onPress = { () => { this.setState({isShowModalIconFree: false}) } }*/}
-                                {/*        title="Thoát"*/}
-                                {/*    />*/}
-                                {/*</View>*/}
-                                <View
-                                    style={[
-                                        {
-                                            width: '50%'
-                                        }
-                                    ]}
-                                >
-                                    <AppButtonActionInf
-                                        size={10}
-                                        textSize={16}
-                                        bg={color_primary}
-                                        onPress = { () => {
-                                            this.state.dataFreeServiceSelection = [];
-                                            this.state.dataFreeService.map((item) => {
-                                                if (item.checked){
-                                                    this.state.dataFreeServiceSelection.push(item);
-                                                }
-                                            });
-                                            this.setState({
-                                                dataFreeServiceSelection: this.state.dataFreeServiceSelection
-                                            });
-                                            this.setState({isShowModalIconFree: false});
-                                        } }
-                                        title="Xác nhận"
-                                    />
-                                </View>
-                            </View>
-                        </View>
-                    </View>
-                </Modal>
-                <Modal transparent visible={this.state.isShowModalIconPaid}>
-                    <View
-                        style={[
-                            {
-                                flex: 1,
-                                justifyContent: "center",
-                                alignItems: "center",
-                                backgroundColor: 'rgba(0,0,0,0.5)',
-                            }
-                        ]}
-                    >
-                        <View
-                            style={[
-                                {
-                                    width: '90%',
-                                    backgroundColor: 'white',
-                                    paddingVertical: 15,
-                                    paddingHorizontal: 15,
-                                    borderRadius: 5,
-                                    height: 310,
-                                }
-                            ]}
-                        >
-                            <View
-                                style={[
-                                    width.w_100,
-                                    flex.align_items_center
-                                ]}
-                            >
-                                <Text
-                                    style={[
-                                        text_size.xl,
-                                        text_color.danger,
-                                        font.serif
-                                    ]}
-                                >
-                                    Chọn dịch vụ
-                                </Text>
-                                <Text
-                                    style={[
-                                        text_size.xs,
-                                        font.serif
-                                    ]}
-                                >
-                                    (Nhấn giữ để xem chi tiết)
-                                </Text>
-                            </View>
-                            <FlatList style={{padding: 5}} numColumns={3} data={this.state.dataPaidService} renderItem={this._renderItemIconPaid} keyExtractor={(item, index) => index.toString()}/>
-                            <View
-                                style={[
-                                    width.w_100,
-                                    flex.flex_row,
-                                    flex.justify_content_center,
-                                    {marginTop: 20}
-                                ]}
-                            >
-                                {/*<View*/}
-                                {/*    style={[*/}
-                                {/*        {*/}
-                                {/*            flex: 1,*/}
-                                {/*            marginRight: 15*/}
-                                {/*        }*/}
-                                {/*    ]}*/}
-                                {/*>*/}
-                                {/*    <AppButtonActionInf*/}
-                                {/*        size={10}*/}
-                                {/*        textSize={16}*/}
-                                {/*        bg={color_danger}*/}
-                                {/*        onPress = { () => {*/}
-                                {/*            this.state.dataPaidServiceSelection = [];*/}
-                                {/*            this.state.dataPaidService.map((item) => {*/}
-                                {/*                if (item.checked){*/}
-                                {/*                    this.state.dataPaidServiceSelection.push(item);*/}
-                                {/*                }*/}
-                                {/*            });*/}
-                                {/*            this.setState({*/}
-                                {/*                dataPaidServiceSelection: this.state.dataPaidServiceSelection*/}
-                                {/*            });*/}
-                                {/*            this.setState({isShowModalIconPaid: false});*/}
-                                {/*        } }*/}
-                                {/*        title="Hủy"*/}
-                                {/*    />*/}
-                                {/*</View>*/}
-                                <View
-                                    style={[
-                                        {
-                                            width: '50%'
-                                        }
-                                    ]}
-                                >
-                                    <AppButtonActionInf
-                                        size={10}
-                                        textSize={16}
-                                        bg={color_primary}
-                                        onPress = { () => {
-                                            this.state.dataPaidServiceSelection = [];
-                                            this.state.dataPaidService.map((item) => {
-                                                if (item.checked){
-                                                    this.state.dataPaidServiceSelection.push(item);
-                                                }
-                                            });
-                                            this.setState({
-                                                dataPaidServiceSelection: this.state.dataPaidServiceSelection
-                                            });
-                                            this.setState({isShowModalIconPaid: false});
-                                        } }
-                                        title="Xác nhận"
-                                    />
-                                </View>
-                            </View>
-                        </View>
-                    </View>
-                </Modal>
             </SafeAreaView>
         );
     }
 }
+
+const mapStateToProps = ({user, freeService}) => {
+    return {user, freeService};
+};
+
+const mapDispatchToProps = {
+    doGetListArea,
+    doUpdateTypeOfRoom,
+    doDeleteImageOfTypeRoom,
+    doAddPriceTypeOfRoom,
+    doAddImageOfTypeRoom
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(UpdateRoomTypeScreen)
 

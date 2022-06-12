@@ -8,10 +8,11 @@ import {
     FlatList,
 
 } from 'react-native';
-import { color_primary } from "../../../utils/theme/Color";
+import {color_dark, color_primary, color_secondary} from "../../../utils/theme/Color";
 import AsyncStorage from "@react-native-community/async-storage";
-import {doLogin, initUser} from "../../../redux/actions/user";
+import {doGetUser, doLogin, initUser} from "../../../redux/actions/user";
 import {connect} from "react-redux";
+import {url} from "../../../constant/define";
 class PersonalScreen extends Component {
 
     constructor(props) {
@@ -47,7 +48,7 @@ class PersonalScreen extends Component {
             {
                 id: 1,
                 name: 'Thông tin cá nhân',
-                onPress: 'information',
+                onPress: 'AccountInf',
                 icon: require("../../../../assets/icons/information.png"),
                 navigate: ''
             },
@@ -88,20 +89,25 @@ class PersonalScreen extends Component {
     renderFunction = ({ item, index }) => {
         return (
             <TouchableOpacity style={styles.functionProfile} onPress={async () => {
-                if (item.onPress === 'Welcome') {
-                    try {
-                        this.props.initUser(null);
-                        await AsyncStorage.setItem('@user', '');
-                        return this.props.navigation.replace('Welcome');
-                    } catch (exception) {
-                        console.log(exception);
-                        return false;
+                if(item.id !== 5) {
+                    if(this.state.dataUser){
+                        this.props.navigation.navigate(item.onPress, {params: item.params});
+                    }else{
+                        alert("Vui lòng đăng nhật để sử dụng!");
                     }
-                }else if(item.onPress === 'Login'){
-                    this.props.navigation.replace('Login');
-                }else{
-                    console.log(item.params);
-                    this.props.navigation.navigate(item.onPress, {params: item.params});
+                } else {
+                    if (item.onPress === 'Welcome') {
+                        try {
+                            this.props.initUser(null);
+                            await AsyncStorage.setItem('@user', '');
+                            return this.props.navigation.replace('Welcome');
+                        } catch (exception) {
+                            console.log(exception);
+                            return false;
+                        }
+                    } else {
+                        this.props.navigation.replace('Login');
+                    }
                 }
 
             }}>
@@ -123,17 +129,40 @@ class PersonalScreen extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <Text style={styles.textTitle}>Cá nhân</Text>
                 <View style={styles.informationContainer}>
                     <View style={styles.avtAndNameContainer}>
-                        <Image
-                            style={{
-                                width: 100,
-                                height: 100
-                            }}
-                            resizeMode={'stretch'}
-                            source={require("../../../../assets/images/avt_dummy.png")}
-                        />
+                        {
+                            this.state.dataUser?.image ?
+                                <Image
+                                    style={{
+                                        width: 100,
+                                        height: 100,
+                                        borderRadius: 50,
+                                        borderWidth: 1,
+                                        borderColor: color_secondary
+                                    }}
+                                    resizeMode={'stretch'}
+                                    source={
+                                        {
+                                            uri: `${url}/${this.state.dataUser?.image}`
+                                        }
+                                    }
+                                />
+                                :
+                                <Image
+                                    style={{
+                                        width: 100,
+                                        height: 100,
+                                        borderRadius: 50,
+                                        borderWidth: 1,
+                                        borderColor: color_secondary
+                                    }}
+                                    resizeMode={'stretch'}
+                                    source={
+                                        require('../../../assets/images/default_avatar.png')
+                                    }
+                                />
+                        }
                         <View style={styles.detailContainer}>
                             <Text style={styles.textName} numberOfLines={1}>{this.state.dataUser ? this.state.dataUser.name : 'Chưa đăng nhập'}</Text>
                             <View>
@@ -164,7 +193,7 @@ const mapStateToProps = ({ user, state }) => {
 };
 
 const mapDispatchToProps = {
-    doLogin, initUser
+    doLogin, initUser, doGetUser
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(PersonalScreen)
@@ -208,7 +237,9 @@ const styles = StyleSheet.create({
     },
     textName: {
         fontSize: 25,
-        color: 'black',
+        color: color_primary,
+        fontFamily: 'serif',
+        fontWeight: "bold",
         textAlignVertical: 'center',
         lineHeight: 30,
         letterSpacing: 0,
@@ -222,8 +253,9 @@ const styles = StyleSheet.create({
         height: 100,
     },
     textDetail: {
-        fontSize: 14,
-        color: 'black',
+        fontSize: 16,
+        color: color_dark,
+        fontFamily: 'serif',
         textAlignVertical: 'center',
         lineHeight: 16,
         letterSpacing: 0,
@@ -244,7 +276,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     textNameFunction: {
-        fontSize: 16,
+        fontSize: 18,
+        fontFamily: "serif",
         color: color_primary,
         textAlignVertical: 'center',
         letterSpacing: 0,

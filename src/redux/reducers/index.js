@@ -7,6 +7,7 @@ import paidSerViceReducer from  "./paidService";
 import typeOfRoomReducer from  "./typeOfRoom";
 import contractReducer from "./contract";
 import billReducer from "./bill";
+import roomReducer from "./room";
 
 const reducers = combineReducers({
     area: areaReducer,
@@ -16,7 +17,8 @@ const reducers = combineReducers({
     paidService: paidSerViceReducer,
     typeOfRoom: typeOfRoomReducer,
     contract: contractReducer,
-    bill: billReducer
+    bill: billReducer,
+    room: roomReducer
 });
 
 export default ( state, action ) => reducers(state, action);

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {
     Keyboard,
-    SafeAreaView, ScrollView, Text,
+    SafeAreaView, ScrollView,
     TouchableWithoutFeedback,
     View
 } from 'react-native';
@@ -54,7 +54,7 @@ class SignUpScreen extends Component{
                 alert("Đăng ký thất bại! Vui lòng thử lại!");
             }
         });
-        
+
     }
 
     render() {

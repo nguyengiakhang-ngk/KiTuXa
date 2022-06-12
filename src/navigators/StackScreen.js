@@ -44,6 +44,12 @@ import ReceiptComponent from "../screens/Admin/Receipt/ReceiptComponent";
 import AddReceipt from "../screens/Admin/Receipt/AddReceipt";
 import ReceiptDetails from "../screens/Admin/Receipt/ReceiptDetails";
 import UpdateReceipt from "../screens/Admin/Receipt/UpdateReceipt";
+import RoomListScreen from "../screens/Admin/Room/RoomListScreen";
+import AddRoomScreen from "../screens/Admin/Room/AddRoomScreen";
+import UpdateRoomScreen from "../screens/Admin/Room/UpdateRoomScreen";
+import AccountInf from "../screens/User/AccountInf/AccountInf";
+import AccountInfScreen from "../screens/User/AccountInf/AccountInf";
+import DetailRoomScreen from "../screens/User/DetailRoom/DetailRoomScreen";
 const Stack = createNativeStackNavigator();
 const StackScreen: () => Node = () => {
 
@@ -193,6 +199,31 @@ const StackScreen: () => Node = () => {
                 <Stack.Screen
                     name="RoomBookedList"
                     component={RoomBookedListScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="RoomList"
+                    component={RoomListScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="AddRoom"
+                    component={AddRoomScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="UpdateRoom"
+                    component={UpdateRoomScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="AccountInf"
+                    component={AccountInfScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="DetailRoom"
+                    component={DetailRoomScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>
