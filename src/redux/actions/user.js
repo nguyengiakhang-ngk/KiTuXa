@@ -7,9 +7,12 @@ import {
     SIGN_UP_ERROR,
     GET_USER_BY_BOOKTICKET,
     GET_USER_BY_BOOKTICKET_SUCCESS,
-    GET_USER_BY_BOOKTICKET_ERROR
+    GET_USER_BY_BOOKTICKET_ERROR,
+    GET_USER_BY_ID,
+    GET_USER_BY_ID_SUCCESS,
+    GET_USER_BY_ID_ERROR
  } from "./types";
-import { login, signUp, getUserByBookTicket } from "../../api/userAPI";
+import { login, signUp, getUserByBookTicket, getUserById } from "../../api/userAPI";
 
 export const initUser = (user) => dispatch => {
     if(user) {
@@ -54,6 +57,20 @@ export const doGetUserByBookTicket = (roomId) => dispatch => {
             })
             .catch(error => {
                 getUserByBookTicketError(error);
+                reject(error);
+            });
+    })
+};
+
+export const doGetUserById = (userId) => dispatch => {
+    return new Promise((resolve, reject) => {
+        getUserById(userId)
+            .then(data => {
+                getUserByIdSuccess(dispatch, data);
+                resolve(data);
+            })
+            .catch(error => {
+                getUserByIdError(error);
                 reject(error);
             });
     })
@@ -104,16 +121,29 @@ const loadGetUserByBookTicket = () => dispatch => {
     });
 }
 
-const getUserByBookTicketSuccess = (dispatch, user) => {
+const getUserByBookTicketSuccess = (dispatch, userAddContract) => {
     dispatch({
         type: GET_USER_BY_BOOKTICKET_SUCCESS,
-        user: user
+        userAddContract: userAddContract
     });
 }
 
-const getUserByBookTicketError = (dispatch, user) => {
+const getUserByBookTicketError = (dispatch, error) => {
     dispatch({
         type: GET_USER_BY_BOOKTICKET_ERROR,
+        error: error
+    });
+}
+
+const getUserByIdSuccess = (dispatch) => {
+    dispatch({
+        type: GET_USER_BY_ID_SUCCESS,
+    });
+}
+
+const getUserByIdError = (dispatch, error) => {
+    dispatch({
+        type: GET_USER_BY_ID_ERROR,
         error: error
     });
 }

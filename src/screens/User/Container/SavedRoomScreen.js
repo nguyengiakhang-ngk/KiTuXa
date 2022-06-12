@@ -10,8 +10,9 @@ import {
 } from "../../../utils/styles/MainStyle";
 import { color_danger, color_primary } from "../../../utils/theme/Color";
 import { Icon } from "@rneui/base";
-
-export default class SavedRoomScreen extends Component {
+import {connect} from "react-redux";
+import { doGetListTypeOfRoomBySave, doGetPriceOfRoom } from "../../../redux/actions/typeOfRoom";
+class SavedRoomScreen extends Component {
 
     data = [
         {
@@ -47,8 +48,31 @@ export default class SavedRoomScreen extends Component {
         super(props);
         this.state = {
             isLoading: true,
-            listData: this.data
+            listData: [],
+            listPrice: []
+            
         };
+    }
+
+    getTypeOfRoom(){
+        this.props.doGetListTypeOfRoomBySave({userId: 1}).then(data => {
+            data.map(item => {
+                this.props.doGetPriceOfRoom({typeOfRoomId: item.id}).then(dataPrice => {
+                    let ls = this.state.listPrice;
+                    ls.push({
+                        price: dataPrice[0].price
+                    })
+                    this.setState({
+                        listPrice: ls
+                    })
+                })
+            })
+            this.setState({listData: data})        
+        })
+        
+    }
+    componentDidMount() {
+        this.getTypeOfRoom()
     }
 
     renderSavedRoom = ({ item, index }) => {
@@ -73,7 +97,7 @@ export default class SavedRoomScreen extends Component {
                         }
                     ]}
                     source={
-                        { uri: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg" }
+                        { uri: item.image }
                     }
                     resizeMode={'stretch'}
                 />
@@ -115,7 +139,7 @@ export default class SavedRoomScreen extends Component {
                                 text_color.black
                             ]}
                         >
-                            {item.s} (m3)
+                            {item.stretch} (m3)
                         </Text>
                     </View>
                     <View
@@ -143,7 +167,7 @@ export default class SavedRoomScreen extends Component {
                                 text_color.black
                             ]}
                         >
-                            {item.price} (vnđ)
+                            {this.state.listPrice[index]?.price} (vnđ)
                         </Text>
                     </View>
                 </View>
@@ -206,3 +230,13 @@ const styles = StyleSheet.create({
         width: '100%'
     }
 })
+
+const mapStateToProps = ({ user, state }) => {
+    return {user,state};
+};
+
+const mapDispatchToProps = {
+    doGetListTypeOfRoomBySave, doGetPriceOfRoom
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(SavedRoomScreen)

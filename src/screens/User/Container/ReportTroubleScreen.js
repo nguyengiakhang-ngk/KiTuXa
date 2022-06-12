@@ -29,9 +29,6 @@ import ImagePicker from 'react-native-image-crop-picker';
 import { Icon } from "@rneui/base";
 import { connect } from 'react-redux';
 import { doAddReceipt } from '../../../redux/actions/receipt';
-import { color_danger, color_primary } from '../../../utils/theme/Color';
-import AppButtonActionInf from "../../../components/AppButtonActionInf";
-
 
 
 const HideKeyboard = ({ children }) => (
@@ -40,7 +37,7 @@ const HideKeyboard = ({ children }) => (
     </TouchableWithoutFeedback>
 );
 
-class AddReceipt extends Component {
+class ReportTroubleScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -140,7 +137,7 @@ class AddReceipt extends Component {
                             image: "",
                             note: "",
                             status: '0',
-                            billId: this.props.route.params.billId
+                            contractId: this.props.route.params.contractId
                         }}
                         validationSchema={ReceiptSchema}
                         onSubmit={values => {
@@ -296,39 +293,15 @@ class AddReceipt extends Component {
                                         <View
                                             style={[
                                                 width.w_100,
-                                                flex.flex_row,
-                                                { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
+                                                { paddingLeft: 15, paddingRight: 15, marginTop: 30 }
                                             ]}
                                         >
-                                            <View
-                                                style={[
-                                                    {
-                                                        flex: 1,
-                                                        marginRight: 15
-                                                    }
-                                                ]}
-                                            >
-                                                <AppButtonActionInf
-                                                    size={13}
-                                                    textSize={18}
-                                                    bg={color_danger}
-                                                    onPress={() => { this.props.navigation.goBack() }}
-                                                    title="Hủy"
-                                                />
-                                            </View>
-                                            <View
-                                                style={{ flex: 1 }}
-                                            >
-                                                <AppButtonActionInf
-                                                    size={13}
-                                                    textSize={18}
-                                                    bg={color_primary}
-                                                    disabled={!this.isFormValid(isValid, values.amountOfMoney)}
-                                                    onPress={handleSubmit}
-                                                    //onPress={() => alert(values.Ten_HD)}
-                                                    title="Thêm"
-                                                />
-                                            </View>
+                                            <AppButton
+                                                disabled={!this.isFormValid(isValid, values.amountOfMoney)}
+                                                onPress={ handleSubmit }
+                                                // onPress={() => this.addReceipt(values)}
+                                                title="Thêm"
+                                            />
                                         </View>
                                     </SafeAreaView>
                                 </HideKeyboard>
@@ -350,4 +323,4 @@ const mapDispatchToProps = {
     doAddReceipt
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddReceipt)
+export default connect(mapStateToProps, mapDispatchToProps)(ReportTroubleScreen)

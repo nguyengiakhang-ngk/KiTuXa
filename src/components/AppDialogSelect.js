@@ -22,14 +22,15 @@ class AppDialogSelect extends Component {
         }
     }
     componentDidMount() {
-        this.setState({
-            textInputValue: this.props.data[0]?.label
-        })
+        // this.setState({
+        //     textInputValue: this.props.data[0]?.label
+        // })
     }
 
     setText(option) {
-        this.setState({ textInputValue: option.label })
+        this.setState({ textInputValue: option.label }, () => console.log(option.label))
         this.props.value[this.props.field] = option.key;
+        this.props.returnFilter ? this.props.returnFilter(option) : null;
     }
     render() {
         return (
@@ -83,6 +84,7 @@ class AppDialogSelect extends Component {
                     onChange={(option) => { this.setText(option) }}>
 
                     <TextInput
+                        autoCorrect={false}
                         style={[text_size.sm, font.serif, font_weight.f_500, { color: 'black', width: '95%' }]}
                         placeholder={this.props.placeholder}
                         value={this.state.textInputValue}

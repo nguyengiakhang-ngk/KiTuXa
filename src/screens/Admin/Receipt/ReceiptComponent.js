@@ -2,14 +2,16 @@ import React, {Component} from 'react';
 import {FlatList, Text, TouchableOpacity, View} from "react-native";
 import axios from "axios";
 import {path} from "../../../constant/define";
-import {flex, font, font_weight, height, position, text_color, text_size, width} from "../../../utils/styles/MainStyle";
+import {flex, font, font_weight, height, position, text_color, text_size, width, background_color} from "../../../utils/styles/MainStyle";
 import {color_danger, color_primary, color_success} from "../../../utils/theme/Color";
 import {Icon} from "@rneui/base";
 import AppFAB from "../../../components/AppFAB";
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
 import moment from "moment/moment";
+import { connect } from 'react-redux';
+import { doGetReceiptByBill, doDeleteReceipt } from '../../../redux/actions/receipt'
 
-export default class ReceiptComponent extends Component{
+class ReceiptComponent extends Component{
     constructor(props) {
         super(props);
         this.state = {
@@ -17,54 +19,38 @@ export default class ReceiptComponent extends Component{
             data: [],
         }
     }
-    viewReceiptDetails(ID_BN){
+    viewReceiptDetails(id){
         this.props.navigation.navigate("ReceiptDetails", {
-            ID_BN: ID_BN
+            id: id
         });
     }
 
-    viewAddReceipt(ID_HD){
+    viewAddReceipt(contractId){
         this.props.navigation.navigate("AddReceipt",
             {
-                ID_HD: ID_HD,
+                billId: this.props.route.params.billId,
                 refresh: () => {this.refresh()}
             });
     }
-    deleteReceipt(ID_BN) {
-        axios.delete(path + `/deleteReceipt/${ID_BN}`)
-            .then((response)=>{
-                if(response.data){
-                    this.setState({
-                        isLoading: true,
-                        data: []
-                    });
-                    this.getReceiptsData();
-                }
-            })
-            .catch((error => {
-                console.log(error);
-            }));
+    deleteReceipt(receipt) {
+        this.props.doDeleteReceipt({id: receipt.id, image: receipt.image}).then(data => {
+            this.refresh()
+        })
     }
 
-    updateReceipt(ID_BN){
+    updateReceipt(id){
         this.props.navigation.navigate("UpdateReceipt", {
-            ID_BN: ID_BN,
+            id: id,
             refresh: () => {this.refresh()}
         });
     }
 
     getReceiptsData(){
-        let ID_HD = 1;
-        axios.get(path + `/getReceipts/${ID_HD}`)
-            .then((response)=>{
-                this.setState({
-                    isLoading: false,
-                    data: response.data
-                });
-            })
-            .catch((error => {
-                console.log(error);
-            }));
+        this.props.doGetReceiptByBill({billId: this.props.route.params.billId}).then(data => {
+            this.setState({
+                data: data
+            }, () => {console.log(data)})
+        })
     }
 
     componentDidMount() {
@@ -110,7 +96,7 @@ export default class ReceiptComponent extends Component{
                             color={'white'}
                         />
                     </View>
-                    <View>
+                    <View style={{width: 200}}>
                         <Text
                             style={[
                                 text_size.sm,
@@ -118,8 +104,9 @@ export default class ReceiptComponent extends Component{
                                 font_weight.bold,
                                 text_color.primary
                             ]}
+                            numberOfLines={1}
                         >
-                            Mã biên nhận: {item.ID_BN}
+                            Mã biên nhận: {item.id}
                         </Text>
                         <View
                             style={[
@@ -140,7 +127,7 @@ export default class ReceiptComponent extends Component{
                                     {marginLeft: 10}
                                 ]}
                             >
-                                Ngày thu tiền: {moment(item.ThoiGian_ThuTien).format('DD-MM-YYYY')}
+                                Ngày thu: {moment(item.dateOfPayment).format('DD-MM-YYYY')}
                             </Text>
                         </View>
                         <View
@@ -150,10 +137,10 @@ export default class ReceiptComponent extends Component{
                             ]}
                         >
                             <Icon
-                                name= {item.Tinh_Trang == 0 ? "circle-notch" : "check-circle"}
+                                name= {item.status == 0 ? "circle-notch" : "check-circle"}
                                 type='font-awesome-5'
                                 size={16}
-                                color={item.Tinh_Trang == 0 ? color_danger : color_success}
+                                color={item.status == 0 ? color_danger : color_success}
                             />
                             <Text
                                 style={[
@@ -162,7 +149,7 @@ export default class ReceiptComponent extends Component{
                                     {marginLeft: 5}
                                 ]}
                             >
-                                {item.Tinh_Trang == 0 ? "Chưa thanh toán" : "Đã thanh toán"}
+                                {item.status == 0 ? "Chưa thanh toán" : "Đã thanh toán"}
                             </Text>
                         </View>
                     </View>
@@ -176,30 +163,30 @@ export default class ReceiptComponent extends Component{
                         style={[
                             {marginRight: 10}
                         ]}
-                        onPress={() => item.Tinh_Trang == 0 ? this.deleteReceipt(item.ID_BN) : ""}
+                        onPress={() => item.status == 0 ? this.deleteReceipt(item) : ""}
                     >
                         <Icon
                             name= {"trash-alt"}
                             type='font-awesome-5'
-                            size={item.Tinh_Trang == 0 ? 22 : 0}
-                            color={item.Tinh_Trang == 0 ? color_danger : "transparent"}
+                            size={item.status == 0 ? 22 : 0}
+                            color={item.status == 0 ? color_danger : "transparent"}
                         />
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={[
                             {marginRight: 10}
                         ]}
-                        onPress={() => this.updateReceipt(item.ID_BN)}
+                        onPress={() => this.updateReceipt(item.id)}
                     >
                         <Icon
                             name= {"pencil-alt"}
                             type='font-awesome-5'
-                            size={item.Tinh_Trang == 0 ? 22 : 0}
-                            color={item.Tinh_Trang == 0 ? color_success : "transparent"}
+                            size={item.status == 0 ? 22 : 0}
+                            color={item.status == 0 ? color_success : "transparent"}
                         />
                     </TouchableOpacity>
                     <TouchableOpacity
-                        onPress={() => this.viewReceiptDetails(item.ID_BN)}
+                        onPress={() => this.viewReceiptDetails(item.id)}
                     >
                         <Icon
                             name= {"eye"}
@@ -218,11 +205,29 @@ export default class ReceiptComponent extends Component{
         return(
             <SafeAreaView
                 style={[
-                    {flex: 1, padding: 5, paddingLeft: 10, paddingRight: 10},
+                    {flex: 1},
                     height.h_100,
                     position.relative
                 ]}
             >
+                <Text
+                    style={[
+                        text_size.xs,
+                        font.serif,
+                        font_weight.bold,
+                        text_color.white,
+                        width.w_100,
+                        background_color.blue,
+                        {
+                            textAlign: 'center',
+                            paddingVertical: 15,
+                            lineHeight: 20,
+                            letterSpacing: 0,
+                        }
+                    ]}
+                >
+                    Danh sách biên nhận
+                </Text>
                 <View
                     style={[
                         position.absolute,
@@ -241,8 +246,18 @@ export default class ReceiptComponent extends Component{
                         onPress = { () => this.viewAddReceipt(1) }
                     />
                 </View>
-                <FlatList data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()}/>
+                <FlatList contentContainerStyle={{paddingHorizontal: 10}} data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()}/>
             </SafeAreaView>
         )
     }
 }
+
+const mapStateToProps = ({ listReceiptByContract }) => {
+    return { listReceiptByContract };
+};
+
+const mapDispatchToProps = {
+    doGetReceiptByBill, doDeleteReceipt
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ReceiptComponent)

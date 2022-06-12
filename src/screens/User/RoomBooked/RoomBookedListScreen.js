@@ -1,105 +1,132 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
     FlatList, Image,
     SafeAreaView, Text, View,
-    Dimensions
+    Dimensions,
+    TouchableOpacity, StyleSheet
 } from 'react-native';
 import {
     background_color,
     flex, font, height, shadow, text_color, text_size, width
 } from "../../../utils/styles/MainStyle";
-import {color_danger, color_primary} from "../../../utils/theme/Color";
-import {Icon} from "@rneui/base";
+import { color_danger, color_primary } from "../../../utils/theme/Color";
+import { Icon } from "@rneui/base";
+import { url } from '../../../constant/define';
+import { connect } from "react-redux";
+import { doGetRoomByBookTicket } from "../../../redux/actions/room";
+import { doGetPriceOfRoom } from "../../../redux/actions/typeOfRoom";
 
-export default class RoomBookedListScreen extends Component{
+class RoomBookedListScreen extends Component {
     constructor(props) {
         super(props);
+        let data = [
+            {
+                id: 1,
+                name: "Hội trường",
+                s: 15,
+                price: 15000,
+                img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
+                createDate: '24/04/2020'
+            },
+            {
+                id: 2,
+                name: "Hội trường",
+                s: 15,
+                price: 15000,
+                img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
+                createDate: '24/04/2020'
+            },
+            {
+                id: 3,
+                name: "Hội trường",
+                s: 15,
+                price: 15000,
+                img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
+                createDate: '24/04/2020'
+            },
+            {
+                id: 4,
+                name: "Hội trường",
+                s: 15,
+                price: 15000,
+                img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
+                createDate: '24/04/2020'
+            },
+            {
+                id: 5,
+                name: "Hội trường",
+                s: 15,
+                price: 15000,
+                img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
+                createDate: '24/04/2020'
+            },
+            {
+                id: 1,
+                name: "Hội trường",
+                s: 15,
+                price: 15000,
+                img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
+                createDate: '24/04/2020'
+            },
+            {
+                id: 2,
+                name: "Hội trường",
+                s: 15,
+                price: 15000,
+                img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
+                createDate: '24/04/2020'
+            },
+            {
+                id: 3,
+                name: "Hội trường",
+                s: 15,
+                price: 15000,
+                img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
+                createDate: '24/04/2020'
+            },
+            {
+                id: 4,
+                name: "Hội trường",
+                s: 15,
+                price: 15000,
+                img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
+                createDate: '24/04/2020'
+            },
+            {
+                id: 5,
+                name: "Hội trường",
+                s: 15,
+                price: 15000,
+                img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
+                createDate: '24/04/2020'
+            }
+        ]
 
         this.state = {
-            data: [
-                {
-                    id: 1,
-                    name: "Hội trường",
-                    s: 15,
-                    price: 15000,
-                    img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
-                    createDate: '24/04/2020'
-                },
-                {
-                    id: 2,
-                    name: "Hội trường",
-                    s: 15,
-                    price: 15000,
-                    img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
-                    createDate: '24/04/2020'
-                },
-                {
-                    id: 3,
-                    name: "Hội trường",
-                    s: 15,
-                    price: 15000,
-                    img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
-                    createDate: '24/04/2020'
-                },
-                {
-                    id: 4,
-                    name: "Hội trường",
-                    s: 15,
-                    price: 15000,
-                    img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
-                    createDate: '24/04/2020'
-                },
-                {
-                    id: 5,
-                    name: "Hội trường",
-                    s: 15,
-                    price: 15000,
-                    img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
-                    createDate: '24/04/2020'
-                },
-                {
-                    id: 1,
-                    name: "Hội trường",
-                    s: 15,
-                    price: 15000,
-                    img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
-                    createDate: '24/04/2020'
-                },
-                {
-                    id: 2,
-                    name: "Hội trường",
-                    s: 15,
-                    price: 15000,
-                    img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
-                    createDate: '24/04/2020'
-                },
-                {
-                    id: 3,
-                    name: "Hội trường",
-                    s: 15,
-                    price: 15000,
-                    img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
-                    createDate: '24/04/2020'
-                },
-                {
-                    id: 4,
-                    name: "Hội trường",
-                    s: 15,
-                    price: 15000,
-                    img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
-                    createDate: '24/04/2020'
-                },
-                {
-                    id: 5,
-                    name: "Hội trường",
-                    s: 15,
-                    price: 15000,
-                    img: "https://thegioimancua.vn/wp-content/uploads/2017/03/rem-san-khau-hoi-truong-sk01.jpg",
-                    createDate: '24/04/2020'
-                }
-            ],
+            data: [],
             refreshing: true,
+            listPrice: []
         }
+    }
+
+    getRoomByBookTicket() {
+        this.props.doGetRoomByBookTicket({ userId: 1 }).then(data => {
+            data.map(item => {
+                this.props.doGetPriceOfRoom({ typeOfRoomId: item.id }).then(dataPrice => {
+                    let ls = this.state.listPrice;
+                    ls.push({
+                        price: dataPrice[0].price
+                    })
+                    this.setState({
+                        listPrice: ls
+                    })
+                })
+            })
+            this.setState({ data: data })
+        })
+    }
+    componentDidMount() {
+        this.getRoomByBookTicket();
     }
 
     routeScreen = (title) => {
@@ -108,53 +135,85 @@ export default class RoomBookedListScreen extends Component{
 
     render() {
         return (
-            <SafeAreaView
-                style={[
+            <View style={styles.container}>
+                <View style={[
+                    flex.flex_row,
+                    flex.align_items_center,
                     {
-                        flex: 1,
-                        padding: 10
-                    },
-                    flex.justify_content_center,
-                    flex.align_items_center
-                ]}
-            >
-                <FlatList showsVerticalScrollIndicator={false} data={this.state.data} renderItem={this._renderItem} keyExtractor={item => item.id.toString()} />
-            </SafeAreaView>
+                        width: '100%',
+                        paddingVertical: 20,
+                        backgroundColor: color_primary,
+                    }
+                ]}>
+                    <TouchableOpacity style={[
+                        {
+                            position: 'absolute',
+                            left: 5,
+                            zIndex: 1
+                        }
+                    ]}
+                        onPress={() => this.props.navigation.goBack(null)}>
+                        <Icon
+                            raised
+                            name='angle-left'
+                            type='font-awesome-5'
+                            color={color_primary}
+                            size={16}
+                        />
+                    </TouchableOpacity>
+                    <Text style={styles.textTitle}>Phòng đã đặt</Text>
+                </View>
+                <FlatList
+                    showsVerticalScrollIndicator={false}
+                    data={this.state.data}
+                    renderItem={this._renderItem}
+                    contentContainerStyle={{ justifyContent: 'center', width: '100%' }}
+                    keyExtractor={item => item.id.toString()} />
+            </View>
         );
     }
 
-    _renderItem = ({item, index}) => {
-        return(
+    _renderItem = ({ item, index }) => {
+        return (
             <View
                 style={[
-                    flex.flex_row,
+                    shadow.shadow,
+                    background_color.white,
                     {
-                        padding: 10
+                        width: '95%',
+                        marginVertical: 5,
+                        flexDirection: 'row',
+                        alignSelf: 'center',
+                        elevation: 4,
+                        padding: 1
                     }
                 ]}
             >
                 <Image
                     style={[
-                        width.w_100,
-                        height.h_100
-                    ]}
-                    source={{uri: item.img}}
-                />
-                <View
-                    style={[
                         {
-                            marginLeft: 5
+                            width: 100,
+                            height: 100,
                         }
                     ]}
-                >
+                    source={
+                        { uri: item.image }
+                    }
+                    resizeMode={'stretch'}
+                />
+                <View>
                     <Text
+                        numberOfLines={1}
                         style={[
-                            text_size.lg,
+                            text_size.md,
                             text_color.primary,
-                            font.serif,
+                            {
+                                marginLeft: 10,
+                                fontWeight: '600'
+                            }
                         ]}
                     >
-                        { item.name }
+                        {item.roomName}
                     </Text>
                     <View
                         style={[
@@ -180,7 +239,7 @@ export default class RoomBookedListScreen extends Component{
                                 text_color.black
                             ]}
                         >
-                            {item.s} (m3)
+                            {item.stretch} (m3)
                         </Text>
                     </View>
                     <View
@@ -208,11 +267,36 @@ export default class RoomBookedListScreen extends Component{
                                 text_color.black
                             ]}
                         >
-                            {item.price} (vnđ)
+                            {this.state.listPrice[index]?.price} (vnđ)
                         </Text>
                     </View>
                 </View>
             </View>
-        )
+        );
     }
 }
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    },
+    textTitle: {
+        fontSize: 16,
+        color: 'white',
+        textAlign: 'center',
+        textAlignVertical: 'center',
+        lineHeight: 20,
+        letterSpacing: 0,
+        width: '100%'
+    }
+})
+
+const mapStateToProps = ({ user, state }) => {
+    return { user, state };
+};
+
+const mapDispatchToProps = {
+    doGetRoomByBookTicket, doGetPriceOfRoom
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(RoomBookedListScreen)

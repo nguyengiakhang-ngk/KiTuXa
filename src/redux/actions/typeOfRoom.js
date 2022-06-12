@@ -1,7 +1,15 @@
 import {
-    ADD_TYPE_OF_ROOM, ADD_TYPE_OF_ROOM_SUCCESS, ADD_TYPE_OF_ROOM_FAIL
+    ADD_TYPE_OF_ROOM, 
+    ADD_TYPE_OF_ROOM_SUCCESS, 
+    ADD_TYPE_OF_ROOM_FAIL,
+    GET_TYPE_OF_ROOM_BY_SAVE,
+    GET_TYPE_OF_ROOM_BY_SAVE_SUCCESS,
+    GET_TYPE_OF_ROOM_BY_SAVE_FAIL,
+    GET_PRICE_OF_ROOM,
+    GET_PRICE_OF_ROOM_SUCCESS,
+    GET_PRICE_OF_ROOM_FAIL
 } from "./types";
-import {addTypeOfRoom} from "../../api/typeOfRoomAPI";
+import {addTypeOfRoom, getListTypeOfRoomBySaveRoomTicket, getPriceOfRoom} from "../../api/typeOfRoomAPI";
 
 // Load List Paid Service
 // const loadGetLPaidService = (dispatch) => {
@@ -63,6 +71,61 @@ const addTypeOfRoomSuccess = (dispatch) => {
 const addTypeOfRoomFail = (dispatch, error) => {
     dispatch({
         type: ADD_TYPE_OF_ROOM_FAIL,
+        error: error
+    });
+}
+
+//Get List type by save
+export const doGetListTypeOfRoomBySave = (userId) => dispatch => {
+    return new Promise((resolve, reject) => {
+        getListTypeOfRoomBySaveRoomTicket(userId)
+            .then(data => {
+                getListTypeOfRoomBySaveRoomTicketSuccess(dispatch);
+                resolve(data);
+            })
+            .catch(error => {
+                getListTypeOfRoomBySaveRoomTicketFail(dispatch, error);
+                reject(error);
+            });
+    })
+}
+
+const getListTypeOfRoomBySaveRoomTicketSuccess = (dispatch) => {
+    dispatch({
+        type: GET_TYPE_OF_ROOM_BY_SAVE_SUCCESS
+    });
+}
+
+const getListTypeOfRoomBySaveRoomTicketFail = (dispatch, error) => {
+    dispatch({
+        type: GET_TYPE_OF_ROOM_BY_SAVE_FAIL,
+        error: error
+    });
+}
+
+export const doGetPriceOfRoom = (typeOfRoomId) => dispatch => {
+    return new Promise((resolve, reject) => {
+        getPriceOfRoom(typeOfRoomId)
+            .then(data => {
+                getListTypeOfRoomBySaveRoomTicketSuccess(dispatch);
+                resolve(data);
+            })
+            .catch(error => {
+                getListTypeOfRoomBySaveRoomTicketFail(dispatch, error);
+                reject(error);
+            });
+    })
+}
+
+const getPriceOfRoomSuccess = (dispatch) => {
+    dispatch({
+        type: GET_PRICE_OF_ROOM_SUCCESS
+    });
+}
+
+const getPriceOfRoomFail = (dispatch, error) => {
+    dispatch({
+        type: GET_PRICE_OF_ROOM_FAIL,
         error: error
     });
 }

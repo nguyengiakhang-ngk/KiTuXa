@@ -1,96 +1,95 @@
 import {
-    GET_BILL_BY_CONTRACT,
-    GET_BILL_BY_CONTRACT_SUCCESS,
-    GET_BILL_BY_CONTRACT_FAIL,
-    GET_BILL_BY_ID,
-    GET_BILL_BY_ID_SUCCESS,
-    GET_BILL_BY_ID_FAIL,
-    ADD_BILL,
-    ADD_BILL_SUCCESS,
-    ADD_BILL_FAIL,
-    UPDATE_BILL,
-    UPDATE_BILL_SUCCESS,
-    UPDATE_BILL_FAIL,
-    DELETE_BILL,
-    DELETE_BILL_SUCCESS,
-    DELETE_BILL_FAIL
-
-} from "../actions/types";
+    GET_LIST_TROUBLE_BY_ROOM,
+    GET_LIST_TROUBLE_BY_ROOM_SUCCESS,
+    GET_LIST_TROUBLE_BY_ROOM_FAIL,
+    ADD_TROUBLE,
+    ADD_TROUBLE_SUCCESS,
+    ADD_TROUBLE_FAIL,
+    UPDATE_TROUBLE,
+    UPDATE_TROUBLE_SUCCESS,
+    UPDATE_TROUBLE_FAIL,
+    DELETE_TROUBLE,
+    DELETE_TROUBLE_SUCCESS,
+    DELETE_TROUBLE_FAIL,
+    GET_TROUBLE_BY_ID,
+    GET_TROUBLE_BY_ID_SUCCESS,
+    GET_TROUBLE_BY_ID_FAIL
+} from '../actions/types';
 
 const INITIAL_STATE = {
-    listBillByContract: '',
+    listTroubleByRoom: null,
     error: ''
 }
 
 export default (preState = INITIAL_STATE, action) => {
     switch (action.type) {
-        case GET_BILL_BY_CONTRACT:
+        case GET_LIST_TROUBLE_BY_ROOM:
             return {
                 ...preState,
-                ...INITIAL_STATE
+                error: ''
             }
-        case GET_BILL_BY_CONTRACT_SUCCESS:
+        case GET_LIST_TROUBLE_BY_ROOM_SUCCESS:
             return {
                 ...preState,
-                listBillByContract: action.listBillByContract,
+                listTroubleByRoom: action.listTroubleByRoom,
             }
-        case GET_BILL_BY_CONTRACT_FAIL:
-            return {
-                ...preState,
-                error: action.error
-            }
-        case ADD_BILL:
-            return {
-                ...preState,
-                ...INITIAL_STATE
-            }
-        case ADD_BILL_SUCCESS:
-            return {
-                ...preState,
-            }
-        case ADD_BILL_FAIL:
+        case GET_LIST_TROUBLE_BY_ROOM_FAIL:
             return {
                 ...preState,
                 error: action.error
             }
-        case UPDATE_BILL:
+        case ADD_TROUBLE:
             return {
                 ...preState,
-                ...INITIAL_STATE
+                error: ''
             }
-        case UPDATE_BILL_SUCCESS:
-            return {
-                ...preState,
-            }
-        case UPDATE_BILL_FAIL:
-            return {
-                ...preState,
-                error: action.error
-            }
-        case GET_BILL_BY_ID:
-            return {
-                ...preState,
-                ...INITIAL_STATE
-            }
-        case GET_BILL_BY_ID_SUCCESS:
+        case ADD_TROUBLE_SUCCESS:
             return {
                 ...preState,
             }
-        case GET_BILL_BY_CONTRACT_FAIL:
+        case ADD_TROUBLE_FAIL:
             return {
                 ...preState,
                 error: action.error
             }
-        case DELETE_BILL:
+        case UPDATE_TROUBLE:
             return {
                 ...preState,
-                ...INITIAL_STATE
+                error: ''
             }
-        case DELETE_BILL_SUCCESS:
+        case UPDATE_TROUBLE_SUCCESS:
             return {
                 ...preState,
             }
-        case DELETE_BILL_FAIL:
+        case UPDATE_TROUBLE_FAIL:
+            return {
+                ...preState,
+                error: action.error
+            }
+        case DELETE_TROUBLE:
+            return {
+                ...preState,
+                error: ''
+            }
+        case DELETE_TROUBLE_SUCCESS:
+            return {
+                ...preState,
+            }
+        case DELETE_TROUBLE_FAIL:
+            return {
+                ...preState,
+                error: action.error
+            }
+        case GET_TROUBLE_BY_ID:
+            return {
+                ...preState,
+                error: ''
+            }
+        case GET_TROUBLE_BY_ID_SUCCESS:
+            return {
+                ...preState,
+            }
+        case GET_TROUBLE_BY_ID_FAIL:
             return {
                 ...preState,
                 error: action.error

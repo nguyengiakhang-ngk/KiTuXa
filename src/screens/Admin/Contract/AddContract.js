@@ -23,9 +23,14 @@ import { ContractSchema } from '../../../utils/validation/ValidationContract';
 import { AppDatePicker } from '../../../components/AppDatePicker';
 import AppSelectSearch from "../../../components/AppSelectSearch";
 import moment from 'moment';
-import { color_primary } from '../../../utils/theme/Color';
 import { connect } from 'react-redux';
 import { doGetUserByBookTicket } from '../../../redux/actions/user';
+import { doGetRoomByArea } from '../../../redux/actions/room';
+import { doAddContract } from '../../../redux/actions/contract';
+import { color_danger, color_primary } from '../../../utils/theme/Color';
+import AppButtonActionInf from "../../../components/AppButtonActionInf";
+import { doGetListArea } from "../../../redux/actions/area";
+
 
 const HideKeyboard = ({ children }) => (
   <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -41,9 +46,9 @@ class AddContract extends Component {
       data: [],
       termList: 0,
       termData: [],
-      selectUser: '',
       dataP: [],
-      dataK: []
+      dataK: [],
+      dataArea: []
     };
   }
 
@@ -51,147 +56,66 @@ class AddContract extends Component {
     return isValid && Object.keys(touched).length !== 0;
   };
 
-  getPhongData() {
-    axios
-      .get(path + `/getPhong/${this.props.route.params.ID_TK}`)
-      .then(response => {
-        // alert(JSON.stringify(response));
-        this.setState({
-          isLoading: false,
-          dataP: response.data.map(item => ({
-            key: item.roomId,
-            label: item.name,
-          })),
-        });
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  }
-  getUserData() {
-    this.props.doGetUserByBookTicket({ roomId: 1 }).then(data => {
+  getListArea() {
+    this.props.doGetListArea({ userId: this.props.user.user.id }).then(data => {
       this.setState({
-        data: data
+        dataArea: data.map(item => ({
+          key: item.id,
+          label: item.areaName,
+        })),
+      }, () => {
+        console.log('dataP: ', this.state.dataP);
       })
     })
-    console.log('chd',this.state.data);
   }
+
+  getPhongData(option) {
+    this.props.doGetRoomByArea({ areaId: option.key }).then(data => {
+      this.setState({
+        dataP: data.map(item => ({
+          key: item.id,
+          label: item.roomName,
+        })),
+      }, () => {
+        console.log('dataP: ', this.state.dataP);
+      })
+    })
+  }
+  getUserData(option) {
+    this.props.doGetUserByBookTicket({ roomId: option.key }).then(data => {
+      this.setState({
+        dataK: data.map(item => ({
+          key: item.id,
+          label: item.name,
+          roomId: item.roomId
+        })),
+      }, () => {
+        console.log('dataK: ', this.state.dataK);
+      })
+    })
+  }
+
   componentDidMount() {
-    this.getPhongData();
-    this.getUserData();
+    this.getListArea();
+    // this.getPhongData();
+    // this.getUserData();
   }
   componentWillUnmount() {
-    //this.props.route.params.refresh();
+    this.props.route.params.refresh();
   }
 
-  addContract = (values, termData) => {
-    let now = new Date();
-
-    axios
-      .get(path + `/checkContract/${values.Phong}/${values.TaiKhoan}`)
-      .then(response => {
-        // alert(JSON.stringify(response)); response.data.ThoiHan.getTime() >= now.getTime()
-        if (new Date(response.data.ThoiHan).getTime() >= now.getTime()) {
-          alert(
-            'Hợp đồng của khách hàng này vẫn còn thời hạn ! Vui lòng thử lại !',
-          );
-        } else {
-          axios
-            .post(path + '/addContract', {
-              TaiKhoan: values.TaiKhoan,
-              Phong: values.Phong,
-              ThoiHan: moment(values.ThoiHan).format('YYYY-MM-DD'),
-              NgayThanhToan: moment(values.NgayThanhToan).format('YYYY-MM-DD'),
-              ChiSoDien: values.ChiSoDien,
-              ChiSoNuoc: values.ChiSoNuoc,
-              Ngay_vao: moment(values.Ngay_vao).format('YYYY-MM-DD'),
-              TinhTrang: 0,
-            })
-            .then(response => {
-              if (response.data) {
-
-                for (let i = 0; i < termData.length; i++) {
-                  axios.post(path + '/addTerm'
-                    // ,{
-                    //   nameOfTerm: 'Điều khoản ' + i,
-                    //   content: termData[i],
-                    //   contractId: 1
-                    // }
-                  )
-                }
-                this.props.navigation.goBack();
-              }
-            })
-            .catch(error => {
-              console.log(error);
-            });
-        }
-      })
-      .catch(error => {
-        console.log(error);
-      });
-  };
-
-  addTerm = () => {
-    this.state.termData.push('');
-    this.setState({
-      termData: this.state.termData
+  addContract = (values) => {
+    this.props.doAddContract(values).then(data => {
+      if (data) {
+        alert("Thêm hợp đồng thành công!");
+        this.props.navigation.goBack(null);
+      } else {
+        alert("Thêm hợp đồng không thành công! Vui lòng thử lại!");
+      }
     })
   };
 
-  changeTextTerm = () => {
 
-  }
-  _renderTerm = (item, index, handleChange, handleBlur, values) => {
-    console.log(this.state.termData)
-    return (
-      <View
-        key={index}
-        style={[{ flex: 1 }, styles.splitView]}>
-        {/* <AppInputInf
-          lable={'Điều khoản ' + (index + 1) + ':'}
-          secureTextEntry={false}
-          field={this.state.termData[index]}
-          handleChange={handleChange}
-          handleBlur={handleBlur}
-          values={values}
-        /> */}
-        <View>
-          <View style={[
-            width.w_100,
-            flex.justify_content_center,
-          ]}>
-            <Text
-              style={[
-                text_size.sm,
-                font.serif
-              ]}
-            >
-              {'Điều khoản ' + (index + 1) + ':'}
-            </Text>
-            <TextInput
-              secureTextEntry={false}
-              style={[
-                text_size.sm,
-                font_weight.f_500,
-                font.serif,
-                padding.p_0,
-                width.w_100,
-                background_color.white,
-                shadow.shadow,
-                { borderRadius: 7, padding: 12, paddingLeft: 10, paddingRight: 10, marginTop: 5, textAlignVertical: 'top', },
-              ]}
-              onChangeText={(newValue) => {
-                this.state.termData[index] = newValue;
-                this.setState({ termData: this.state.termData });
-              }}
-            // value={}
-            />
-          </View>
-        </View>
-      </View>
-    );
-  };
 
   render() {
     return (
@@ -217,22 +141,26 @@ class AddContract extends Component {
         <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
           <Formik
             initialValues={{
-              userId: '',
-              roomId: '',
+              userId: "",
+              roomId: "",
               duration: new Date(),
               dateOfPayment: new Date(),
               numberOfElectric: '',
               numberOfWater: '',
               dayIn: new Date(),
               status: 0,
+              term: ''
             }}
             validationSchema={ContractSchema}
             onSubmit={values => {
-              this.addContract(values, this.state.termData);
-              // this.state.termData
-              //alert(this.state.date);
+              if(values.dayIn > values.duration){
+                alert("Ngày vào không thể sau thời hạn! Xin vui lòng thử lại!")
+              }else{
+                this.addContract(values);
+              }
+              
             }}>
-            {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid, }) => {
+            {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid }) => {
               return (
                 <HideKeyboard>
                   <SafeAreaView
@@ -241,28 +169,14 @@ class AddContract extends Component {
                     <View
                       style={[width.w_100, styles.splitView]}>
                       <AppDialogSelect
-                        lable={'Khách thuê:'}
-                        data={this.state.dataK}
-                        placeholder={'Vui lòng chọn khách...'}
+                        lable={'Khu:'}
+                        data={this.state.dataArea}
+                        placeholder={'Vui lòng chọn khu...'}
                         value={values}
-                        field={'TaiKhoan'}
+                        returnFilter={(key) => this.getPhongData(key)}
                       />
-                      {/* <AppSelectSearch
-                        label={'Khách hàng:'}
-                        data={this.state.users}
-                        value={this.state.selectUser}
-                        onSelect={(user) => this.onSelectUser(user)}
-                        displayKey={"name"}
-                        contentStyle={{ height: '85%' }}
-                        itemStyle={{ paddingVertical: 20, borderBottomWidth: 1, borderBottomColor: 'black' }}
-                        placeholder={'Tìm kiếm tên người dùng...'}
-                        selectText={'Vui lòng chọn khách hàng...                   '}
-                        selectButtonTextStyle={[text_size.sm, { opacity: .5, numberOfLines: 1 }]}
-                      /> */}
-                      {errors.TaiKhoan && touched.TaiKhoan ? (
-                        <AppError errors={errors.TaiKhoan} />
-                      ) : null}
                     </View>
+
                     <View
                       style={[width.w_100, styles.splitView]}>
                       <AppDialogSelect
@@ -270,10 +184,25 @@ class AddContract extends Component {
                         data={this.state.dataP}
                         placeholder={'Vui lòng chọn phòng...'}
                         value={values}
-                        field={'Phong'}
+                        field={'roomId'}
+                        returnFilter={(key) => this.getUserData(key)}
                       />
-                      {errors.Phong && touched.Phong ? (
-                        <AppError errors={errors.Phong} />
+                      {errors.roomId && touched.roomId ? (
+                        <AppError errors={errors.roomId} />
+                      ) : null}
+                    </View>
+
+                    <View
+                      style={[width.w_100, styles.splitView]}>
+                      <AppDialogSelect
+                        lable={'Khách thuê:'}
+                        data={this.state.dataK}
+                        placeholder={'Vui lòng chọn khách...'}
+                        value={values}
+                        field={'userId'}
+                      />
+                      {errors.userId && touched.userId ? (
+                        <AppError errors={errors.userId} />
                       ) : null}
                     </View>
 
@@ -282,11 +211,11 @@ class AddContract extends Component {
                       <AppDatePicker
                         label={'Ngày Vào:'}
                         value={values}
-                        field={'Ngay_vao'}
+                        field={'dayIn'}
                         alreadydate={new Date()}
                       />
-                      {errors.Ngay_vao && touched.Ngay_vao ? (
-                        <AppError errors={errors.Ngay_vao} />
+                      {errors.dayIn ? (
+                        <AppError errors={errors.dayIn} />
                       ) : null}
                     </View>
 
@@ -295,10 +224,11 @@ class AddContract extends Component {
                       <AppDatePicker
                         label={'Thời Hạn:'}
                         value={values}
-                        field={'ThoiHan'}
+                        field={'duration'}
                         alreadydate={new Date()}
+                        minimumDate={values.dayIn}
                       />
-                      {errors.ThoiHan && touched.ThoiHan ? (
+                      {errors.ThoiHan ? (
                         <AppError errors={errors.ThoiHan} />
                       ) : null}
                     </View>
@@ -307,11 +237,11 @@ class AddContract extends Component {
                       <AppDatePicker
                         label={'Ngày Thanh Toán:'}
                         value={values}
-                        field={'NgayThanhToan'}
+                        field={'dateOfPayment'}
                         alreadydate={new Date()}
                       />
-                      {errors.NgayThanhToan && touched.NgayThanhToan ? (
-                        <AppError errors={errors.NgayThanhToan} />
+                      {errors.dateOfPayment ? (
+                        <AppError errors={errors.dateOfPayment} />
                       ) : null}
                     </View>
                     <View style={[flex.flex_row, width.w_100]}>
@@ -321,13 +251,13 @@ class AddContract extends Component {
                           lable={'Chỉ Số Nước:'}
                           keyboardType={'numeric'}
                           secureTextEntry={false}
-                          field={'ChiSoNuoc'}
+                          field={'numberOfWater'}
                           handleChange={handleChange}
                           handleBlur={handleBlur}
                           values={values}
                         />
-                        {errors.ChiSoNuoc && touched.ChiSoNuoc ? (
-                          <AppError errors={errors.ChiSoNuoc} />
+                        {errors.numberOfWater && touched.numberOfWater ? (
+                          <AppError errors={errors.numberOfWater} />
                         ) : null}
                       </View>
                       <View
@@ -336,42 +266,70 @@ class AddContract extends Component {
                           lable={'Chỉ Số Điện:'}
                           keyboardType={'numeric'}
                           secureTextEntry={false}
-                          field={'ChiSoDien'}
+                          field={'numberOfElectric'}
                           handleChange={handleChange}
                           handleBlur={handleBlur}
                           values={values}
                         />
-                        {errors.ChiSoDien && touched.ChiSoDien ? (
-                          <AppError errors={errors.ChiSoDien} />
+                        {errors.numberOfElectric && touched.numberOfElectric ? (
+                          <AppError errors={errors.numberOfElectric} />
                         ) : null}
                       </View>
                     </View>
-                    <View>
-                      {
-                        this.state.termData.map((item, index) => {
-                          return this._renderTerm(item, index, handleChange, handleBlur, values);
-                        })
-                      }
-                    </View>
-                    <Pressable
-                      onPress={() => {
-                        this.addTerm();
-                      }}>
-                      <View
-                        style={styles.splitView}>
-                        <Text style={[text_size.md, { color: '#0094cc' }]}>
-                          + Thêm Điều Khoản
-                        </Text>
-                      </View>
-                    </Pressable>
                     <View
-                      style={[width.w_100, { paddingLeft: 15, paddingRight: 15, marginTop: 30 }]}>
-                      <AppButton
-                        disabled={!this.isFormValid(isValid, touched)}
-                        onPress={handleSubmit}
-                        // onPress={() => console.log(this.state.termData)}
-                        title="Thêm"
+                      style={[{ flex: 1 }, styles.splitView]}>
+                      <AppInputInf
+                        lable={'Điều khoản:'}
+                        secureTextEntry={false}
+                        field={'term'}
+                        handleChange={handleChange}
+                        handleBlur={handleBlur}
+                        values={values}
+                        number={5}
+                        multiline={true}
+                        keyboardType="name-phone-pad"
+                        returnKeyType='none'
                       />
+                      {errors.term && touched.term ? (
+                        <AppError errors={errors.term} />
+                      ) : null}
+                    </View>
+                    <View
+                      style={[
+                        width.w_100,
+                        flex.flex_row,
+                        { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
+                      ]}
+                    >
+                      <View
+                        style={[
+                          {
+                            flex: 1,
+                            marginRight: 15
+                          }
+                        ]}
+                      >
+                        <AppButtonActionInf
+                          size={13}
+                          textSize={18}
+                          bg={color_danger}
+                          onPress={() => { this.props.navigation.goBack() }}
+                          title="Hủy"
+                        />
+                      </View>
+                      <View
+                        style={{ flex: 1 }}
+                      >
+                        <AppButtonActionInf
+                          size={13}
+                          textSize={18}
+                          bg={color_primary}
+                          disabled={!this.isFormValid(isValid, touched)}
+                          onPress={handleSubmit}
+                          //onPress={() => alert(values.Ten_HD)}
+                          title="Thêm"
+                        />
+                      </View>
                     </View>
                   </SafeAreaView>
                 </HideKeyboard>
@@ -396,12 +354,12 @@ const styles = StyleSheet.create({
   }
 })
 
-const mapStateToProps = ({user}) => {
-  return { user };
+const mapStateToProps = ({ userAddContract, user }) => {
+  return { userAddContract, user };
 };
 
 const mapDispatchToProps = {
-  doGetUserByBookTicket
+  doGetUserByBookTicket, doGetRoomByArea, doAddContract, doGetListArea
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddContract)

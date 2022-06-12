@@ -28,11 +28,12 @@ import AppItemHome from "../../../components/AppItemHome";
 import ImagePicker from 'react-native-image-crop-picker';
 import { Icon } from "@rneui/base";
 import { connect } from 'react-redux';
-import { doAddReceipt } from '../../../redux/actions/receipt';
+import { doAddTrouble } from '../../../redux/actions/trouble';
+import { TroubleSchema } from '../../../utils/validation/ValidationTrouble';
 import { color_danger, color_primary } from '../../../utils/theme/Color';
 import AppButtonActionInf from "../../../components/AppButtonActionInf";
-
-
+import { doGetListArea } from "../../../redux/actions/area";
+import { doGetRoomByArea } from '../../../redux/actions/room';
 
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -40,33 +41,76 @@ const HideKeyboard = ({ children }) => (
     </TouchableWithoutFeedback>
 );
 
-class AddReceipt extends Component {
+class AddTrouble extends Component {
     constructor(props) {
         super(props);
         this.state = {
             isLoading: true,
             data: [],
             image: '',
-            dataTT: [{ 'key': '0', 'label': 'Chưa thanh toán' }, { 'key': '1', 'label': 'Đã thanh toán' }].map(item => ({ key: item.key, label: item.label })),
-            dataTToan: [{ 'key': '0', 'label': 'Thanh toán tiền mặt' }, { 'key': '1', 'label': 'Chuyển khoản' }].map(item => ({ key: item.key, label: item.label }))
-
+            dataMD: [
+                {
+                    'key': '0',
+                    'label': 'Thấp'
+                },
+                {
+                    'key': '1',
+                    'label': 'Trung bình'
+                },
+                {
+                    'key': '2',
+                    'label': 'Cao'
+                }
+            ],
+            dataArea: [],
+            dataP: []
         }
 
     }
 
+    componentDidMount() {
+        this.getListArea()
+    }
 
-    isFormValid = (isValid, amountOfMoney) => {
-        return isValid && String(amountOfMoney).length !== 0;
+
+    isFormValid = (name, level, image) => {
+        return String(name).length !== 0 && String(level).length !== 0 && image;
     }
     // componentDidMount() {
     //     alert(this.props.route.params.ID_HD);
     // }
 
     componentWillUnmount() {
-        this.props.route.params.refresh();
+        this.props.route.params?.refresh();
     }
 
-    addReceipt = (values) => {
+    getListArea() {
+        this.props.doGetListArea({ userId: this.props.user.user.id }).then(data => {
+            this.setState({
+                dataArea: data.map(item => ({
+                    key: item.id,
+                    label: item.areaName,
+                })),
+            }, () => {
+                console.log('dataP: ', this.state.dataP);
+            })
+        })
+    }
+
+    getPhongData(option) {
+        this.props.doGetRoomByArea({ areaId: option.key }).then(data => {
+            this.setState({
+                dataP: data.map(item => ({
+                    key: item.id,
+                    label: item.roomName,
+                })),
+            }, () => {
+                console.log('dataP: ', this.state.dataP);
+            })
+        })
+    }
+
+    addTrouble = (values) => {
         const date = new Date();
         const minutes = date.getMinutes();
         let data = new FormData();
@@ -75,14 +119,14 @@ class AddReceipt extends Component {
             type: "image/jpeg",
             name: this.state.image.filename || `temp_image_${minutes}.jpg`
         });
-        data.append("receipt", JSON.stringify(values));
-        this.props.doAddReceipt(data).then(data => {
+        data.append("trouble", JSON.stringify(values));
+        this.props.doAddTrouble(data).then(data => {
             if (data) {
-                alert("Thêm biên nhận thành công!");
+                alert("Báo cáo sự cố thành công!");
                 this.props.navigation.goBack(null);
             }
             else {
-                alert("Thêm biên nhận không thành công! Vui lòng thử lại!");
+                alert("Báo cáo sự cố không thành công! Vui lòng thử lại!");
             }
         })
     }
@@ -127,24 +171,25 @@ class AddReceipt extends Component {
                         }
                     ]}
                 >
-                    Thêm biên nhận
+                    Báo cáo sự cố
                 </Text>
                 <ScrollView
                     style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}
                 >
                     <Formik
                         initialValues={{
-                            amountOfMoney: "",
-                            dateOfPayment: new Date(),
-                            paymentMethod: '0',
+                            dateOfTrouble: new Date(),
+                            dateOfSolve: new Date(),
+                            name: new Date(),
+                            describe: '',
                             image: "",
-                            note: "",
+                            level: "",
                             status: '0',
-                            billId: this.props.route.params.billId
+                            roomId: ''
                         }}
-                        validationSchema={ReceiptSchema}
+                        validationSchema={TroubleSchema}
                         onSubmit={values => {
-                            this.addReceipt(values);
+                            this.addTrouble(values);
                             //alert(this.state.date);
                         }}
                     >
@@ -167,21 +212,49 @@ class AddReceipt extends Component {
                                         onPress={Keyboard.dismiss}
                                     >
                                         <View
+                                            style={[width.w_100, {
+                                                paddingLeft: 15,
+                                                paddingRight: 15,
+                                                marginTop: 10
+                                            }]}>
+                                            <AppDialogSelect
+                                                lable={'Khu:'}
+                                                data={this.state.dataArea}
+                                                placeholder={'Vui lòng chọn khu...'}
+                                                value={values}
+                                                returnFilter={(key) => this.getPhongData(key)}
+                                            />
+                                        </View>
+
+                                        <View
+                                            style={[width.w_100, {
+                                                paddingLeft: 15,
+                                                paddingRight: 15,
+                                                marginTop: 10
+                                            }]}>
+                                            <AppDialogSelect
+                                                lable={'Phòng:'}
+                                                data={this.state.dataP}
+                                                placeholder={'Vui lòng chọn phòng...'}
+                                                value={values}
+                                                field={'roomId'}
+                                            />
+                                        </View>
+                                        <View
                                             style={[
-                                                { paddingLeft: 15, paddingRight: 10, marginTop: 10 }
+                                                { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
                                             ]}
                                         >
                                             <AppInputInf
-                                                lable={"Số Tiền:"}
+                                                lable={"Tên sự cố:"}
                                                 secureTextEntry={false}
-                                                field={"amountOfMoney"}
-                                                keyboardType={'numeric'}
+                                                field={"name"}
                                                 handleChange={handleChange}
                                                 handleBlur={handleBlur}
                                                 values={values}
                                             />
-                                            {errors.amountOfMoney && touched.amountOfMoney ? (
-                                                <AppError errors={errors.amountOfMoney} />
+                                            {errors.name && touched.name ? (
+                                                <AppError errors={errors.name} />
                                             ) : null}
                                         </View>
                                         <View
@@ -191,9 +264,9 @@ class AddReceipt extends Component {
                                             ]}
                                         >
                                             <AppDatePicker
-                                                label={"Thời Gian Thu Tiền:"}
+                                                label={"Thời gian xảy ra sự cố:"}
                                                 value={values}
-                                                field={"dateOfPayment"}
+                                                field={"dateOfTrouble"}
                                                 alreadydate={new Date()}
                                             />
                                         </View>
@@ -205,14 +278,14 @@ class AddReceipt extends Component {
                                             ]}
                                         >
                                             <AppDialogSelect
-                                                lable={"Phương thức thanh toán:"}
-                                                data={this.state.dataTToan}
-                                                placeholder={"Chọn phương thức thanh toán..."}
+                                                lable={"Mức độ:"}
+                                                data={this.state.dataMD}
+                                                placeholder={"Chọn mức độ sự cố..."}
                                                 value={values}
-                                                field={"paymentMethod"}
+                                                field={"level"}
                                             />
-                                            {errors.paymentMethod && touched.paymentMethod ? (
-                                                <AppError errors={errors.paymentMethod} />
+                                            {errors.level && touched.level ? (
+                                                <AppError errors={errors.level} />
                                             ) : null}
                                         </View>
                                         <View
@@ -221,16 +294,15 @@ class AddReceipt extends Component {
                                                 { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
                                             ]}
                                         >
-                                            {/*<AppItemHome*/}
-                                            {/*    bg = {'orange'}*/}
-                                            {/*    name = 'file-invoice-dollar'*/}
-                                            {/*    size = {200}*/}
-                                            {/*    color = {'white'}*/}
-                                            {/*    colorText = {'black'}*/}
-                                            {/*    // label = {'Biên nhận'}*/}
-                                            {/*    onPress = {() => this.ChoosePhotoFromLibrary()}*/}
-                                            {/*/>*/}
                                             <Pressable onPress={() => this.ChoosePhotoFromLibrary()}>
+                                                <Text
+                                                    style={[
+                                                        text_size.sm,
+                                                        font.serif
+                                                    ]}
+                                                >
+                                                    Chọn ảnh
+                                                </Text>
                                                 {this.state.image.length == 0 ?
                                                     <Icon
                                                         name={'image'}
@@ -258,39 +330,19 @@ class AddReceipt extends Component {
 
                                         <View
                                             style={[
-                                                width.w_100,
-                                                { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
-                                            ]}
-                                        >
-                                            <AppDialogSelect
-                                                lable={"Tình Trạng:"}
-                                                data={this.state.dataTT}
-                                                placeholder={"Vui lòng chọn tình trạng..."}
-                                                value={values}
-                                                field={"status"}
-                                            />
-                                            {errors.status && touched.status ? (
-                                                <AppError errors={errors.status} />
-                                            ) : null}
-                                        </View>
-                                        <View
-                                            style={[
-                                                width.w_100,
-                                                { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
+                                                { paddingLeft: 15, paddingRight: 10, marginTop: 10 }
                                             ]}
                                         >
                                             <AppInputInf
-                                                lable={"Ghi Chú:"}
+                                                lable={"Tình trạng sự cố:"}
                                                 secureTextEntry={false}
-                                                field={"note"}
+                                                field={"describe"}
                                                 handleChange={handleChange}
                                                 handleBlur={handleBlur}
                                                 values={values}
-                                                multiline={true}
-                                                number={4}
                                             />
-                                            {errors.note && touched.note ? (
-                                                <AppError errors={errors.note} />
+                                            {errors.describe && touched.describe ? (
+                                                <AppError errors={errors.describe} />
                                             ) : null}
                                         </View>
                                         <View
@@ -323,7 +375,7 @@ class AddReceipt extends Component {
                                                     size={13}
                                                     textSize={18}
                                                     bg={color_primary}
-                                                    disabled={!this.isFormValid(isValid, values.amountOfMoney)}
+                                                    disabled={!this.isFormValid(values.name, values.level, this.state.image)}
                                                     onPress={handleSubmit}
                                                     //onPress={() => alert(values.Ten_HD)}
                                                     title="Thêm"
@@ -342,12 +394,12 @@ class AddReceipt extends Component {
     }
 }
 
-const mapStateToProps = state => {
-    return { state };
+const mapStateToProps = ({ user }) => {
+    return { user };
 };
 
 const mapDispatchToProps = {
-    doAddReceipt
+    doAddTrouble, doGetListArea, doGetRoomByArea
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(AddReceipt)
+export default connect(mapStateToProps, mapDispatchToProps)(AddTrouble)

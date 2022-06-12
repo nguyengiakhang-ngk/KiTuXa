@@ -1,17 +1,21 @@
-import { 
-    LOGIN, 
-    LOGIN_SUCCESS, 
-    LOGIN_ERROR, 
-    SIGN_UP, 
-    SIGN_UP_SUCCESS, 
+import {
+    LOGIN,
+    LOGIN_SUCCESS,
+    LOGIN_ERROR,
+    SIGN_UP,
+    SIGN_UP_SUCCESS,
     SIGN_UP_ERROR,
     GET_USER_BY_BOOKTICKET,
     GET_USER_BY_BOOKTICKET_SUCCESS,
-    GET_USER_BY_BOOKTICKET_ERROR
+    GET_USER_BY_BOOKTICKET_ERROR,
+    GET_USER_BY_ID,
+    GET_USER_BY_ID_SUCCESS,
+    GET_USER_BY_ID_ERROR
 } from '../actions/types';
 
 const INITIAL_STATE = {
     user: '',
+    userAddContract: '',
     error: ''
 }
 
@@ -55,9 +59,23 @@ export default (preState = INITIAL_STATE, action) => {
         case GET_USER_BY_BOOKTICKET_SUCCESS:
             return {
                 ...preState,
-                user: action.user,
+                userAddContract: action.userAddContract,
             }
         case GET_USER_BY_BOOKTICKET_ERROR:
+            return {
+                ...preState,
+                error: action.error
+            }
+        case GET_USER_BY_ID:
+            return {
+                ...preState,
+                ...INITIAL_STATE
+            }
+        case GET_USER_BY_ID_SUCCESS:
+            return {
+                ...preState,
+            }
+        case GET_USER_BY_ID_ERROR:
             return {
                 ...preState,
                 error: action.error

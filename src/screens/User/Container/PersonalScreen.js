@@ -30,6 +30,9 @@ class PersonalScreen extends Component {
             dataUser: JSON.parse(user)
         })
     }
+    refresh = async () => {
+        await this.getDataUser();
+    }
 
     async componentDidMount() {
         await this.getDataUser();
@@ -47,37 +50,42 @@ class PersonalScreen extends Component {
             {
                 id: 1,
                 name: 'Thông tin cá nhân',
-                onPress: 'information',
+                onPress: this.state.userId ? 'information' : 'Login',
                 icon: require("../../../../assets/icons/information.png"),
                 navigate: ''
             },
             {
                 id: 2,
                 name: 'Chuyển sang giao diện Admin',
-                onPress: 'HomeScreen',
+                onPress: this.state.userId ? 'HomeScreen' : 'Login',
                 icon: require("../../../../assets/icons/admin.png"),
-                params: this.props.user.user
+                params: {params: this.props.user.user}
             },
             {
                 id: 3,
                 name: 'Phòng đã đặt',
-                onPress: 'RoomBookedList',
+                onPress: this.state.userId ? 'RoomBookedList' : 'Login',
                 icon: require("../../../../assets/icons/booking.png")
             },
             {
                 id: 4,
                 name: 'Đã lưu',
-                onPress: 'SavedRoom',
+                onPress: this.state.userId ? 'SavedRoom' : 'Login',
                 icon: require("../../../../assets/icons/saved.png"),
-                navigate: 'SavedRoom'
             },
             {
                 id: 5,
+                name: 'Báo cáo sự cố',
+                onPress: this.state.userId ? 'AddTrouble' : 'Login',
+                icon: require("../../../../assets/icons/report.png"),
+                params: {id: 1, refresh: () => this.refresh()}
+            },
+            {
+                id: 6,
                 name: this.state.userId ? 'Đăng xuất' : 'Đăng nhập',
                 onPress: this.state.userId ? 'Welcome' : 'Login',
                 icon: require("../../../../assets/icons/logout.png"),
-                navigate: ''
-            }
+            },
         ];
 
         this.setState({
@@ -101,7 +109,7 @@ class PersonalScreen extends Component {
                     this.props.navigation.replace('Login');
                 }else{
                     console.log(item.params);
-                    this.props.navigation.navigate(item.onPress, {params: item.params});
+                    this.props.navigation.navigate(item.onPress, item.params);
                 }
 
             }}>
@@ -152,7 +160,6 @@ class PersonalScreen extends Component {
                         showsVerticalScrollIndicator={false}
                         style={{ flex: 1 }}
                     />
-                    <Text style={[styles.textNameFunction, { alignSelf: 'center', marginBottom: 15 }]}>Thank you, ©2022</Text>
                 </View>
             </View>
         );

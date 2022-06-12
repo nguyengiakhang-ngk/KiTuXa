@@ -8,7 +8,11 @@ import AppFAB from "../../../components/AppFAB";
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
 import moment from "moment/moment";
 import { connect } from "react-redux";
-import { doLoadListBillByContract } from "../../../redux/actions/bill";
+import { doLoadListBillByContract, doDeleteBill } from "../../../redux/actions/bill";
+import AppDialogSelect from "../../../components/AppDialogSelect";
+import { doGetListArea } from "../../../redux/actions/area";
+import { doGetRoomByArea } from '../../../redux/actions/room';
+import { doLoadListContractByRoom } from "../../../redux/actions/contract";
 
 class BillsComponent extends Component {
     constructor(props) {
@@ -16,14 +20,69 @@ class BillsComponent extends Component {
         this.state = {
             isLoading: true,
             data: [],
+            dataArea: [],
+            dataRoom: [],
+            dataContract: [],
+            filterArea: [],
+            filterRoom: [],
+            filterContract: []
         }
     }
 
+    viewBillDetails(id) {
+        this.props.navigation.navigate("BillDetails", {
+            id: id
+        });
+    }
 
+    updateBill(id) {
+        this.props.navigation.navigate("UpdateBill", {
+            id: id,
+            refresh: () => { this.refresh() }
+        });
+    }
 
+    getListArea() {
+        this.props.doGetListArea({ userId: this.props.user.user.id }).then(data => {
+          this.setState({
+            dataArea: data.map(item => ({
+              key: item.id,
+              label: item.areaName,
+            })),
+          }, () => {
+            console.log('dataA: ', this.state.dataArea);
+          })
+        })
+    }
 
-    getBillsData() {
-        this.props.doLoadListBillByContract({ contractId: 1 }).then(data => {
+    getPhongData(option) {
+        this.props.doGetRoomByArea({ areaId: option.key }).then(data => {
+          this.setState({
+            dataRoom: data.map(item => ({
+              key: item.id,
+              label: item.roomName,
+            })),
+          }, () => {
+            console.log('dataP: ', this.state.dataP);
+          })
+        })
+    }
+
+    getContractData(option) {
+        this.props.doLoadListContractByRoom({ roomId: option.key }).then(data => {
+            this.setState({
+                dataContract: data.map(item => ({
+                    key: item.id,
+                    label: "Mã HĐ: "+item.id,
+                  }))
+            }, () => {
+                console.log(this.state.dataContract)
+            })
+        })
+    }
+
+    getBillsData(option) {
+        this.props.doLoadListBillByContract({ contractId: option.key }).then(data => {
             this.setState({
                 data: data
             })
@@ -31,12 +90,24 @@ class BillsComponent extends Component {
         console.log(this.state.data);
     }
 
+    deleteBill(id) {
+        this.props.doDeleteBill({ id: id }).then(data => {
+            if (data) {
+                alert("Xóa hóa đơn thành công!");
+                this.refresh();
+            } else {
+                alert("Xóa hóa đơn thất bại! Vui lòng thử lại!");
+            }
+        })
+        console.log(this.state.data);
+    }
+
     componentDidMount() {
-        this.getBillsData();
+        this.getListArea();
     }
 
     refresh() {
-        this.getBillsData();
+        this.getListArea();
     }
 
 
@@ -158,12 +229,12 @@ class BillsComponent extends Component {
                         <Icon
                             name={"pencil-alt"}
                             type='font-awesome-5'
-                            size={item.TinhTrang == 0 ? 22 : 0}
-                            color={item.TinhTrang == 0 ? color_success : "transparent"}
+                            size={item.status == 0 ? 22 : 0}
+                            color={item.status == 0 ? color_success : "transparent"}
                         />
                     </TouchableOpacity>
                     <TouchableOpacity
-                        onPress={() => this.viewBillDetails(item.contractId)}
+                        onPress={() => this.viewBillDetails(item.id)}
                     >
                         <Icon
                             name={"eye"}
@@ -220,20 +291,66 @@ class BillsComponent extends Component {
                         name='plus'
                         size={20}
                         color={'white'}
-                        onPress={() => this.viewAddBill(1)}
+                        onPress={() => this.props.navigation.navigate('AddBill', { contractId: 1, refresh: () => this.refresh() })}
                     />
                 </View>
-                <FlatList data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()} contentContainerStyle={{paddingHorizontal: 10, paddingVertical: 5}}/>
+                <View style={[
+                    flex.flex_row, flex.justify_content_between
+                ]}>
+                    <View
+                        style={{
+                            paddingLeft: 15,
+                            paddingRight: 15,
+                            marginTop: 10,
+                            width: '33%'
+                        }}>
+                        <AppDialogSelect
+                            lable={'Khu:'}
+                            data={this.state.dataArea}
+                            value={this.state.filterArea}
+                            returnFilter={(key) => this.getPhongData(key)}
+                        />
+                    </View>
+                    <View
+                        style={{
+                            paddingLeft: 15,
+                            paddingRight: 15,
+                            marginTop: 10,
+                            width: '33%'
+                        }}>
+                        <AppDialogSelect
+                            lable={'Phòng:'}
+                            data={this.state.dataRoom}
+                            value={this.state.filterRoom}
+                            returnFilter={(key) => this.getContractData(key)}
+                        />
+                    </View>
+                    <View
+                        style={{
+                            paddingLeft: 15,
+                            paddingRight: 15,
+                            marginTop: 10,
+                            width: '33%'
+                        }}>
+                        <AppDialogSelect
+                            lable={'Hợp đồng:'}
+                            data={this.state.dataContract}
+                            value={this.state.filterContract}
+                            returnFilter={(key) => this.getBillsData(key)}
+                        />
+                    </View>
+                </View>
+                <FlatList data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()} contentContainerStyle={{ paddingHorizontal: 10, paddingVertical: 5 }} />
             </SafeAreaView>
         )
     }
 }
-const mapStateToProps = ({ listBillByContract }) => {
-    return { listBillByContract };
+const mapStateToProps = ({ listBillByContract, user }) => {
+    return { listBillByContract, user };
 };
 
 const mapDispatchToProps = {
-    doLoadListBillByContract
+    doLoadListBillByContract, doDeleteBill, doGetListArea, doGetRoomByArea, doLoadListContractByRoom
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BillsComponent)
