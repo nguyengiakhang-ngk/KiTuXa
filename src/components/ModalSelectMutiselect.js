@@ -50,11 +50,13 @@ export default class ModalSelectMutiselect extends React.Component {
                                 }}
                             >
                                 <Text
+                                    numberOfLines={1}
                                     style={[
                                         text_size.sm,
                                         font.serif,
                                         {
-                                            color: color_dark
+                                            color: color_dark,
+                                            width: '80%',
                                         }
                                     ]}
                                 >

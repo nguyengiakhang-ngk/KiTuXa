@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {
     Image,
-    SafeAreaView,
+    SafeAreaView, ScrollView,
     Text, View,
 } from 'react-native';
 import { Icon } from "@rneui/base";
@@ -42,7 +42,7 @@ class HomeScreen extends Component {
     }
     render() {
         return (
-            <SafeAreaView
+            <View
                 style={[
                     {
                         flex: 1,
@@ -162,113 +162,114 @@ class HomeScreen extends Component {
                 >
 
                     {/*Icon menu*/}
-                    <View
-                        style={[
-                            {
-                                width: '33.333333%',
-                                paddingRight: 0.5,
-                                paddingLeft: 0.5,
-                                paddingTop: 10,
-                                paddingBottom: 5
-                            }
-                        ]}
+                    <ScrollView
+                        contentContainerStyle={{flexDirection: "row", flexWrap: "wrap"}}
                     >
-                        <AppItemHome
-                            bg={'red'}
-                            name='vihara'
-                            size={30}
-                            color={'white'}
-                            colorText={'black'}
-                            label={'Khu trọ'}
-                            onPress={() => this.routeScreen("AreaList")}
-                        />
-                    </View>
-                    <View
-                        style={[
-                            {
-                                width: '33.3%',
-                                paddingRight: 0.5,
-                                paddingLeft: 0.5,
-                                paddingTop: 10,
-                                paddingBottom: 5
-                            }
-                        ]}
-                    >
-                        <AppItemHome
-                            bg={'red'}
-                            name='calendar-check'
-                            size={30}
-                            color={'white'}
-                            colorText={'black'}
-                            label={'Phiếu đặt'}
-                            onPress={() => this.props.navigation.navigate("ListBookTicket")}
-                        />
-                    </View>
-                    <View
-                        style={[
-                            {
-                                width: '33.3%',
-                                paddingRight: 0.5,
-                                paddingLeft: 0.5,
-                                paddingTop: 10,
-                                paddingBottom: 5
-                            }
-                        ]}
-                    >
-                        <AppItemHome
-                            bg={'green'}
-                            name='boxes'
-                            size={30}
-                            color={'white'}
-                            colorText={'black'}
-                            label={'Loại phòng'}
-                            onPress={() => this.routeScreen("RoomTypeList")}
-                        />
-                    </View>
-                    <View
-                        style={[
-                            {
-                                width: '33.3%',
-                                paddingRight: 0.5,
-                                paddingLeft: 0.5,
-                                paddingTop: 10,
-                                paddingBottom: 5
-                            }
-                        ]}
-                    >
-                        <AppItemHome
-                            bg={color_primary}
-                            name='house-user'
-                            size={30}
-                            color={'white'}
-                            colorText={'black'}
-                            label={'Phòng'}
-                            onPress={() => this.routeScreen("RoomList")}
-                        />
-                    </View>
-                    <View
-                        style={[
-                            {
-                                width: '33.3%',
-                                paddingRight: 0.5,
-                                paddingLeft: 0.5,
-                                paddingTop: 10,
-                                paddingBottom: 5
-                            }
-                        ]}
-                    >
-                        <AppItemHome
-                            bg={'orange'}
-                            name='file-invoice-dollar'
-                            size={30}
-                            color={'white'}
-                            colorText={'black'}
-                            label={'Hóa đơn'}
-                            onPress={() => this.routeScreen("BillsComponent")}
+                        <View
+                            style={[
+                                {
+                                    width: '33.333333%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingTop: 10,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
+                                bg={'red'}
+                                name='vihara'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
+                                label={'Khu trọ'}
+                                onPress={() => this.routeScreen("AreaList")}
+                            />
+                        </View>
+                        <View
+                            style={[
+                                {
+                                    width: '33.3%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingTop: 10,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
+                                bg={'red'}
+                                name='calendar-check'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
+                                label={'Phiếu đặt'}
+                                onPress={() => this.props.navigation.navigate("ListBookTicket")}
+                            />
+                        </View>
+                        <View
+                            style={[
+                                {
+                                    width: '33.3%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingTop: 10,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
+                                bg={'green'}
+                                name='boxes'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
+                                label={'Loại phòng'}
+                                onPress={() => this.routeScreen("RoomTypeList")}
+                            />
+                        </View>
+                        <View
+                            style={[
+                                {
+                                    width: '33.3%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
+                                bg={color_primary}
+                                name='house-user'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
+                                label={'Phòng'}
+                                onPress={() => this.routeScreen("RoomList")}
+                            />
+                        </View>
+                        <View
+                            style={[
+                                {
+                                    width: '33.3%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
+                                bg={'orange'}
+                                name='file-invoice-dollar'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
+                                label={'Hóa đơn'}
+                                onPress={() => this.routeScreen("BillsComponent")}
 
-                        />
-                    </View>
-                    {/* <View
+                            />
+                        </View>
+                        {/* <View
                         style={[
                             {
                                 width: '33.3%',
@@ -289,208 +290,231 @@ class HomeScreen extends Component {
                             onPress = {() => this.routeScreen("ReceiptComponent") }
                         />
                     </View> */}
-                    <View
-                        style={[
-                            {
-                                width: '33.3%',
-                                paddingRight: 0.5,
-                                paddingLeft: 0.5,
-                                paddingTop: 10,
-                                paddingBottom: 5
-                            }
-                        ]}
-                    >
-                        <AppItemHome
-                            bg={'purple'}
-                            name='tint'
-                            size={30}
-                            color={'white'}
-                            colorText={'black'}
-                            label={'Điện/nước'}
-                            onPress={() => this.routeScreen("ChooseNumber")}
-                        />
-                    </View>
-                    <View
-                        style={[
-                            {
-                                width: '33.3%',
-                                paddingRight: 0.5,
-                                paddingLeft: 0.5,
-                                paddingTop: 10,
-                                paddingBottom: 5
-                            }
-                        ]}
-                    >
-                        <AppItemHome
-                            bg={'gray'}
-                            name='file-signature'
-                            size={30}
-                            color={'white'}
-                            colorText={'black'}
-                            label={'Hợp đồng'}
-                            onPress={() => this.routeScreen("ContractScreen")}
-                        />
-                    </View>
-                    <View
-                        style={[
-                            {
-                                width: '33.3%',
-                                paddingRight: 0.5,
-                                paddingLeft: 0.5,
-                                paddingTop: 10,
-                                paddingBottom: 5
-                            }
-                        ]}
-                    >
-                        <AppItemHome
-                            bg={'crimson'}
-                            name='servicestack'
-                            size={30}
-                            color={'white'}
-                            colorText={'black'}
-                            label={'Dịch vụ'}
-                            onPress={() => this.routeScreen("TabService")}
-                        />
-                    </View>
-                    <View
-                        style={[
-                            {
-                                width: '33.3%',
-                                paddingRight: 0.5,
-                                paddingLeft: 0.5,
-                                paddingTop: 10,
-                                paddingBottom: 5
-                            }
-                        ]}
-                    >
-                        <AppItemHome
-                            bg={'orangered'}
-                            name='bug'
-                            size={30}
-                            color={'white'}
-                            colorText={'black'}
-                            label={'Sự cố'}
-                            onPress={() => this.routeScreen("TroubleScreen")}
-                        />
-                    </View>
-                    <View
-                        style={[
-                            {
-                                width: '33.3%',
-                                paddingRight: 0.5,
-                                paddingLeft: 0.5,
-                                paddingTop: 10,
-                                paddingBottom: 5
-                            }
-                        ]}
-                    >
-                        <AppItemHome
-                            bg={'red'}
-                            name='artstation'
-                            size={30}
-                            color={'white'}
-                            colorText={'black'}
-                            label={'Loại vật chất'}
-                            onPress={() => this.routeScreen("materialtype")}
-                        />
-                    </View>
-                    <View
-                        style={[
-                            {
-                                width: '33.3%',
-                                paddingRight: 0.5,
-                                paddingLeft: 0.5,
-                                paddingTop: 10,
-                                paddingBottom: 5
-                            }
-                        ]}
-                    >
-                        <AppItemHome
-                            bg={color_primary}
-                            name='laravel'
-                            size={30}
-                            color={'white'}
-                            colorText={'black'}
-                            label={'Vật chất'}
-                            onPress={() => this.routeScreen("material")}
-                        />
-                    </View>
-                    <View
-                        style={[
-                            {
-                                width: '33.3%',
-                                paddingRight: 0.5,
-                                paddingLeft: 0.5,
-                                paddingTop: 10,
-                                paddingBottom: 5
-                            }
-                        ]}
-                    >
-                        <AppItemHome
-                            bg={'gray'}
-                            name='audible'
-                            size={30}
-                            color={'white'}
-                            colorText={'black'}
-                            label={'Hóa đơn vật chất'}
-                            onPress={() => this.routeScreen("billmaterial")}
-                        />
-                    </View>
-                    <View
-                        style={[
-                            {
-                                width: '33.3%',
-                                paddingRight: 0.5,
-                                paddingLeft: 0.5,
-                                paddingTop: 10,
-                                paddingBottom: 5
-                            }
-                        ]}
-                    >
-                        <AppItemHome
-                            bg={'purple'}
-                            name='gg'
-                            size={30}
-                            color={'white'}
-                            colorText={'black'}
-                            label={'Nhập vật chất'}
-                            onPress={() => this.routeScreen("inputmaterial")}
-                        />
-                    </View>
-                    <View
-                        style={[
-                            {
-                                width: '33.3%',
-                                paddingRight: 0.5,
-                                paddingLeft: 0.5,
-                                paddingTop: 10,
-                                paddingBottom: 5
-                            }
-                        ]}
-                    >
-                        <AppItemHome
-                            bg={'red'}
-                            name='bug'
-                            size={30}
-                            color={'white'}
-                            colorText={'black'}
-                            label={'Sự cố'}
-                            onPress={() => this.routeScreen("TroubleScreen")}
-                            label={'Quét QR Code'}
-                            onPress={() => this.routeScreen("qrcode")}
-                        />
-                        <AppItemHome
-                            bg={'orangered'}
-                            name='bug'
-                            size={30}
-                            color={'white'}
-                            colorText={'black'}
-                            label={'Sự cố'}
-                            onPress={() => this.routeScreen("TroubleScreen")}
-                        />
-                    </View>
+                        <View
+                            style={[
+                                {
+                                    width: '33.3%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
+                                bg={'purple'}
+                                name='tint'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
+                                label={'Điện/nước'}
+                                onPress={() => this.routeScreen("ChooseNumber")}
+                            />
+                        </View>
+                        <View
+                            style={[
+                                {
+                                    width: '33.3%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
+                                bg={'gray'}
+                                name='file-signature'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
+                                label={'Hợp đồng'}
+                                onPress={() => this.routeScreen("ContractScreen")}
+                            />
+                        </View>
+                        <View
+                            style={[
+                                {
+                                    width: '33.3%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
+                                bg={'crimson'}
+                                name='servicestack'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
+                                label={'Dịch vụ'}
+                                onPress={() => this.routeScreen("TabService")}
+                            />
+                        </View>
+                        <View
+                            style={[
+                                {
+                                    width: '33.3%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
+                                bg={'orangered'}
+                                name='bug'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
+                                label={'Sự cố'}
+                                onPress={() => this.routeScreen("TroubleScreen")}
+                            />
+                        </View>
+                        <View
+                            style={[
+                                {
+                                    width: '33.3%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
+                                bg={'red'}
+                                name='artstation'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
+                                label={'Loại vật chất'}
+                                onPress={() => this.routeScreen("materialtype")}
+                            />
+                        </View>
+                        <View
+                            style={[
+                                {
+                                    width: '33.3%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
+                                bg={color_primary}
+                                name='laravel'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
+                                label={'Vật chất'}
+                                onPress={() => this.routeScreen("material")}
+                            />
+                        </View>
+                        <View
+                            style={[
+                                {
+                                    width: '33.3%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
+                                bg={'gray'}
+                                name='audible'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
+                                label={'Hóa đơn vật chất'}
+                                onPress={() => this.routeScreen("billmaterial")}
+                            />
+                        </View>
+                        <View
+                            style={[
+                                {
+                                    width: '33.3%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
+                                bg={'purple'}
+                                name='gg'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
+                                label={'Nhập vật chất'}
+                                onPress={() => this.routeScreen("inputmaterial")}
+                            />
+                        </View>
+                        <View
+                            style={[
+                                {
+                                    width: '33.3%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
+                                bg={'red'}
+                                name='bug'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
+                                label={'Sự cố'}
+                                onPress={() => this.routeScreen("TroubleScreen")}
+                                label={'Quét QR Code'}
+                                onPress={() => this.routeScreen("qrcode")}
+                            />
+                        </View>
+                        <View
+                            style={[
+                                {
+                                    width: '33.3%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
+                                bg={'orangered'}
+                                name='bug'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
+                                label={'Sự cố'}
+                                onPress={() => this.routeScreen("TroubleScreen")}
+                            />
+                        </View>
+                        <View
+                            style={[
+                                {
+                                    width: '33.3%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
+                                bg={'orangered'}
+                                name='bug'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
+                                label={'Thêm vật chất phòng'}
+                                onPress={() => this.routeScreen("AddMaterial")}
+                            />
+                        </View>
+                    </ScrollView>
                 </View>
-            </SafeAreaView>
+            </View>
         );
     }
 }

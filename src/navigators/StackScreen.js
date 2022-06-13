@@ -78,6 +78,7 @@ import AccountInfScreen from "../screens/User/AccountInf/AccountInf";
 import DetailRoomScreen from "../screens/User/DetailRoom/DetailRoomScreen";
 
 import ListBookTicketScreen from '../screens/Admin/BookTicket/ListBookTicketScreen';
+import AddMaterialScreen from "../screens/Admin/AddMaterial/AddMaterial";
 
 const Stack = createNativeStackNavigator();
 const StackScreen: () => Node = () => {
@@ -355,6 +356,11 @@ const StackScreen: () => Node = () => {
                 <Stack.Screen
                     name="ListBookTicket"
                     component={ListBookTicketScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="AddMaterial"
+                    component={AddMaterialScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>
