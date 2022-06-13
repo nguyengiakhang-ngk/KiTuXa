@@ -54,6 +54,7 @@ class RoomBookedListScreen extends Component {
             let check = data.filter(item => {
                 return item.userId === this.props.user.user.id
             })
+            console.log(check[0], " ;hellolo ===> ", check[0].duration <= new Date())
             if(check.length > 0){
                 this.setState({
                     dataContract: check
@@ -64,7 +65,7 @@ class RoomBookedListScreen extends Component {
                     });
                 })
             }
-            console.log(">>data>>",data, ">>check>>>", check);
+            // console.log(">>data>>",data, ">>check>>>", check);
         })
     }
 

@@ -173,7 +173,6 @@ render() {
                             />
                     }
                     <View style={styles.detailContainer}>
-                        <Text style={styles.textName} numberOfLines={1}>{this.state.dataUser ? this.state.dataUser.name : 'Chưa đăng nhập'}</Text>
                         <View style={styles.detailContainer}>
                             <Text style={styles.textName} numberOfLines={1}>{this.state.dataUser ? this.state.dataUser.name : 'Chưa đăng nhập'}</Text>
                             <View>

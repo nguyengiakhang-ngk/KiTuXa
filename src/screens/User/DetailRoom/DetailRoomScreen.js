@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
     Keyboard,
     Modal,
-    ScrollView, Text, TouchableOpacity, View
+    ScrollView, Text, TouchableOpacity, View, TextInput
 } from 'react-native';
 import { connect } from "react-redux";
 import { SliderBox } from "react-native-image-slider-box";
@@ -42,10 +42,10 @@ class DetailRoomScreen extends Component {
             room: this.props.route.params.room,
             area: {},
             images: [
-                "http://192.168.1.11:3001/uploads/typeOfRoom/48dc8016935adfc9ff95502692dcc433.jpg",
-                "http://192.168.1.11:3001/uploads/typeOfRoom/48dc8016935adfc9ff95502692dcc433.jpg",
-                "http://192.168.1.11:3001/uploads/typeOfRoom/48dc8016935adfc9ff95502692dcc433.jpg",
-                "http://192.168.1.11:3001/uploads/typeOfRoom/48dc8016935adfc9ff95502692dcc433.jpg"
+                "http://10.10.10.151:3001/uploads/typeOfRoom/65c52eafa5c414590cac04493a1969ef.jpg",
+                "http://10.10.10.151:3001/uploads/typeOfRoom/65c52eafa5c414590cac04493a1969ef.jpg",
+                "http://10.10.10.151:3001/uploads/typeOfRoom/thiet-ke-phong-lam-viec-tai-nha-0.jpg",
+                "http://10.10.10.151:3001/uploads/typeOfRoom/thiet-ke-phong-lam-viec-tai-nha-0.jpg"
             ],
             isViewImage: false,
             viewImageIndex: 0,
@@ -410,6 +410,7 @@ class DetailRoomScreen extends Component {
                                         textSize={16}
                                         bg={color_primary}
                                         title="Đặt"
+                                        onPress={() => this.setState({isVisible: true})}
                                     />
                                 </View>
                                 <TouchableOpacity
@@ -573,7 +574,7 @@ class DetailRoomScreen extends Component {
                                     style={{ flex: 1, marginLeft: 10, flexDirection: "row", flexWrap: "wrap" }}
                                 >
                                     {
-                                        this.state.room?.freetickets.map((item, index) => {
+                                        this.state.room.freetickets?.map((item, index) => {
                                             return (
                                                 this.renderSelected(item, index)
                                             )
@@ -581,7 +582,7 @@ class DetailRoomScreen extends Component {
                                     }
 
                                     {
-                                        this.state.room?.paidtickets.map((item, index) => {
+                                        this.state.room.paidtickets?.map((item, index) => {
                                             return (
                                                 this.renderSelectedPaid(item, index)
                                             )
@@ -687,12 +688,7 @@ class DetailRoomScreen extends Component {
                                         }
                                     ]}
                                 >
-                                    <View style=
-                                        {[
-                                            width.w_100,
-                                            flex.justify_content_center,
-                                        ], { margin: 10 }}>
-                                        <View style={[flex.align_items_center, width.w_100]}>
+                                        <View style={[flex.align_items_center]}>
                                             <Text style={[font_weight.bold, text_size.lg, width.w_100, { textAlign: 'center' }]}>Đặt phòng</Text>
                                             <View
                                                 style={[width.w_100, {
@@ -828,10 +824,9 @@ class DetailRoomScreen extends Component {
                                                         this.state.roomBook.length == 0
                                                     }
                                                     onPress={() => { this.addBookTicket() }}
-                                                    title="Duyệt"
+                                                    title="ĐẶT"
                                                 />
                                             </View>
-                                        </View>
                                     </View>
                                 </ScrollView>
                             </View>

@@ -1,10 +1,10 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
     Image,
     SafeAreaView,
     Text, View,
 } from 'react-native';
-import {Icon} from "@rneui/base";
+import { Icon } from "@rneui/base";
 import {
     background_color,
     flex, font_weight,
@@ -14,10 +14,11 @@ import {
 } from "../../../utils/styles/MainStyle";
 import AsyncStorage from '@react-native-community/async-storage';
 import AppItemHome from "../../../components/AppItemHome";
-import {color_primary} from "../../../utils/theme/Color";
-import {connect} from "react-redux";
+import { color_primary, color_secondary } from "../../../utils/theme/Color";
+import { connect } from "react-redux";
+import { url } from '../../../constant/define';
 
-class HomeScreen extends Component{
+class HomeScreen extends Component {
 
     constructor(props) {
         super(props);
@@ -65,50 +66,71 @@ class HomeScreen extends Component{
                 >
                     <View
                         style=
-                            {[
-                                flex.flex_row,
-                                flex.align_items_center,
-                                flex.justify_content_between,
-                                flex.flex_wrap
-                            ]}
+                        {[
+                            flex.flex_row,
+                            flex.align_items_center,
+                            flex.justify_content_between,
+                            flex.flex_wrap
+                        ]}
                     >
                         <View
                             style=
-                                {[
-                                    flex.flex_row,
-                                    flex.align_items_center
-                                ]}
+                            {[
+                                flex.flex_row,
+                                flex.align_items_center
+                            ]}
                         >
-                            <Image
-                                source={require("../../../../assets/images/avt_dummy.png")}
-                                style={{
-                                    width: 80,
-                                    height: 80,
-                                    marginRight: 10,
-                                    borderBottomLeftRadius: 40,
-                                    borderBottomRightRadius: 40,
-                                    borderTopRightRadius: 40,
-                                    borderTopLeftRadius: 40,
-                                    overflow: 'hidden',
-                                }}
-                            />
+                            {
+                                this.state.user?.image ?
+                                    <Image
+                                        style={{
+                                            width: 100,
+                                            height: 100,
+                                            borderRadius: 50,
+                                            borderWidth: 1,
+                                            borderColor: color_secondary
+                                        }}
+                                        resizeMode={'stretch'}
+                                        source={
+                                            {
+                                                uri: `${url}/${this.state.user?.image}`
+                                            }
+                                        }
+                                    />
+                                    :
+                                    <Image
+                                        style={{
+                                            width: 100,
+                                            height: 100,
+                                            borderRadius: 50,
+                                            borderWidth: 1,
+                                            borderColor: color_secondary
+                                        }}
+                                        resizeMode={'stretch'}
+                                        source={
+                                            require('../../../assets/images/default_avatar.png')
+                                        }
+                                    />
+                            }
                             <View>
                                 <Text
                                     style=
-                                        {[
-                                            text_color.white,
-                                            text_size.xl,
-                                            font_weight.bold
-                                        ]}
+                                    {[
+                                        text_color.white,
+                                        text_size.xl,
+                                        font_weight.bold,
+                                        { marginLeft: 10}
+                                    ]}
                                 >
                                     {this.state.user.name}
                                 </Text>
                                 <Text
                                     style=
-                                        {[
-                                            text_color.white,
-                                            text_size.xs
-                                        ]}
+                                    {[
+                                        text_color.white,
+                                        text_size.xs,
+                                        { marginLeft: 10}
+                                    ]}
                                 >Người quản lý
                                 </Text>
                             </View>
@@ -123,17 +145,19 @@ class HomeScreen extends Component{
                 </View>
                 <View
                     style={[
-                        {flex: 3},
+                        { flex: 3 },
                         flex.flex_row,
                         flex.flex_wrap,
                         flex.justify_content_between,
                         width.w_100,
                         background_color.white,
-                        {borderTopStartRadius: 40},
-                        {borderTopEndRadius: 40},
-                        {paddingTop: 10,
-                        paddingLeft: 5,
-                        paddingRight: 5}
+                        { borderTopStartRadius: 40 },
+                        { borderTopEndRadius: 40 },
+                        {
+                            paddingTop: 10,
+                            paddingLeft: 5,
+                            paddingRight: 5
+                        }
                     ]}
                 >
 
@@ -150,13 +174,13 @@ class HomeScreen extends Component{
                         ]}
                     >
                         <AppItemHome
-                            bg = {'red'}
-                            name = 'vihara'
-                            size = {30}
-                            color = {'white'}
-                            colorText = {'black'}
-                            label = {'Khu trọ'}
-                            onPress = {() => this.routeScreen("AreaList") }
+                            bg={'red'}
+                            name='vihara'
+                            size={30}
+                            color={'white'}
+                            colorText={'black'}
+                            label={'Khu trọ'}
+                            onPress={() => this.routeScreen("AreaList")}
                         />
                     </View>
                     <View
@@ -171,12 +195,12 @@ class HomeScreen extends Component{
                         ]}
                     >
                         <AppItemHome
-                            bg = {'red'}
-                            name = 'calendar-check'
-                            size = {30}
-                            color = {'white'}
-                            colorText = {'black'}
-                            label = {'Phiếu đặt'}
+                            bg={'red'}
+                            name='calendar-check'
+                            size={30}
+                            color={'white'}
+                            colorText={'black'}
+                            label={'Phiếu đặt'}
                             onPress={() => this.props.navigation.navigate("ListBookTicket")}
                         />
                     </View>
@@ -192,13 +216,13 @@ class HomeScreen extends Component{
                         ]}
                     >
                         <AppItemHome
-                            bg = {'green'}
-                            name = 'boxes'
-                            size = {30}
-                            color = {'white'}
-                            colorText = {'black'}
-                            label = {'Loại phòng'}
-                            onPress = {() => this.routeScreen("RoomTypeList") }
+                            bg={'green'}
+                            name='boxes'
+                            size={30}
+                            color={'white'}
+                            colorText={'black'}
+                            label={'Loại phòng'}
+                            onPress={() => this.routeScreen("RoomTypeList")}
                         />
                     </View>
                     <View
@@ -213,13 +237,13 @@ class HomeScreen extends Component{
                         ]}
                     >
                         <AppItemHome
-                            bg = {color_primary}
-                            name = 'house-user'
-                            size = {30}
-                            color = {'white'}
-                            colorText = {'black'}
-                            label = {'Phòng'}
-                            onPress = {() => this.routeScreen("RoomList") }
+                            bg={color_primary}
+                            name='house-user'
+                            size={30}
+                            color={'white'}
+                            colorText={'black'}
+                            label={'Phòng'}
+                            onPress={() => this.routeScreen("RoomList")}
                         />
                     </View>
                     <View
@@ -234,13 +258,13 @@ class HomeScreen extends Component{
                         ]}
                     >
                         <AppItemHome
-                            bg = {'orange'}
-                            name = 'file-invoice-dollar'
-                            size = {30}
-                            color = {'white'}
-                            colorText = {'black'}
-                            label = {'Hóa đơn'}
-                            onPress = {() => this.routeScreen("BillsComponent") }
+                            bg={'orange'}
+                            name='file-invoice-dollar'
+                            size={30}
+                            color={'white'}
+                            colorText={'black'}
+                            label={'Hóa đơn'}
+                            onPress={() => this.routeScreen("BillsComponent")}
 
                         />
                     </View>
@@ -277,12 +301,12 @@ class HomeScreen extends Component{
                         ]}
                     >
                         <AppItemHome
-                            bg = {'purple'}
-                            name = 'tint'
-                            size = {30}
-                            color = {'white'}
-                            colorText = {'black'}
-                            label = {'Điện/nước'}
+                            bg={'purple'}
+                            name='tint'
+                            size={30}
+                            color={'white'}
+                            colorText={'black'}
+                            label={'Điện/nước'}
                             onPress={() => this.routeScreen("ChooseNumber")}
                         />
                     </View>
@@ -298,13 +322,13 @@ class HomeScreen extends Component{
                         ]}
                     >
                         <AppItemHome
-                            bg = {'gray'}
-                            name = 'file-signature'
-                            size = {30}
-                            color = {'white'}
-                            colorText = {'black'}
-                            label = {'Hợp đồng'}
-                            onPress = {() => this.routeScreen("ContractScreen") }
+                            bg={'gray'}
+                            name='file-signature'
+                            size={30}
+                            color={'white'}
+                            colorText={'black'}
+                            label={'Hợp đồng'}
+                            onPress={() => this.routeScreen("ContractScreen")}
                         />
                     </View>
                     <View
@@ -319,13 +343,13 @@ class HomeScreen extends Component{
                         ]}
                     >
                         <AppItemHome
-                            bg = {'crimson'}
-                            name = 'servicestack'
-                            size = {30}
-                            color = {'white'}
-                            colorText = {'black'}
-                            label = {'Dịch vụ'}
-                            onPress = {() => this.routeScreen("TabService") }
+                            bg={'crimson'}
+                            name='servicestack'
+                            size={30}
+                            color={'white'}
+                            colorText={'black'}
+                            label={'Dịch vụ'}
+                            onPress={() => this.routeScreen("TabService")}
                         />
                     </View>
                     <View
@@ -340,13 +364,13 @@ class HomeScreen extends Component{
                         ]}
                     >
                         <AppItemHome
-                            bg = {'orangered'}
-                            name = 'bug'
-                            size = {30}
-                            color = {'white'}
-                            colorText = {'black'}
-                            label = {'Sự cố'}
-                            onPress = {() => this.routeScreen("TroubleScreen") }
+                            bg={'orangered'}
+                            name='bug'
+                            size={30}
+                            color={'white'}
+                            colorText={'black'}
+                            label={'Sự cố'}
+                            onPress={() => this.routeScreen("TroubleScreen")}
                         />
                     </View>
 
@@ -356,9 +380,9 @@ class HomeScreen extends Component{
     }
 }
 
-const mapStateToProps = ({user}) => {
+const mapStateToProps = ({ user }) => {
     // alert(JSON.stringify(user));
-    return {user};
+    return { user };
 };
 
 const mapDispatchToProps = {
