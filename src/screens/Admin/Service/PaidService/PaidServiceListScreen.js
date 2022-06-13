@@ -32,6 +32,8 @@ import {
     doUpdatePaidService
 } from "../../../../redux/actions/paidService";
 import {connect} from "react-redux";
+import {doAddPriceService} from "../../../../redux/actions/priceTypeOfRoom";
+import {cardExpiry} from "../../../../utils/proccess/proccessApp";
 
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -101,11 +103,16 @@ class PaidServiceListScreen extends Component{
         data.append("paidService", JSON.stringify(paidService));
         this.props.doAddPaidService(data).then(data => {
             if(data) {
-                this.setState({
-                    isShowModalAdd: false,
-                    imagePaidService: null
-                });
-                this.getPaidServiceData();
+                let price = values.price.split(".").join("");
+                this.props.doAddPriceService({price: price, paidServiceId: data}).then(check => {
+                    if(check) {
+                        this.setState({
+                            isShowModalAdd: false,
+                            imagePaidService: null
+                        });
+                        this.getPaidServiceData();
+                    }
+                })
             }
         })
     }
@@ -129,12 +136,17 @@ class PaidServiceListScreen extends Component{
         data.append("paidService", JSON.stringify(paidService));
         this.props.doUpdatePaidService(data, {id: this.state.paidServiceUpdate.id}).then(data => {
             if(data) {
-                this.setState({
-                    isShowModalAdd: false,
-                    imagePaidService: null,
-                    paidServiceUpdate: null
-                });
-                this.getFreeServiceData();
+                let price = values.price.split(".").join("");
+                this.props.doAddPriceService({price: price, paidServiceId: this.state.paidServiceUpdate.id}).then(check => {
+                    if(check) {
+                        this.setState({
+                            isShowModalAdd: false,
+                            imagePaidService: null,
+                            paidServiceUpdate: null
+                        });
+                        this.getFreeServiceData();
+                    }
+                })
             }
         });
     }
@@ -210,7 +222,8 @@ class PaidServiceListScreen extends Component{
                                 <Formik
                                     initialValues={{
                                         serviceName: this.state.paidServiceUpdate ? this.state.paidServiceUpdate.name : '',
-                                        unit: this.state.paidServiceUpdate ? this.state.paidServiceUpdate.unit : ''
+                                        unit: this.state.paidServiceUpdate ? this.state.paidServiceUpdate.unit : '',
+                                        price: this.state.paidServiceUpdate?.priceofservices.length ? this.state.paidServiceUpdate?.priceofservices[this.state.paidServiceUpdate?.priceofservices.length-1].price : '',
                                     }}
                                     validationSchema={PaidServiceSchema}
                                     onSubmit={values => {
@@ -291,14 +304,15 @@ class PaidServiceListScreen extends Component{
                                                         <AppInputInf
                                                             lable={"Giá dịch vụ:"}
                                                             secureTextEntry={false}
-                                                            field={"unit"}
+                                                            field={"price"}
                                                             handleChange={handleChange}
                                                             handleBlur={handleBlur}
                                                             values={values}
+                                                            formatNum = { true }
                                                         />
-                                                        {/*{errors.unit && touched.unit ? (*/}
-                                                        {/*    <AppError errors={ errors.unit }/>*/}
-                                                        {/*) : null}*/}
+                                                        {errors.price && touched.price ? (
+                                                            <AppError errors={ errors.price }/>
+                                                        ) : null}
                                                     </View>
                                                     <View
                                                         style={[
@@ -488,7 +502,7 @@ class PaidServiceListScreen extends Component{
                                     {marginLeft: 4}
                                 ]}
                             >
-                                Có phí ({item.unit})
+                                Có phí ({cardExpiry(item.priceofservices?.length ? item.priceofservices[item.priceofservices.length-1]?.price : 0)})
                             </Text>
                         </View>
                     </View>
@@ -540,7 +554,8 @@ const mapDispatchToProps = {
     doAddPaidService,
     doDeletePaidService,
     doGetListPaidService,
-    doUpdatePaidService
+    doUpdatePaidService,
+    doAddPriceService
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(PaidServiceListScreen)
