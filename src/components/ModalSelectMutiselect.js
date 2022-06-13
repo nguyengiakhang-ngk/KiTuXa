@@ -20,75 +20,64 @@ export default class ModalSelectMutiselect extends React.Component {
         super(props);
 
         this.state = {
-            value: this.props.initValue,
             isVisible: false,
-            selected: [],
-            data: []
         }
     }
 
-    componentDidMount() {
-        this.setState({
-            data: this.props.data
-        })
-    }
-
-    onChange = () => {
-        this.props.onChangeValue(this.state.value);
-    }
-
-    deleteItemSelected = (index) => {
-        this.state.selected.splice(index, 1);
-    }
-
     renderSelected = (item, index) => {
-        return(
-            <View>
-                {
-                    item.checked ?
-                        <View
-                            key={item.id}
-                            style={{
-                                flexDirection: "row",
-                                borderWidth: 1,
-                                borderColor: color_primary,
-                                borderRadius: 20,
-                                paddingHorizontal: 5,
-                                paddingVertical: 5,
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                width: '30%',
-                                marginRight: '3%'
-                            }}
-                        >
-                            <Text
-                                style={[
-                                    text_size.sm,
-                                    font.serif,
-                                    {
-                                        color: color_dark
-                                    }
-                                ]}
-                            >
-                                {item.name}
-                            </Text>
-                            <TouchableOpacity
-                                onPress={() => {
-                                    this.props.onChangeSelect(index);
+        if(item.checked){
+            return(
+                <View
+                    style={{
+                        marginTop: 10,
+                        width: '30%',
+                        marginRight: '3%'
+                    }}
+                >
+                    {
+                        item.checked ?
+                            <View
+                                key={item.id}
+                                style={{
+                                    flexDirection: "row",
+                                    borderWidth: 2,
+                                    borderColor: color_primary,
+                                    borderRadius: 20,
+                                    paddingHorizontal: 5,
+                                    paddingVertical: 5,
+                                    justifyContent: "space-between",
+                                    alignItems: "center"
                                 }}
                             >
-                                <Icon
-                                    name='times-circle'
-                                    type='font-awesome-5'
-                                    size={18}
-                                    color={color_danger}
-                                />
-                            </TouchableOpacity>
-                        </View>
-                        : null
-                }
-            </View>
-        )
+                                <Text
+                                    style={[
+                                        text_size.sm,
+                                        font.serif,
+                                        {
+                                            color: color_dark
+                                        }
+                                    ]}
+                                >
+                                    {item.name}
+                                </Text>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        this.props.onChangeSelect(index);
+                                    }}
+                                >
+                                    <Icon
+                                        name='times-circle'
+                                        type='font-awesome-5'
+                                        size={18}
+                                        color={color_danger}
+                                    />
+                                </TouchableOpacity>
+                            </View>
+                            : null
+                    }
+                </View>
+            )
+        }
     }
 
     onChange = () => {
@@ -97,13 +86,17 @@ export default class ModalSelectMutiselect extends React.Component {
 
     _renderItemSelect = ({item, index}) => {
         return(
-            <View
+            <TouchableOpacity
                 key={index}
                 style={{
                     flexDirection: "row",
                     alignItems: "center",
                     borderBottomWidth: 1,
-                    borderBottomColor: color_secondary
+                    borderBottomColor: color_secondary,
+                    paddingVertical: 5
+                }}
+                onPress={() => {
+                    this.props.onChangeSelect(index);
                 }}
             >
                 <CheckBox
@@ -126,7 +119,7 @@ export default class ModalSelectMutiselect extends React.Component {
                     uncheckedColor={color_primary}
                     checkedColor={color_primary}
                 />
-            </View>
+            </TouchableOpacity>
         )
     }
 
@@ -134,7 +127,8 @@ export default class ModalSelectMutiselect extends React.Component {
         return(
             <ScrollView
                 contentContainerStyle={{
-                    width: '100%'
+                    width: '100%',
+                    marginTop: 5
                 }}
             >
                 <TouchableOpacity
@@ -174,7 +168,8 @@ export default class ModalSelectMutiselect extends React.Component {
                 </TouchableOpacity>
                 <View
                     style={{
-                        marginTop: 10
+                        flexDirection: "row",
+                        flexWrap: "wrap"
                     }}
                 >
                     {
@@ -212,40 +207,20 @@ export default class ModalSelectMutiselect extends React.Component {
                                     <View
                                         style={[
                                             width.w_100,
-                                            flex.flex_row,
+                                            flex.align_items_center,
                                             {paddingLeft: 15, paddingRight: 15, marginTop: 20}
                                         ]}
                                     >
                                         <View
                                             style={[
                                                 {
-                                                    flex: 1,
-                                                    marginRight: 15
+                                                    width: '40%'
                                                 }
                                             ]}
                                         >
                                             <AppButtonActionInf
-                                                size={13}
-                                                textSize={18}
-                                                bg={color_danger}
-                                                onPress = { () => {
-                                                    this.setState({
-                                                        isVisible: false
-                                                    })
-                                                }}
-                                                title="Hủy"
-                                            />
-                                        </View>
-                                        <View
-                                            style={[
-                                                {
-                                                    flex: 1
-                                                }
-                                            ]}
-                                        >
-                                            <AppButtonActionInf
-                                                size={13}
-                                                textSize={18}
+                                                size={10}
+                                                textSize={16}
                                                 bg={color_primary}
                                                 onPress = { () => {
                                                     this.setState({

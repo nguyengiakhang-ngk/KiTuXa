@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {
+    ActivityIndicator,
     Dimensions,
     FlatList, Image,
     SafeAreaView,
@@ -427,7 +428,7 @@ class SearchScreen extends Component{
                                               keyExtractor={item => item.id.toString()} />
                                     :
                                     <View
-                                        style={{height: '50%', justifyContent: "center", alignItems: "center"}}
+                                        style={{height: '50%', justifyContent: "center", alignItems:  "center"}}
                                     >
                                         <Text
                                             style={[

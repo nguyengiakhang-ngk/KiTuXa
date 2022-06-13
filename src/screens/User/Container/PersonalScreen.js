@@ -166,7 +166,7 @@ class PersonalScreen extends Component {
                         <View style={styles.detailContainer}>
                             <Text style={styles.textName} numberOfLines={1}>{this.state.dataUser ? this.state.dataUser.name : 'Chưa đăng nhập'}</Text>
                             <View>
-                                <Text style={styles.textDetail}>{this.state.dataUser ? this.state.dataUser.gender === '1' ? "Nam" : "Nữ" : ''}</Text>
+                                <Text style={styles.textDetail}>{this.state.dataUser ? this.state.dataUser.gender === '0' ? "Nam" : "Nữ" : ''}</Text>
                                 <Text style={styles.textDetail}>{this.state.dataUser ? 'SĐT: '+this.state.dataUser.numberPhone : ''}</Text>
                                 <Text style={styles.textDetail}>{this.state.dataUser ? 'Địa chỉ: '+this.state.dataUser.address : ''}</Text>
                             </View>

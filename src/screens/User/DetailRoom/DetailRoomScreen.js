@@ -1,19 +1,21 @@
 import React, {Component} from 'react';
 import {
+    Keyboard,
     Modal,
     ScrollView, Text, TouchableOpacity, View
 } from 'react-native';
 import {connect} from "react-redux";
 import { SliderBox } from "react-native-image-slider-box";
 import {
+    background_color,
     flex,
     font,
     font_weight,
     text_color,
-    text_size,
+    text_size, width,
 } from "../../../utils/styles/MainStyle";
 import AppButtonActionInf from "../../../components/AppButtonActionInf";
-import {color_danger, color_dark, color_primary} from "../../../utils/theme/Color";
+import {color_danger, color_dark, color_primary, color_success} from "../../../utils/theme/Color";
 import { Image } from "react-native";
 import {Icon} from "@rneui/base";
 import {doGetAreaById} from "../../../redux/actions/area";
@@ -21,6 +23,12 @@ import GetLocation from 'react-native-get-location';
 import MapView, { Marker } from 'react-native-maps';
 import AsyncStorage from "@react-native-community/async-storage";
 import {doAddSaveRoom, doDeleteSaveRoom, doGetSaveRoom} from "../../../redux/actions/saveRoom";
+import {Formik} from "formik";
+import {PaidServiceSchema} from "../../../utils/validation/ValidatePaidService";
+import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
+import AppInputInf from "../../../components/AppInputInf";
+import AppError from "../../../components/AppError";
+import {url} from "../../../constant/define";
 
 class DetailRoomScreen extends Component {
     constructor(props) {
@@ -40,7 +48,9 @@ class DetailRoomScreen extends Component {
             location: {},
             isMap: false,
             user: null,
-            ticket: null
+            ticket: null,
+            viewDetailService: null,
+            isViewDetailService: false
         }
     }
 
@@ -84,6 +94,96 @@ class DetailRoomScreen extends Component {
         } else{
             alert("Vui lòng đăng nhập để sử dụng!")
         }
+    }
+
+    renderSelected = (item, index) => {
+        return(
+            <TouchableOpacity
+                key={item.id}
+                style={{
+                    flexDirection: "row",
+                    borderWidth: 2,
+                    borderColor: color_primary,
+                    borderRadius: 20,
+                    padding: 5,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginBottom: 10,
+                    width: '30%',
+                    marginRight: '3%'
+                }}
+                onPress={() => {
+                    this.setState({
+                        viewDetailService: item.freeservice,
+                        isViewDetailService: true
+                    })
+                }}
+            >
+                <Icon
+                    name='servicestack'
+                    type='font-awesome-5'
+                    size={18}
+                    color={color_danger}
+                />
+                <Text
+                    style={[
+                        text_size.xs,
+                        font.serif,
+                        {
+                            color: color_dark,
+                            marginLeft: 5
+                        }
+                    ]}
+                >
+                    {item.freeservice.name}
+                </Text>
+            </TouchableOpacity>
+        )
+    }
+
+    renderSelectedPaid = (item, index) => {
+        return(
+            <TouchableOpacity
+                key={item.id}
+                style={{
+                    flexDirection: "row",
+                    borderWidth: 2,
+                    borderColor: color_primary,
+                    borderRadius: 20,
+                    padding: 5,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginBottom: 10,
+                    width: '30%',
+                    marginRight: '3%'
+                }}
+                onPress={() => {
+                    this.setState({
+                        viewDetailService: item.paidservice,
+                        isViewDetailService: true
+                    })
+                }}
+            >
+                <Icon
+                    name='servicestack'
+                    type='font-awesome-5'
+                    size={18}
+                    color={color_danger}
+                />
+                <Text
+                    style={[
+                        text_size.xs,
+                        font.serif,
+                        {
+                            color: color_dark,
+                            marginLeft: 5
+                        }
+                    ]}
+                >
+                    {item.paidservice.name}
+                </Text>
+            </TouchableOpacity>
+        )
     }
 
     render()
@@ -401,6 +501,41 @@ class DetailRoomScreen extends Component {
                                         Mô tả khu: {this.state.area?.description}
                                     </Text>
                                 </View>
+                                <View
+                                    style={[
+                                        flex.flex_row,
+                                        {
+                                            marginTop: 5
+                                        }
+                                    ]}
+                                >
+                                    <Icon
+                                        style={{marginTop: 2}}
+                                        name='servicestack'
+                                        type='font-awesome-5'
+                                        color={color_primary}
+                                        size={20}
+                                    />
+                                    <View
+                                        style={{flex: 1, marginLeft: 10, flexDirection: "row", flexWrap: "wrap"}}
+                                    >
+                                        {
+                                            this.state.room?.freetickets.map((item, index) => {
+                                                return(
+                                                    this.renderSelected(item, index)
+                                                )
+                                            })
+                                        }
+
+                                        {
+                                            this.state.room?.paidtickets.map((item, index) => {
+                                                return(
+                                                    this.renderSelectedPaid(item, index)
+                                                )
+                                            })
+                                        }
+                                    </View>
+                                </View>
                             </View>
                         </View>
                     </ScrollView>
@@ -536,6 +671,168 @@ class DetailRoomScreen extends Component {
                                 </View>
                             </Modal>
                             : null
+                    }
+                    {
+                        this.state.isViewDetailService ?
+                            <Modal transparent visible={this.state.isViewDetailService}>
+                                <View
+                                    style={[
+                                        {
+                                            flex: 1,
+                                            backgroundColor: 'rgba(0,0,0,0.5)',
+                                            justifyContent: "center",
+                                            alignItems: "center"
+                                        }
+                                    ]}
+                                >
+                                    <View
+                                        style={[
+                                            {
+                                                width: '90%',
+                                                backgroundColor: 'white',
+                                                borderRadius: 5
+                                            }
+                                        ]}
+                                    >
+                                        <SafeAreaView
+                                            style={[
+                                                {margin: 15},
+                                                background_color.white,
+                                                flex.justify_content_between
+                                            ]}
+                                            onPress={Keyboard.dismiss}
+                                        >
+                                            <View
+                                                style={[
+                                                    width.w_100
+                                                ]}
+                                            >
+                                                <View
+                                                    style={[
+                                                        width.w_100
+                                                    ]}
+                                                >
+                                                    <Text
+                                                        style={[
+                                                            text_size.sm,
+                                                            font.serif,
+                                                            {
+                                                                color: color_dark
+                                                            }
+                                                        ]}
+                                                    >
+                                                        {this.state.viewDetailService.name}
+                                                    </Text>
+                                                </View>
+                                                <View
+                                                    style={[
+                                                        width.w_100,
+                                                        {
+                                                            marginTop: 10
+                                                        }
+                                                    ]}
+                                                >
+                                                    {
+                                                        this.state.viewDetailService?.unit ?
+                                                            <Text
+                                                                style={[
+                                                                    text_size.sm,
+                                                                    font.serif,
+                                                                    {
+                                                                        color: color_dark
+                                                                    }
+                                                                ]}
+                                                            >
+                                                                {this.state.viewDetailService.unit}
+                                                            </Text>
+                                                            : <View/>
+                                                    }
+                                                </View>
+                                                <View
+                                                    style={[
+                                                        width.w_100,
+                                                        {
+                                                            marginTop: 10
+                                                        }
+                                                    ]}
+                                                >
+                                                    {
+                                                        this.state.viewDetailService.priceofservices?.length ?
+                                                            <Text
+                                                                style={[
+                                                                    text_size.sm,
+                                                                    font.serif,
+                                                                    {
+                                                                        color: color_dark
+                                                                    }
+                                                                ]}
+                                                            >
+                                                                {this.state.viewDetailService.priceofservices[this.state.viewDetailService.priceofservices?.length-1].price}
+                                                            </Text>
+                                                            : <View/>
+                                                    }
+                                                </View>
+                                                <View
+                                                    style={[
+                                                        width.w_100,
+                                                        flex.flex_row,
+                                                        flex.align_items_center,
+                                                        {
+                                                            marginTop: 10
+                                                        }
+                                                    ]}
+                                                >
+                                                    {/*    */}
+                                                </View>
+                                                {
+                                                    (this.state.viewDetailService?.image) ?
+                                                        <View
+                                                            style={[
+                                                                width.w_100
+                                                            ]}
+                                                        >
+                                                            <Image
+                                                                style={[
+                                                                    width.w_100,
+                                                                    {height: 180}
+                                                                ]}
+                                                                source={
+                                                                    {
+                                                                        uri: `${url}/${this.state.viewDetailService?.image}`
+                                                                    }
+                                                                }
+                                                            />
+                                                        </View>
+                                                        : <View/>
+                                                }
+                                            </View>
+                                            <View
+                                                style={[
+                                                    width.w_100,
+                                                    flex.align_items_center,
+                                                    {paddingLeft: 15, paddingRight: 15, marginTop: 20}
+                                                ]}
+                                            >
+                                                <View>
+                                                    <AppButtonActionInf
+                                                        size={10}
+                                                        textSize={18}
+                                                        bg={color_primary}
+                                                        onPress = {() => {
+                                                            this.setState({
+                                                                isViewDetailService: false
+                                                            })
+                                                        }}
+                                                        title={'Đóng'}
+                                                    />
+                                                </View>
+                                            </View>
+                                        </SafeAreaView>
+                                    </View>
+                                </View>
+                            </Modal>
+                            : <View/>
+
                     }
                 </View>
             );

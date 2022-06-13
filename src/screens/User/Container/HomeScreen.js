@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Dimensions, FlatList, Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, Dimensions, FlatList, Image, SafeAreaView, Text, TouchableOpacity, View} from 'react-native';
 import {background_color, flex, shadow, text_color, text_size} from "../../../utils/styles/MainStyle";
 import {color_danger, color_primary} from "../../../utils/theme/Color";
 import {Icon} from "@rneui/base";
@@ -39,7 +39,8 @@ class HomeScreen extends Component {
             dataNewAll: [],
             dataAll: [],
             isDataNewAll: false,
-            isDataAll: false
+            isDataAll: false,
+            isLoading: true
         }
     }
 
@@ -72,8 +73,14 @@ class HomeScreen extends Component {
     getTypeRoomNew = () => {
         this.setState({
             isDataAll: false,
-            isDataNewAll: false
+            isDataNewAll: false,
+            isLoading: true
         })
+        setTimeout(() => {
+            this.setState({
+                isLoading: false
+            })
+        }, 500)
         this.props.doGetListTypeOfRoomNew().then(data => {
             let arr = _.cloneDeep( data );
             arr.map(item => {
@@ -122,20 +129,31 @@ class HomeScreen extends Component {
                 ]}
             >
                 {
-                    (!this.state.isDataNewAll && !this.state.isDataAll) ?
-                        <SliderBox
-                            autoplay
-                            images={
-                                [
-                                    "http://192.168.1.11:3001/uploads/slide1.jpg",
-                                    "http://192.168.1.11:3001/uploads/slide2.jpg",
-                                    "http://192.168.1.11:3001/uploads/slide3.jpg"
-                                ]
+                    !this.state.dataTitle[0].list || !this.state.dataTitle[1].list || this.state.isLoading ?
+                        <ActivityIndicator size="large" color={color_primary} />
+                        :
+                        <View
+                            style={{
+                                flex: 1
+                            }}
+                        >
+                            {
+                                (!this.state.isDataNewAll && !this.state.isDataAll) ?
+                                    <SliderBox
+                                        autoplay
+                                        images={
+                                            [
+                                                `${url}/uploads/slide1.jpg`,
+                                                `${url}/uploads/slide2.jpg`,
+                                                `${url}/uploads/slide3.jpg`
+                                            ]
+                                        }
+                                    />
+                                    : null
                             }
-                        />
-                        : null
+                            <FlatList showsVerticalScrollIndicator={false} data={this.state.dataTitle} renderItem={this._renderItemTitle} keyExtractor={item => item.id.toString()} />
+                        </View>
                 }
-                <FlatList showsVerticalScrollIndicator={false} data={this.state.dataTitle} renderItem={this._renderItemTitle} keyExtractor={item => item.id.toString()} />
             </SafeAreaView>
         );
     }

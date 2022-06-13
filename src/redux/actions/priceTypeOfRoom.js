@@ -1,7 +1,7 @@
 import {
     ADD_PRICE_TYPE_OF_ROOM, ADD_PRICE_TYPE_OF_ROOM_SUCCESS, ADD_PRICE_TYPE_OF_ROOM_FAIL
 } from "./types";
-import {addPriceTypeOfRoom} from "../../api/priceTypeOfRoomAPI";
+import {addPriceService, addPriceTypeOfRoom} from "../../api/priceTypeOfRoomAPI";
 
 // Add Paid Service
 export const doAddPriceTypeOfRoom = (priceTypeOfRoom) => dispatch => {
@@ -29,4 +29,16 @@ const addPriceTypeOfRoomFail = (dispatch, error) => {
         type: ADD_PRICE_TYPE_OF_ROOM_FAIL,
         error: error
     });
+}
+
+export const doAddPriceService = (priceService) => dispatch => {
+    return new Promise((resolve, reject) => {
+        addPriceService(priceService)
+            .then(data => {
+                resolve(data);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    })
 }

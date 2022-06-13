@@ -29,6 +29,8 @@ export const GET_LIST_TYPE_OF_ROOM_SEARCH_ADDRESS = `/getListTypeRoomSearchAddre
 
 export const ADD_PRICE_TYPE_OF_ROOM = `/addPriceofroom`;
 
+export const ADD_PRICE_SERVICE = `/addPriceofservice`;
+
 export const GET_LIST_ROOM = `/getRoom`;
 export const ADD_ROOM = `/addRoom`;
 export const DELETE_ROOM = `/deleteRoom`;
@@ -47,5 +49,8 @@ export const GET_SAVE_ROOM = `/getSaveRoomTicket`;
 export const ADD_SAVE = `/addSaveRoomTicket`;
 export const DELETE_SAVE = `/deleteSaveRoomTicket`;
 
-export const ADD_FREE_TICKET = `/addaddFreeTicket`;
+export const ADD_FREE_TICKET = `/addFreeTicket`;
 export const DELETE_ADD_FREE_TICKET = `/deleteaddFreeTicket`;
+
+export const ADD_PAID_TICKET = `/addPaidTicket`;
+export const DELETE_PAID_TICKET = `/deletePaidTicket`;

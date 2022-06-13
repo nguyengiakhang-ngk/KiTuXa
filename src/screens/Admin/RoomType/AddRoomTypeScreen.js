@@ -31,6 +31,8 @@ import {Multiselect} from "multiselect-react-dropdown";
 import {doGetListFreeService} from "../../../redux/actions/freeService";
 import ModalSelectMutiselect from "../../../components/ModalSelectMutiselect";
 import {doAddFreeTicket} from "../../../redux/actions/freeTocket";
+import {doGetListPaidService} from "../../../redux/actions/paidService";
+import {doAddPaidTicket} from "../../../redux/actions/paidTicket";
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         {children}
@@ -44,11 +46,7 @@ class AddRoomTypeScreen extends Component {
             data: [],
             imageList: [],
             dataFreeService: [],
-            dataFreeServiceSelection: [],
-            dataPaidServiceSelection: [],
             dataPaidService: [],
-            isShowModalIconFree: false,
-            isShowModalIconPaid: false,
             areaData: [],
             initValue: '',
         }
@@ -65,9 +63,13 @@ class AddRoomTypeScreen extends Component {
 
     getFreeServiceData(){
         this.props.doGetListFreeService({userId: this.props.user.user.id}).then(data =>{
-            alert(JSON.stringify(data));
             this.setState({
                 dataFreeService: data.map(item => ({id: item.id, name: item.name, checked: false}))
+            })
+        });
+        this.props.doGetListPaidService({userId: this.props.user.user.id}).then(data =>{
+            this.setState({
+                dataPaidService: data.map(item => ({id: item.id, name: item.name, checked: false}))
             })
         });
     }
@@ -198,6 +200,20 @@ class AddRoomTypeScreen extends Component {
                 this.props.doAddPriceTypeOfRoom({price: price, typeOfRoomId: data}).then(data => {
                     // alert(data);
                 })
+                this.state.dataFreeService.map(item => {
+                    if(item.checked) {
+                        this.props.doAddFreeTicket({typeOfRoomId: data, freeServiceId: item.id}).then(data => {
+                            // alert(data);
+                        })
+                    }
+                })
+                this.state.dataPaidService.map(item => {
+                    if(item.checked) {
+                        this.props.doAddPaidTicket({typeOfRoomId: data, paidServiceId: item.id}).then(data => {
+                            // alert(data);
+                        })
+                    }
+                })
                 if(this.state.imageList.length > 0) {
                     this.mapImageRoomType(data);
                 }else{
@@ -207,33 +223,7 @@ class AddRoomTypeScreen extends Component {
         })
     }
 
-    mapPaidService = (id_loai) => {
-        this.state.dataPaidService.map( (item, index) => {
-            if (item.checked){
-                this.addPaidServiceBill(item.key, id_loai);
-            }
-        });
-    }
-
-    addPaidServiceBill = (id_cp, id_loai) => {
-        axios.post(path + `/addPaidServiceBill`, {
-            id_cp: id_cp,
-            id_loai: id_loai
-        })
-            .then((response)=>{
-
-            })
-            .catch((error => {
-                console.log(error);
-            }));
-    }
-
     mapImageRoomType = (typeOfRoomId) => {
-        // this.state.dataFreeService.map(item => {
-        //     this.props.doAddFreeTicket({typeOfRoomId: typeOfRoomId, freeServiceId: item.id}).then(data => {
-        //
-        //     })
-        // })
         this.state.imageList.map( (item, index) => {
             this.uploadImageRoomType(item, index, typeOfRoomId);
         });
@@ -430,15 +420,47 @@ class AddRoomTypeScreen extends Component {
                                     <View
                                         style={[
                                             width.w_100,
-                                            {paddingLeft: 15, paddingRight: 15, marginTop: 10}
+                                            {paddingLeft: 15, paddingRight: 15, marginTop: 15}
                                         ]}
                                     >
+                                        <Text
+                                            style={[
+                                                text_size.sm,
+                                                font.serif
+                                            ]}
+                                        >
+                                            Dịch vụ miễn phí:
+                                        </Text>
                                         <ModalSelectMutiselect
                                             data={this.state.dataFreeService}
                                             onChangeSelect={(value) => {
                                                 this.state.dataFreeService[value].checked = !this.state.dataFreeService[value].checked;
                                                 this.setState({
                                                     dataFreeService: this.state.dataFreeService
+                                                })
+                                            }}
+                                        />
+                                    </View>
+                                    <View
+                                        style={[
+                                            width.w_100,
+                                            {paddingLeft: 15, paddingRight: 15, marginTop: 10}
+                                        ]}
+                                    >
+                                        <Text
+                                            style={[
+                                                text_size.sm,
+                                                font.serif
+                                            ]}
+                                        >
+                                            Dịch vụ có phí:
+                                        </Text>
+                                        <ModalSelectMutiselect
+                                            data={this.state.dataPaidService}
+                                            onChangeSelect={(value) => {
+                                                this.state.dataPaidService[value].checked = !this.state.dataPaidService[value].checked;
+                                                this.setState({
+                                                    dataPaidService: this.state.dataPaidService
                                                 })
                                             }}
                                         />
@@ -534,211 +556,6 @@ class AddRoomTypeScreen extends Component {
                         )}
                     </Formik>
                 </ScrollView>
-                <Modal transparent visible={this.state.isShowModalIconFree}>
-                    <View
-                        style={[
-                            {
-                                flex: 1,
-                                justifyContent: "center",
-                                alignItems: "center",
-                                backgroundColor: 'rgba(0,0,0,0.5)',
-                            }
-                        ]}
-                    >
-                        <View
-                            style={[
-                                {
-                                    width: '90%',
-                                    backgroundColor: 'white',
-                                    paddingVertical: 15,
-                                    paddingHorizontal: 15,
-                                    borderRadius: 5,
-                                    height: 310
-                                }
-                            ]}
-                        >
-                            <View
-                                style={[
-                                    width.w_100,
-                                    flex.align_items_center
-                                ]}
-                            >
-                                <Text
-                                    style={[
-                                        text_size.xl,
-                                        text_color.danger,
-                                        font.serif
-                                    ]}
-                                >
-                                    Chọn dịch vụ
-                                </Text>
-                                <Text
-                                    style={[
-                                        text_size.xs,
-                                        font.serif
-                                    ]}
-                                >
-                                    (Nhấn giữ để xem chi tiết)
-                                </Text>
-                            </View>
-                            <FlatList style={{padding: 5}} numColumns={3} data={this.state.dataFreeService} renderItem={this._renderItemIcon} keyExtractor={(item, index) => index.toString()}/>
-                            <View
-                                style={[
-                                    width.w_100,
-                                    flex.align_items_center,
-                                    {
-                                        marginTop: 20
-                                    }
-                                ]}
-                            >
-                                {/*<View*/}
-                                {/*    style={[*/}
-                                {/*        {*/}
-                                {/*            flex: 1,*/}
-                                {/*            marginRight: 15*/}
-                                {/*        }*/}
-                                {/*    ]}*/}
-                                {/*>*/}
-                                {/*    <AppButtonActionInf*/}
-                                {/*        size={10}*/}
-                                {/*        textSize={16}*/}
-                                {/*        bg={color_danger}*/}
-                                {/*        onPress = { () => { this.setState({isShowModalIconFree: false}) } }*/}
-                                {/*        title="Thoát"*/}
-                                {/*    />*/}
-                                {/*</View>*/}
-                                <View
-                                    style={[
-                                        {
-                                            width: '50%'
-                                        }
-                                    ]}
-                                >
-                                    <AppButtonActionInf
-                                        size={10}
-                                        textSize={16}
-                                        bg={color_primary}
-                                        onPress = { () => {
-                                            this.state.dataFreeServiceSelection = [];
-                                            this.state.dataFreeService.map((item) => {
-                                                if (item.checked){
-                                                    this.state.dataFreeServiceSelection.push(item);
-                                                }
-                                            });
-                                            this.setState({
-                                                dataFreeServiceSelection: this.state.dataFreeServiceSelection
-                                            });
-                                            this.setState({isShowModalIconFree: false});
-                                        } }
-                                        title="Xác nhận"
-                                    />
-                                </View>
-                            </View>
-                        </View>
-                    </View>
-                </Modal>
-                <Modal transparent visible={this.state.isShowModalIconPaid}>
-                    <View
-                        style={[
-                            {
-                                flex: 1,
-                                justifyContent: "center",
-                                alignItems: "center",
-                                backgroundColor: 'rgba(0,0,0,0.5)',
-                            }
-                        ]}
-                    >
-                        <View
-                            style={[
-                                {
-                                    width: '90%',
-                                    backgroundColor: 'white',
-                                    paddingVertical: 15,
-                                    paddingHorizontal: 15,
-                                    borderRadius: 5,
-                                    height: 310,
-                                }
-                            ]}
-                        >
-                            <View
-                                style={[
-                                    width.w_100,
-                                    flex.align_items_center
-                                ]}
-                            >
-                                <Text
-                                    style={[
-                                        text_size.xl,
-                                        text_color.danger,
-                                        font.serif
-                                    ]}
-                                >
-                                    Chọn dịch vụ
-                                </Text>
-                                <Text
-                                    style={[
-                                        text_size.xs,
-                                        font.serif
-                                    ]}
-                                >
-                                    (Nhấn giữ để xem chi tiết)
-                                </Text>
-                            </View>
-                            <FlatList style={{padding: 5}} numColumns={3} data={this.state.dataPaidService} renderItem={this._renderItemIconPaid} keyExtractor={(item, index) => index.toString()}/>
-                            <View
-                                style={[
-                                    width.w_100,
-                                    flex.flex_row,
-                                    flex.justify_content_center,
-                                    {marginTop: 20}
-                                ]}
-                            >
-                                {/*<View*/}
-                                {/*    style={[*/}
-                                {/*        {*/}
-                                {/*            flex: 1,*/}
-                                {/*            marginRight: 15*/}
-                                {/*        }*/}
-                                {/*    ]}*/}
-                                {/*>*/}
-                                {/*    <AppButtonActionInf*/}
-                                {/*        size={10}*/}
-                                {/*        textSize={16}*/}
-                                {/*        bg={color_danger}*/}
-                                {/*        onPress = { () => { this.setState({isShowModalIconPaid: false}) } }*/}
-                                {/*        title="Hủy"*/}
-                                {/*    />*/}
-                                {/*</View>*/}
-                                <View
-                                    style={[
-                                        {
-                                            width: '50%'
-                                        }
-                                    ]}
-                                >
-                                    <AppButtonActionInf
-                                        size={10}
-                                        textSize={16}
-                                        bg={color_primary}
-                                        onPress = { () => {
-                                            this.state.dataPaidServiceSelection = [];
-                                            this.state.dataPaidService.map((item) => {
-                                                if (item.checked){
-                                                    this.state.dataPaidServiceSelection.push(item);
-                                                }
-                                            });
-                                            this.setState({
-                                                dataPaidServiceSelection: this.state.dataPaidServiceSelection
-                                            });
-                                            this.setState({isShowModalIconPaid: false});
-                                        } }
-                                        title="Xác nhận"
-                                    />
-                                </View>
-                            </View>
-                        </View>
-                    </View>
-                </Modal>
             </SafeAreaView>
         );
     }
@@ -754,7 +571,9 @@ const mapDispatchToProps = {
     doGetListArea,
     doAddPriceTypeOfRoom,
     doGetListFreeService,
-    doAddFreeTicket
+    doAddFreeTicket,
+    doGetListPaidService,
+    doAddPaidTicket
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddRoomTypeScreen)
