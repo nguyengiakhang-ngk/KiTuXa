@@ -119,7 +119,7 @@ class HomeScreen extends Component {
                                         text_color.white,
                                         text_size.xl,
                                         font_weight.bold,
-                                        { marginLeft: 10}
+                                        { marginLeft: 10 }
                                     ]}
                                 >
                                     {this.state.user.name}
@@ -129,7 +129,7 @@ class HomeScreen extends Component {
                                     {[
                                         text_color.white,
                                         text_size.xs,
-                                        { marginLeft: 10}
+                                        { marginLeft: 10 }
                                     ]}
                                 >Người quản lý
                                 </Text>
@@ -373,7 +373,122 @@ class HomeScreen extends Component {
                             onPress={() => this.routeScreen("TroubleScreen")}
                         />
                     </View>
-
+                    <View
+                        style={[
+                            {
+                                width: '33.3%',
+                                paddingRight: 0.5,
+                                paddingLeft: 0.5,
+                                paddingTop: 10,
+                                paddingBottom: 5
+                            }
+                        ]}
+                    >
+                        <AppItemHome
+                            bg={'red'}
+                            name='artstation'
+                            size={30}
+                            color={'white'}
+                            colorText={'black'}
+                            label={'Loại vật chất'}
+                            onPress={() => this.routeScreen("materialtype")}
+                        />
+                    </View>
+                    <View
+                        style={[
+                            {
+                                width: '33.3%',
+                                paddingRight: 0.5,
+                                paddingLeft: 0.5,
+                                paddingTop: 10,
+                                paddingBottom: 5
+                            }
+                        ]}
+                    >
+                        <AppItemHome
+                            bg={color_primary}
+                            name='laravel'
+                            size={30}
+                            color={'white'}
+                            colorText={'black'}
+                            label={'Vật chất'}
+                            onPress={() => this.routeScreen("material")}
+                        />
+                    </View>
+                    <View
+                        style={[
+                            {
+                                width: '33.3%',
+                                paddingRight: 0.5,
+                                paddingLeft: 0.5,
+                                paddingTop: 10,
+                                paddingBottom: 5
+                            }
+                        ]}
+                    >
+                        <AppItemHome
+                            bg={'gray'}
+                            name='audible'
+                            size={30}
+                            color={'white'}
+                            colorText={'black'}
+                            label={'Hóa đơn vật chất'}
+                            onPress={() => this.routeScreen("billmaterial")}
+                        />
+                    </View>
+                    <View
+                        style={[
+                            {
+                                width: '33.3%',
+                                paddingRight: 0.5,
+                                paddingLeft: 0.5,
+                                paddingTop: 10,
+                                paddingBottom: 5
+                            }
+                        ]}
+                    >
+                        <AppItemHome
+                            bg={'purple'}
+                            name='gg'
+                            size={30}
+                            color={'white'}
+                            colorText={'black'}
+                            label={'Nhập vật chất'}
+                            onPress={() => this.routeScreen("inputmaterial")}
+                        />
+                    </View>
+                    <View
+                        style={[
+                            {
+                                width: '33.3%',
+                                paddingRight: 0.5,
+                                paddingLeft: 0.5,
+                                paddingTop: 10,
+                                paddingBottom: 5
+                            }
+                        ]}
+                    >
+                        <AppItemHome
+                            bg={'red'}
+                            name='bug'
+                            size={30}
+                            color={'white'}
+                            colorText={'black'}
+                            label={'Sự cố'}
+                            onPress={() => this.routeScreen("TroubleScreen")}
+                            label={'Quét QR Code'}
+                            onPress={() => this.routeScreen("qrcode")}
+                        />
+                        <AppItemHome
+                            bg={'orangered'}
+                            name='bug'
+                            size={30}
+                            color={'white'}
+                            colorText={'black'}
+                            label={'Sự cố'}
+                            onPress={() => this.routeScreen("TroubleScreen")}
+                        />
+                    </View>
                 </View>
             </SafeAreaView>
         );

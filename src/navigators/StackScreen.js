@@ -44,6 +44,18 @@ import ReceiptComponent from "../screens/Admin/Receipt/ReceiptComponent";
 import AddReceipt from "../screens/Admin/Receipt/AddReceipt";
 import ReceiptDetails from "../screens/Admin/Receipt/ReceiptDetails";
 import UpdateReceipt from "../screens/Admin/Receipt/UpdateReceipt";
+import MaterialType from '../screens/Admin/MaterialType/MaterialType';
+import MaterialTypeAdd from '../screens/Admin/MaterialType/MaterialTypeAdd';
+import MaterialTypeView from '../screens/Admin/MaterialType/MaterialTypeView';
+import Material from '../screens/Admin/Material/Material';
+import MaterialAdd from '../screens/Admin/Material/MaterialAdd';
+import MaterialView from '../screens/Admin/Material/MaterialView';
+import InputMaterial from '../screens/Admin/InputMaterial/InputMaterial';
+import BillMaterial from '../screens/Admin/BillMaterial/BIllMaterial';
+import BillMaterialView from '../screens/Admin/BillMaterial/BillMaterialView';
+import QRCode from '../screens/Admin/QRCode/QRCode';
+import DetailMaterial from '../screens/Admin/DetailMaterial/DetailMaterial';
+import DetailMaterialView from '../screens/Admin/DetailMaterial/DetailMaterialView';
 
 //Trouble
 import TroubleScreen from '../screens/Admin/Trouble/TroubleScreen';
@@ -216,6 +228,66 @@ const StackScreen: () => Node = () => {
                 <Stack.Screen
                     name="RoomBookedList"
                     component={RoomBookedListScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="materialtypeview"
+                    component={MaterialTypeView}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="materialtypeadd"
+                    component={MaterialTypeAdd}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="materialtype"
+                    component={MaterialType}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="materialview"
+                    component={MaterialView}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="materialadd"
+                    component={MaterialAdd}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="material"
+                    component={Material}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="detailmaterialview"
+                    component={DetailMaterialView}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="detailmaterial"
+                    component={DetailMaterial}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="inputmaterial"
+                    component={InputMaterial}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="billmaterialview"
+                    component={BillMaterialView}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="billmaterial"
+                    component={BillMaterial}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="qrcode"
+                    component={QRCode}
                     options={{ headerShown: false }}
                 />
                 {/* Trouble */}

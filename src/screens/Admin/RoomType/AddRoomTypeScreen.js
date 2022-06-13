@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
     FlatList,
     Image,
@@ -12,18 +12,18 @@ import {
     width
 } from "../../../utils/styles/MainStyle";
 import AppError from "../../../components/AppError";
-import {Formik} from "formik";
+import { Formik } from "formik";
 import AppInputInf from "../../../components/AppInputInf";
 import axios from "axios";
-import {path} from "../../../constant/define";
-import {RoomTypeSchema} from "../../../utils/validation/ValidationRoomType";
+import { path } from "../../../constant/define";
+import { RoomTypeSchema } from "../../../utils/validation/ValidationRoomType";
 import ImagePicker from 'react-native-image-crop-picker';
-import {Icon} from "@rneui/base";
-import {color_danger, color_primary, color_success, color_white} from "../../../utils/theme/Color";
+import { Icon } from "@rneui/base";
+import { color_danger, color_primary, color_success, color_white } from "../../../utils/theme/Color";
 import AppButtonActionInf from "../../../components/AppButtonActionInf";
-import {connect} from "react-redux";
-import {doAddTypeOfRoom} from "../../../redux/actions/typeOfRoom";
-import {doAddImageOfTypeRoom} from "../../../redux/actions/imageTypeOfRoom";
+import { connect } from "react-redux";
+import { doAddTypeOfRoom } from "../../../redux/actions/typeOfRoom";
+import { doAddImageOfTypeRoom } from "../../../redux/actions/imageTypeOfRoom";
 import AppDialogSelect from "../../../components/AppDialogSelect";
 import {doGetListArea} from "../../../redux/actions/area";
 import {doAddPriceTypeOfRoom} from "../../../redux/actions/priceTypeOfRoom";
@@ -79,7 +79,7 @@ class AddRoomTypeScreen extends Component {
     }
 
     getAreaList = () => {
-        this.props.doGetListArea({userId: this.props.user.user.id}).then(data => {
+        this.props.doGetListArea({ userId: this.props.user.user.id }).then(data => {
             this.setState({
                 areaData: data.map(item => ({key: item.id, label: item.areaName}))
             },() => {
@@ -89,8 +89,198 @@ class AddRoomTypeScreen extends Component {
             })
         })
     }
+    getFreeService() {
 
-    chooseImage(){
+    }
+
+    getPaidService() {
+
+    }
+
+    _renderItemIcon = ({ item, index }) => {
+        return (
+            <TouchableOpacity
+                style={[
+                    {
+                        paddingVertical: 10,
+                        borderRadius: 5,
+                        margin: 5,
+                        width: '30%'
+                    },
+                    item.checked ? background_color.light : '',
+                    flex.align_items_center
+                ]}
+                onPress={() => {
+                    this.state.dataFreeService[index].checked = !this.state.dataFreeService[index].checked;
+                    this.setState({
+                        dataIcon: this.state.dataIcon
+                    });
+                }}
+                onLongPress={() => { alert(item.label) }}
+            >
+                <Icon
+                    name={item.icon}
+                    type='font-awesome-5'
+                    color={color_primary}
+                    size={30} />
+                <Text
+                    numberOfLines={1}
+                    style={[
+                        text_size.sm,
+                        font.serif,
+                        {
+                            textAlign: 'center'
+                        }
+                    ]}
+                >
+                    {item.label}
+                </Text>
+            </TouchableOpacity>
+        )
+    }
+
+    _renderItemIconSelection = () => {
+        return this.state.dataFreeServiceSelection.map((item, index) => {
+            return (
+                <TouchableOpacity
+                    style={[
+                        {
+                            paddingVertical: 10,
+                            paddingHorizontal: 5,
+                            borderRadius: 5,
+                            margin: 5,
+                            width: '30.5%'
+                        },
+                        background_color.light,
+                        flex.align_items_center
+                    ]}
+                    onPress={() => {
+                        this.state.dataFreeService.map(i => {
+                            if (i.key === item.key) {
+                                i.checked = false;
+                            }
+                        });
+                        this.state.dataFreeServiceSelection.splice(index, 1);
+                        this.setState({
+                            dataFreeServiceSelection: this.state.dataFreeServiceSelection
+                        });
+                    }}
+                // onLongPress={ () => {alert(item.label)} }
+                >
+                    <Icon
+                        name={item.icon}
+                        type='font-awesome-5'
+                        color={color_primary}
+                        size={30} />
+                    <Text
+                        numberOfLines={1}
+                        style={[
+                            text_size.sm,
+                            font.serif,
+                            {
+                                textAlign: 'center'
+                            }
+                        ]}
+                    >
+                        {item.label}
+                    </Text>
+                </TouchableOpacity>
+            )
+        })
+    }
+
+    _renderItemIconPaidSelection = () => {
+        return this.state.dataPaidServiceSelection.map((item, index) => {
+            return (
+                <TouchableOpacity
+                    style={[
+                        {
+                            paddingVertical: 10,
+                            paddingHorizontal: 5,
+                            borderRadius: 5,
+                            margin: 5,
+                            width: '30.5%'
+                        },
+                        background_color.light,
+                        flex.align_items_center
+                    ]}
+                    onPress={() => {
+                        this.state.dataPaidService.map(i => {
+                            if (i.key === item.key) {
+                                i.checked = false;
+                            }
+                        });
+                        this.state.dataPaidServiceSelection.splice(index, 1);
+                        this.setState({
+                            dataPaidServiceSelection: this.state.dataPaidServiceSelection
+                        });
+                    }}
+                // onLongPress={ () => {alert(item.label)} }
+                >
+                    <Icon
+                        name={item.icon}
+                        type='font-awesome-5'
+                        color={color_primary}
+                        size={30} />
+                    <Text
+                        numberOfLines={1}
+                        style={[
+                            text_size.sm,
+                            font.serif,
+                            {
+                                textAlign: 'center'
+                            }
+                        ]}
+                    >
+                        {item.label}
+                    </Text>
+                </TouchableOpacity>
+            )
+        })
+    }
+
+    _renderItemIconPaid = ({ item, index }) => {
+        return (
+            <TouchableOpacity
+                style={[
+                    {
+                        paddingVertical: 10,
+                        borderRadius: 5,
+                        margin: 5,
+                        width: '30.5%'
+                    },
+                    item.checked ? background_color.light : '',
+                    flex.align_items_center
+                ]}
+                onPress={() => {
+                    this.state.dataPaidService[index].checked = !this.state.dataPaidService[index].checked;
+                    this.setState({
+                        dataIcon: this.state.dataIcon
+                    });
+                }}
+                onLongPress={() => { alert(item.label) }}
+            >
+                <Icon
+                    name={item.icon}
+                    type='font-awesome-5'
+                    color={color_primary}
+                    size={30} />
+                <Text
+                    style={[
+                        text_size.sm,
+                        font.serif,
+                        {
+                            textAlign: 'center'
+                        }
+                    ]}
+                >
+                    {item.label}
+                </Text>
+            </TouchableOpacity>
+        )
+    }
+
+    chooseImage() {
         ImagePicker.openPicker({
             multiple: true,
             waitAnimationEnd: false,
@@ -115,15 +305,15 @@ class AddRoomTypeScreen extends Component {
         })
             .catch(error => console.log('Error: ', error.message));
     }
-    removeImage(index){
+    removeImage(index) {
         this.state.imageList.splice(index, 1);
         this.setState({
-           imageList: this.state.imageList
+            imageList: this.state.imageList
         });
     }
     imageListView() {
         return this.state.imageList.map((image, index) => {
-            return(
+            return (
                 <View
                     key={index}
                     style={[
@@ -135,7 +325,7 @@ class AddRoomTypeScreen extends Component {
                 >
                     <Image
                         source=
-                            {{uri: image.path}}
+                        {{ uri: image.path }}
                         style={{
                             width: '100%',
                             height: 150,
@@ -223,9 +413,51 @@ class AddRoomTypeScreen extends Component {
         })
     }
 
+    mapFreeService = (id_loai) => {
+        this.state.dataFreeService.map((item, index) => {
+            if (item.checked) {
+                this.addFreeServiceBill(item.key, id_loai);
+            }
+        });
+    }
+
+    addFreeServiceBill = (id_mp, id_loai) => {
+        axios.post(path + `/addFreeServiceBill`, {
+            id_mp: id_mp,
+            id_loai: id_loai
+        })
+            .then((response) => {
+
+            })
+            .catch((error => {
+                console.log(error);
+            }));
+    }
+
+    mapPaidService = (id_loai) => {
+        this.state.dataPaidService.map((item, index) => {
+            if (item.checked) {
+                this.addPaidServiceBill(item.key, id_loai);
+            }
+        });
+    }
+
+    addPaidServiceBill = (id_cp, id_loai) => {
+        axios.post(path + `/addPaidServiceBill`, {
+            id_cp: id_cp,
+            id_loai: id_loai
+        })
+            .then((response) => {
+
+            })
+            .catch((error => {
+                console.log(error);
+            }));
+    }
+
     mapImageRoomType = (typeOfRoomId) => {
-        this.state.imageList.map( (item, index) => {
-            this.uploadImageRoomType(item, index, typeOfRoomId);
+        this.state.imageList.map((item) => {
+            this.uploadImageRoomType(item, typeOfRoomId);
         });
     }
 
@@ -237,7 +469,7 @@ class AddRoomTypeScreen extends Component {
             type: "image/jpeg",
             name: item.filename || `temp_image_${date.getMilliseconds()}.jpg`
         });
-        dataImage.append("imageOfTypeRoom", JSON.stringify({typeOfRoomId: typeOfRoomId}));
+        dataImage.append("imageOfTypeRoom", JSON.stringify({ typeOfRoomId: typeOfRoomId }));
         this.props.doAddImageOfTypeRoom(dataImage).then(data => {
             if( data && index === (this.state.imageList.length - 1) ){
                 this.props.navigation.goBack();
@@ -249,30 +481,30 @@ class AddRoomTypeScreen extends Component {
         return (
             <SafeAreaView
                 style={[
-                    {flex: 1},
+                    { flex: 1 },
                     height.h_100,
                     position.relative,
                     background_color.white
                 ]}
             >
                 <ScrollView
-                    style={{ flex: 1}} contentContainerStyle={{ flexGrow: 1 }}
+                    style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}
                     nestedScrollEnabled
                 >
                     <Formik
-                        initialValues={{roomTypeName: "", price: "", acreage: "", totalGuest:"", object:"", note:"", areaId: this.state.areaData[0]}}
+                        initialValues={{ roomTypeName: "", price: "", acreage: "", totalGuest: "", object: "", note: "", areaId: this.state.areaData[0] }}
                         validationSchema={RoomTypeSchema}
                         onSubmit={(values) => {
                             this.addRoomType(values)
                         }}
                     >
                         {({
-                              handleChange,
-                              handleBlur,
-                              handleSubmit, values,
-                              errors,
-                              touched ,
-                              isValid
+                            handleChange,
+                            handleBlur,
+                            handleSubmit, values,
+                            errors,
+                            touched,
+                            isValid
                         }) => (
                             <HideKeyboard>
                                 <SafeAreaView
@@ -286,7 +518,7 @@ class AddRoomTypeScreen extends Component {
                                     <View
                                         style={[
                                             width.w_100,
-                                            {paddingLeft: 15, paddingRight: 15, marginTop: 10}
+                                            { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
                                         ]}
                                     >
                                         <AppDialogSelect
@@ -301,7 +533,7 @@ class AddRoomTypeScreen extends Component {
                                     <View
                                         style={[
                                             width.w_100,
-                                            {paddingLeft: 15, paddingRight: 15, marginTop: 10}
+                                            { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
                                         ]}
                                     >
                                         <AppInputInf
@@ -313,13 +545,13 @@ class AddRoomTypeScreen extends Component {
                                             values={values}
                                         />
                                         {errors.roomTypeName && touched.roomTypeName ? (
-                                            <AppError errors={ errors.roomTypeName }/>
+                                            <AppError errors={errors.roomTypeName} />
                                         ) : null}
                                     </View>
                                     <View
                                         style={[
                                             width.w_100,
-                                            {paddingLeft: 15, paddingRight: 15, marginTop: 10}
+                                            { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
                                         ]}
                                     >
                                         <AppInputInf
@@ -330,10 +562,10 @@ class AddRoomTypeScreen extends Component {
                                             handleChange={handleChange}
                                             handleBlur={handleBlur}
                                             values={values}
-                                            formatNum = { true }
+                                            formatNum={true}
                                         />
                                         {errors.price && touched.price ? (
-                                            <AppError errors={ errors.price }/>
+                                            <AppError errors={errors.price} />
                                         ) : null}
                                     </View>
                                     <View
@@ -344,7 +576,7 @@ class AddRoomTypeScreen extends Component {
                                     >
                                         <View
                                             style={[
-                                                {paddingLeft: 15, paddingRight: 10, marginTop: 10, flex: 1}
+                                                { paddingLeft: 15, paddingRight: 10, marginTop: 10, flex: 1 }
                                             ]}
                                         >
                                             <AppInputInf
@@ -357,12 +589,12 @@ class AddRoomTypeScreen extends Component {
                                                 values={values}
                                             />
                                             {errors.acreage && touched.acreage ? (
-                                                <AppError errors={ errors.acreage }/>
+                                                <AppError errors={errors.acreage} />
                                             ) : null}
                                         </View>
                                         <View
                                             style={[
-                                                {paddingLeft: 10, paddingRight: 15, marginTop: 10, flex: 1}
+                                                { paddingLeft: 10, paddingRight: 15, marginTop: 10, flex: 1 }
                                             ]}
                                         >
                                             <AppInputInf
@@ -375,14 +607,14 @@ class AddRoomTypeScreen extends Component {
                                                 values={values}
                                             />
                                             {errors.totalGuest && touched.totalGuest ? (
-                                                <AppError errors={ errors.totalGuest }/>
+                                                <AppError errors={errors.totalGuest} />
                                             ) : null}
                                         </View>
                                     </View>
                                     <View
                                         style={[
                                             width.w_100,
-                                            {paddingLeft: 15, paddingRight: 15, marginTop: 10}
+                                            { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
                                         ]}
                                     >
                                         <AppInputInf
@@ -394,13 +626,13 @@ class AddRoomTypeScreen extends Component {
                                             values={values}
                                         />
                                         {errors.object && touched.object ? (
-                                            <AppError errors={ errors.object }/>
+                                            <AppError errors={errors.object} />
                                         ) : null}
                                     </View>
                                     <View
                                         style={[
                                             width.w_100,
-                                            {paddingLeft: 15, paddingRight: 15, marginTop: 10}
+                                            { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
                                         ]}
                                     >
                                         <AppInputInf
@@ -414,7 +646,7 @@ class AddRoomTypeScreen extends Component {
                                             number={4}
                                         />
                                         {errors.note && touched.note ? (
-                                            <AppError errors={ errors.note }/>
+                                            <AppError errors={errors.note} />
                                         ) : null}
                                     </View>
                                     <View
@@ -468,7 +700,7 @@ class AddRoomTypeScreen extends Component {
                                     <View
                                         style={[
                                             width.w_100,
-                                            {paddingLeft: 15, paddingRight: 15, marginTop: 10}
+                                            { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
                                         ]}
                                     >
                                         <TouchableOpacity
@@ -515,7 +747,7 @@ class AddRoomTypeScreen extends Component {
                                         style={[
                                             width.w_100,
                                             flex.flex_row,
-                                            {paddingLeft: 15, paddingRight: 15, marginTop: 20}
+                                            { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
                                         ]}
                                     >
                                         <View
@@ -530,7 +762,7 @@ class AddRoomTypeScreen extends Component {
                                                 size={13}
                                                 textSize={18}
                                                 bg={color_danger}
-                                                onPress = { () => { this.props.navigation.goBack() } }
+                                                onPress={() => { this.props.navigation.goBack() }}
                                                 title="Hủy"
                                             />
                                         </View>
@@ -545,8 +777,8 @@ class AddRoomTypeScreen extends Component {
                                                 size={13}
                                                 textSize={18}
                                                 bg={color_primary}
-                                                disabled = { !this.isFormValid(isValid, touched) }
-                                                onPress = { handleSubmit }
+                                                disabled={!this.isFormValid(isValid, touched)}
+                                                onPress={handleSubmit}
                                                 title="Thêm"
                                             />
                                         </View>
@@ -556,13 +788,218 @@ class AddRoomTypeScreen extends Component {
                         )}
                     </Formik>
                 </ScrollView>
+                <Modal transparent visible={this.state.isShowModalIconFree}>
+                    <View
+                        style={[
+                            {
+                                flex: 1,
+                                justifyContent: "center",
+                                alignItems: "center",
+                                backgroundColor: 'rgba(0,0,0,0.5)',
+                            }
+                        ]}
+                    >
+                        <View
+                            style={[
+                                {
+                                    width: '90%',
+                                    backgroundColor: 'white',
+                                    paddingVertical: 15,
+                                    paddingHorizontal: 15,
+                                    borderRadius: 5,
+                                    height: 310
+                                }
+                            ]}
+                        >
+                            <View
+                                style={[
+                                    width.w_100,
+                                    flex.align_items_center
+                                ]}
+                            >
+                                <Text
+                                    style={[
+                                        text_size.xl,
+                                        text_color.danger,
+                                        font.serif
+                                    ]}
+                                >
+                                    Chọn dịch vụ
+                                </Text>
+                                <Text
+                                    style={[
+                                        text_size.xs,
+                                        font.serif
+                                    ]}
+                                >
+                                    (Nhấn giữ để xem chi tiết)
+                                </Text>
+                            </View>
+                            <FlatList style={{ padding: 5 }} numColumns={3} data={this.state.dataFreeService} renderItem={this._renderItemIcon} keyExtractor={(item, index) => index.toString()} />
+                            <View
+                                style={[
+                                    width.w_100,
+                                    flex.align_items_center,
+                                    {
+                                        marginTop: 20
+                                    }
+                                ]}
+                            >
+                                {/*<View*/}
+                                {/*    style={[*/}
+                                {/*        {*/}
+                                {/*            flex: 1,*/}
+                                {/*            marginRight: 15*/}
+                                {/*        }*/}
+                                {/*    ]}*/}
+                                {/*>*/}
+                                {/*    <AppButtonActionInf*/}
+                                {/*        size={10}*/}
+                                {/*        textSize={16}*/}
+                                {/*        bg={color_danger}*/}
+                                {/*        onPress = { () => { this.setState({isShowModalIconFree: false}) } }*/}
+                                {/*        title="Thoát"*/}
+                                {/*    />*/}
+                                {/*</View>*/}
+                                <View
+                                    style={[
+                                        {
+                                            width: '50%'
+                                        }
+                                    ]}
+                                >
+                                    <AppButtonActionInf
+                                        size={10}
+                                        textSize={16}
+                                        bg={color_primary}
+                                        onPress={() => {
+                                            this.state.dataFreeServiceSelection = [];
+                                            this.state.dataFreeService.map((item) => {
+                                                if (item.checked) {
+                                                    this.state.dataFreeServiceSelection.push(item);
+                                                }
+                                            });
+                                            this.setState({
+                                                dataFreeServiceSelection: this.state.dataFreeServiceSelection
+                                            });
+                                            this.setState({ isShowModalIconFree: false });
+                                        }}
+                                        title="Xác nhận"
+                                    />
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+                <Modal transparent visible={this.state.isShowModalIconPaid}>
+                    <View
+                        style={[
+                            {
+                                flex: 1,
+                                justifyContent: "center",
+                                alignItems: "center",
+                                backgroundColor: 'rgba(0,0,0,0.5)',
+                            }
+                        ]}
+                    >
+                        <View
+                            style={[
+                                {
+                                    width: '90%',
+                                    backgroundColor: 'white',
+                                    paddingVertical: 15,
+                                    paddingHorizontal: 15,
+                                    borderRadius: 5,
+                                    height: 310,
+                                }
+                            ]}
+                        >
+                            <View
+                                style={[
+                                    width.w_100,
+                                    flex.align_items_center
+                                ]}
+                            >
+                                <Text
+                                    style={[
+                                        text_size.xl,
+                                        text_color.danger,
+                                        font.serif
+                                    ]}
+                                >
+                                    Chọn dịch vụ
+                                </Text>
+                                <Text
+                                    style={[
+                                        text_size.xs,
+                                        font.serif
+                                    ]}
+                                >
+                                    (Nhấn giữ để xem chi tiết)
+                                </Text>
+                            </View>
+                            <FlatList style={{ padding: 5 }} numColumns={3} data={this.state.dataPaidService} renderItem={this._renderItemIconPaid} keyExtractor={(item, index) => index.toString()} />
+                            <View
+                                style={[
+                                    width.w_100,
+                                    flex.flex_row,
+                                    flex.justify_content_center,
+                                    { marginTop: 20 }
+                                ]}
+                            >
+                                {/*<View*/}
+                                {/*    style={[*/}
+                                {/*        {*/}
+                                {/*            flex: 1,*/}
+                                {/*            marginRight: 15*/}
+                                {/*        }*/}
+                                {/*    ]}*/}
+                                {/*>*/}
+                                {/*    <AppButtonActionInf*/}
+                                {/*        size={10}*/}
+                                {/*        textSize={16}*/}
+                                {/*        bg={color_danger}*/}
+                                {/*        onPress = { () => { this.setState({isShowModalIconPaid: false}) } }*/}
+                                {/*        title="Hủy"*/}
+                                {/*    />*/}
+                                {/*</View>*/}
+                                <View
+                                    style={[
+                                        {
+                                            width: '50%'
+                                        }
+                                    ]}
+                                >
+                                    <AppButtonActionInf
+                                        size={10}
+                                        textSize={16}
+                                        bg={color_primary}
+                                        onPress={() => {
+                                            this.state.dataPaidServiceSelection = [];
+                                            this.state.dataPaidService.map((item) => {
+                                                if (item.checked) {
+                                                    this.state.dataPaidServiceSelection.push(item);
+                                                }
+                                            });
+                                            this.setState({
+                                                dataPaidServiceSelection: this.state.dataPaidServiceSelection
+                                            });
+                                            this.setState({ isShowModalIconPaid: false });
+                                        }}
+                                        title="Xác nhận"
+                                    />
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
             </SafeAreaView>
         );
     }
 }
 
-const mapStateToProps = ({user, area}) => {
-    return {user, area};
+const mapStateToProps = ({ user, area }) => {
+    return { user, area };
 };
 
 const mapDispatchToProps = {

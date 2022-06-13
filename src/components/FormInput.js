@@ -2,7 +2,7 @@ import React from "react";
 import { Text, TextInput, View } from "react-native";
 import { background_color, flex, font, font_weight, padding, shadow, text_size, width } from "../utils/styles/MainStyle";
 
-const FormInput = ({ lable, style, ...props }) => {
+const FormInput = ({ lable, style, value, editable, onChangeText, ...props }) => {
     return (
         <View style={[
             width.w_100,
@@ -19,6 +19,9 @@ const FormInput = ({ lable, style, ...props }) => {
             </Text>
             <TextInput
                 {...props}
+                onChangeText={onChangeText}
+                value={value + ""}
+                editable={editable}
                 style={[
                     text_size.sm,
                     font_weight.f_500,
