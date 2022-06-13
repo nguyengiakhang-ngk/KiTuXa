@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
     Keyboard,
     Modal,
-    ScrollView, Text, TextInput, TouchableOpacity, View
+    ScrollView, Text, TouchableOpacity, View
 } from 'react-native';
 import { connect } from "react-redux";
 import { SliderBox } from "react-native-image-slider-box";
@@ -12,10 +12,10 @@ import {
     font,
     font_weight,
     text_color,
-    text_size, width,
+    text_size, width, shadow, padding
 } from "../../../utils/styles/MainStyle";
 import AppButtonActionInf from "../../../components/AppButtonActionInf";
-import {color_danger, color_dark, color_primary, color_success} from "../../../utils/theme/Color";
+import { color_danger, color_dark, color_primary, color_success } from "../../../utils/theme/Color";
 import { Image } from "react-native";
 import { Icon } from "@rneui/base";
 import { doGetAreaById } from "../../../redux/actions/area";
@@ -23,18 +23,16 @@ import GetLocation from 'react-native-get-location';
 import MapView, { Marker } from 'react-native-maps';
 import AsyncStorage from "@react-native-community/async-storage";
 import { doAddSaveRoom, doDeleteSaveRoom, doGetSaveRoom } from "../../../redux/actions/saveRoom";
+import { Formik } from "formik";
+import { PaidServiceSchema } from "../../../utils/validation/ValidatePaidService";
+import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
+import AppInputInf from "../../../components/AppInputInf";
+import AppError from "../../../components/AppError";
+import { url } from "../../../constant/define";
 import { doGetRoomByType } from '../../../redux/actions/room';
 import { doAddBookTicket } from '../../../redux/actions/bookticket';
 import AppDialogSelect from '../../../components/AppDialogSelect';
 import { AppDatePicker } from '../../../components/AppDatePicker';
-import AppInputInf from '../../../components/AppInputInf';
-import { background_color, shadow, padding } from '../../../utils/styles/MainStyle';
-import {Formik} from "formik";
-import {PaidServiceSchema} from "../../../utils/validation/ValidatePaidService";
-import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
-import AppInputInf from "../../../components/AppInputInf";
-import AppError from "../../../components/AppError";
-import {url} from "../../../constant/define";
 
 class DetailRoomScreen extends Component {
     constructor(props) {
@@ -55,18 +53,17 @@ class DetailRoomScreen extends Component {
             isMap: false,
             user: null,
             ticket: null,
-
+            viewDetailService: null,
+            isViewDetailService: false,
 
             //Modal đặt
             isVisible: false,
             listRoomByType: [],
             roomBook: '',
-            startBook: {'startBook': new Date()},
-            endBook: {'endBook': new Date()},
+            startBook: { 'startBook': new Date() },
+            endBook: { 'endBook': new Date() },
             prepayment: "0",
             note: '',
-            viewDetailService: null,
-            isViewDetailService: false
         }
     }
 
@@ -91,7 +88,7 @@ class DetailRoomScreen extends Component {
             }
         })
         // console.log(">>>>>log Room by type:>>>", this.state.room);
-        this.props.doGetRoomByType({typeOfRoomId: this.state.room.id}).then(data => {
+        this.props.doGetRoomByType({ typeOfRoomId: this.state.room.id }).then(data => {
             if (data) {
                 console.log(">>>>>log Room by type:>>>", data);
                 this.setState({
@@ -115,7 +112,7 @@ class DetailRoomScreen extends Component {
             "userId": this.props.user.user.id
         }
         this.props.doAddBookTicket(formData).then(data => {
-            if(data){
+            if (data) {
                 this.setState({
                     isVisible: false,
                     roomBook: '',
@@ -124,11 +121,14 @@ class DetailRoomScreen extends Component {
                     prepayment: '',
                     note: '',
                 })
-            }else{
+            } else {
                 alert("Đã xảy ra lỗi! Vui lòng thử lại!");
             }
         })
     }
+
+
+
 
     saveTicket = () => {
         if (this.state.user) {
@@ -151,7 +151,7 @@ class DetailRoomScreen extends Component {
     }
 
     renderSelected = (item, index) => {
-        return(
+        return (
             <TouchableOpacity
                 key={item.id}
                 style={{
@@ -196,7 +196,7 @@ class DetailRoomScreen extends Component {
     }
 
     renderSelectedPaid = (item, index) => {
-        return(
+        return (
             <TouchableOpacity
                 key={item.id}
                 style={{
@@ -239,8 +239,6 @@ class DetailRoomScreen extends Component {
             </TouchableOpacity>
         )
     }
-
-    
 
     render() {
         return (
@@ -412,7 +410,6 @@ class DetailRoomScreen extends Component {
                                         textSize={16}
                                         bg={color_primary}
                                         title="Đặt"
-                                        onPress={() => this.setState({ isVisible: true })}
                                     />
                                 </View>
                                 <TouchableOpacity
@@ -430,54 +427,6 @@ class DetailRoomScreen extends Component {
                                         size={40}
                                     />
                                 </TouchableOpacity>
-                                    <Text
-                                        style={[
-                                            text_size.sm,
-                                            font.serif,
-                                            {
-                                                marginLeft: 8,
-                                                color: color_dark
-                                            }
-                                        ]}
-                                    >
-                                        Mô tả khu: {this.state.area?.description}
-                                    </Text>
-                                </View>
-                                <View
-                                    style={[
-                                        flex.flex_row,
-                                        {
-                                            marginTop: 5
-                                        }
-                                    ]}
-                                >
-                                    <Icon
-                                        style={{marginTop: 2}}
-                                        name='servicestack'
-                                        type='font-awesome-5'
-                                        color={color_primary}
-                                        size={20}
-                                    />
-                                    <View
-                                        style={{flex: 1, marginLeft: 10, flexDirection: "row", flexWrap: "wrap"}}
-                                    >
-                                        {
-                                            this.state.room?.freetickets.map((item, index) => {
-                                                return(
-                                                    this.renderSelected(item, index)
-                                                )
-                                            })
-                                        }
-
-                                        {
-                                            this.state.room?.paidtickets.map((item, index) => {
-                                                return(
-                                                    this.renderSelectedPaid(item, index)
-                                                )
-                                            })
-                                        }
-                                    </View>
-                                </View>
                             </View>
                         </View>
                         <View
@@ -605,6 +554,41 @@ class DetailRoomScreen extends Component {
                                     Mô tả khu: {this.state.area?.description}
                                 </Text>
                             </View>
+                            <View
+                                style={[
+                                    flex.flex_row,
+                                    {
+                                        marginTop: 5
+                                    }
+                                ]}
+                            >
+                                <Icon
+                                    style={{ marginTop: 2 }}
+                                    name='servicestack'
+                                    type='font-awesome-5'
+                                    color={color_primary}
+                                    size={20}
+                                />
+                                <View
+                                    style={{ flex: 1, marginLeft: 10, flexDirection: "row", flexWrap: "wrap" }}
+                                >
+                                    {
+                                        this.state.room?.freetickets.map((item, index) => {
+                                            return (
+                                                this.renderSelected(item, index)
+                                            )
+                                        })
+                                    }
+
+                                    {
+                                        this.state.room?.paidtickets.map((item, index) => {
+                                            return (
+                                                this.renderSelectedPaid(item, index)
+                                            )
+                                        })
+                                    }
+                                </View>
+                            </View>
                         </View>
                     </View>
                 </ScrollView>
@@ -709,7 +693,7 @@ class DetailRoomScreen extends Component {
                                             flex.justify_content_center,
                                         ], { margin: 10 }}>
                                         <View style={[flex.align_items_center, width.w_100]}>
-                                            <Text style={[font_weight.bold, text_size.lg, width.w_100, {textAlign: 'center'}]}>Đặt phòng</Text>
+                                            <Text style={[font_weight.bold, text_size.lg, width.w_100, { textAlign: 'center' }]}>Đặt phòng</Text>
                                             <View
                                                 style={[width.w_100, {
                                                     paddingLeft: 15,
@@ -721,7 +705,7 @@ class DetailRoomScreen extends Component {
                                                     data={this.state.listRoomByType}
                                                     placeholder={'Vui lòng chọn Phòng...'}
                                                     value={this.state.roomBook}
-                                                    returnFilter={(key) => this.setState({roomBook: key.key})}
+                                                    returnFilter={(key) => this.setState({ roomBook: key.key })}
                                                 />
                                             </View>
                                             <View
@@ -788,7 +772,7 @@ class DetailRoomScreen extends Component {
                                                     text_size.sm,
                                                     font_weight.f_500,
                                                     font.serif,
-                                                    {marginTop: 5, textAlignVertical: 'top'},
+                                                    { marginTop: 5, textAlignVertical: 'top' },
                                                 ]}>Ghi chú</Text>
                                                 <TextInput
                                                     style={[
@@ -920,174 +904,175 @@ class DetailRoomScreen extends Component {
                                         />
                                     </TouchableOpacity>
                                 </View>
-                            </Modal>
-                            : null
-                    }
-                    {
-                        this.state.isViewDetailService ?
-                            <Modal transparent visible={this.state.isViewDetailService}>
+                            </View>
+                        </Modal>
+                        : null
+                }
+                {
+                    this.state.isViewDetailService ?
+                        <Modal transparent visible={this.state.isViewDetailService}>
+                            <View
+                                style={[
+                                    {
+                                        flex: 1,
+                                        backgroundColor: 'rgba(0,0,0,0.5)',
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                    }
+                                ]}
+                            >
                                 <View
                                     style={[
                                         {
-                                            flex: 1,
-                                            backgroundColor: 'rgba(0,0,0,0.5)',
-                                            justifyContent: "center",
-                                            alignItems: "center"
+                                            width: '90%',
+                                            backgroundColor: 'white',
+                                            borderRadius: 5
                                         }
                                     ]}
                                 >
-                                    <View
+                                    <SafeAreaView
                                         style={[
-                                            {
-                                                width: '90%',
-                                                backgroundColor: 'white',
-                                                borderRadius: 5
-                                            }
+                                            { margin: 15 },
+                                            background_color.white,
+                                            flex.justify_content_between
                                         ]}
+                                        onPress={Keyboard.dismiss}
                                     >
-                                        <SafeAreaView
+                                        <View
                                             style={[
-                                                {margin: 15},
-                                                background_color.white,
-                                                flex.justify_content_between
+                                                width.w_100
                                             ]}
-                                            onPress={Keyboard.dismiss}
                                         >
                                             <View
                                                 style={[
                                                     width.w_100
                                                 ]}
                                             >
-                                                <View
+                                                <Text
                                                     style={[
-                                                        width.w_100
-                                                    ]}
-                                                >
-                                                    <Text
-                                                        style={[
-                                                            text_size.sm,
-                                                            font.serif,
-                                                            {
-                                                                color: color_dark
-                                                            }
-                                                        ]}
-                                                    >
-                                                        {this.state.viewDetailService.name}
-                                                    </Text>
-                                                </View>
-                                                <View
-                                                    style={[
-                                                        width.w_100,
+                                                        text_size.sm,
+                                                        font.serif,
                                                         {
-                                                            marginTop: 10
+                                                            color: color_dark
                                                         }
                                                     ]}
                                                 >
+                                                    {this.state.viewDetailService.name}
+                                                </Text>
+                                            </View>
+                                            <View
+                                                style={[
+                                                    width.w_100,
                                                     {
-                                                        this.state.viewDetailService?.unit ?
-                                                            <Text
-                                                                style={[
-                                                                    text_size.sm,
-                                                                    font.serif,
-                                                                    {
-                                                                        color: color_dark
-                                                                    }
-                                                                ]}
-                                                            >
-                                                                {this.state.viewDetailService.unit}
-                                                            </Text>
-                                                            : <View/>
+                                                        marginTop: 10
                                                     }
-                                                </View>
-                                                <View
-                                                    style={[
-                                                        width.w_100,
-                                                        {
-                                                            marginTop: 10
-                                                        }
-                                                    ]}
-                                                >
-                                                    {
-                                                        this.state.viewDetailService.priceofservices?.length ?
-                                                            <Text
-                                                                style={[
-                                                                    text_size.sm,
-                                                                    font.serif,
-                                                                    {
-                                                                        color: color_dark
-                                                                    }
-                                                                ]}
-                                                            >
-                                                                {this.state.viewDetailService.priceofservices[this.state.viewDetailService.priceofservices?.length-1].price}
-                                                            </Text>
-                                                            : <View/>
-                                                    }
-                                                </View>
-                                                <View
-                                                    style={[
-                                                        width.w_100,
-                                                        flex.flex_row,
-                                                        flex.align_items_center,
-                                                        {
-                                                            marginTop: 10
-                                                        }
-                                                    ]}
-                                                >
-                                                    {/*    */}
-                                                </View>
+                                                ]}
+                                            >
                                                 {
-                                                    (this.state.viewDetailService?.image) ?
-                                                        <View
+                                                    this.state.viewDetailService?.unit ?
+                                                        <Text
                                                             style={[
-                                                                width.w_100
+                                                                text_size.sm,
+                                                                font.serif,
+                                                                {
+                                                                    color: color_dark
+                                                                }
                                                             ]}
                                                         >
-                                                            <Image
-                                                                style={[
-                                                                    width.w_100,
-                                                                    {height: 180}
-                                                                ]}
-                                                                source={
-                                                                    {
-                                                                        uri: `${url}/${this.state.viewDetailService?.image}`
-                                                                    }
-                                                                }
-                                                            />
-                                                        </View>
-                                                        : <View/>
+                                                            {this.state.viewDetailService.unit}
+                                                        </Text>
+                                                        : <View />
                                                 }
                                             </View>
                                             <View
                                                 style={[
                                                     width.w_100,
-                                                    flex.align_items_center,
-                                                    {paddingLeft: 15, paddingRight: 15, marginTop: 20}
+                                                    {
+                                                        marginTop: 10
+                                                    }
                                                 ]}
                                             >
-                                                <View>
-                                                    <AppButtonActionInf
-                                                        size={10}
-                                                        textSize={18}
-                                                        bg={color_primary}
-                                                        onPress = {() => {
-                                                            this.setState({
-                                                                isViewDetailService: false
-                                                            })
-                                                        }}
-                                                        title={'Đóng'}
-                                                    />
-                                                </View>
+                                                {
+                                                    this.state.viewDetailService.priceofservices?.length ?
+                                                        <Text
+                                                            style={[
+                                                                text_size.sm,
+                                                                font.serif,
+                                                                {
+                                                                    color: color_dark
+                                                                }
+                                                            ]}
+                                                        >
+                                                            {this.state.viewDetailService.priceofservices[this.state.viewDetailService.priceofservices?.length - 1].price}
+                                                        </Text>
+                                                        : <View />
+                                                }
                                             </View>
-                                        </SafeAreaView>
-                                    </View>
+                                            <View
+                                                style={[
+                                                    width.w_100,
+                                                    flex.flex_row,
+                                                    flex.align_items_center,
+                                                    {
+                                                        marginTop: 10
+                                                    }
+                                                ]}
+                                            >
+                                                {/*    */}
+                                            </View>
+                                            {
+                                                (this.state.viewDetailService?.image) ?
+                                                    <View
+                                                        style={[
+                                                            width.w_100
+                                                        ]}
+                                                    >
+                                                        <Image
+                                                            style={[
+                                                                width.w_100,
+                                                                { height: 180 }
+                                                            ]}
+                                                            source={
+                                                                {
+                                                                    uri: `${url}/${this.state.viewDetailService?.image}`
+                                                                }
+                                                            }
+                                                        />
+                                                    </View>
+                                                    : <View />
+                                            }
+                                        </View>
+                                        <View
+                                            style={[
+                                                width.w_100,
+                                                flex.align_items_center,
+                                                { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
+                                            ]}
+                                        >
+                                            <View>
+                                                <AppButtonActionInf
+                                                    size={10}
+                                                    textSize={18}
+                                                    bg={color_primary}
+                                                    onPress={() => {
+                                                        this.setState({
+                                                            isViewDetailService: false
+                                                        })
+                                                    }}
+                                                    title={'Đóng'}
+                                                />
+                                            </View>
+                                        </View>
+                                    </SafeAreaView>
                                 </View>
-                            </Modal>
-                            : <View/>
+                            </View>
+                        </Modal>
+                        : <View />
 
-                    }
-                </View>
-            );
-        }
+                }
+            </View>
+        );
+    }
 }
 
 const mapStateToProps = ({ user }) => {
@@ -1098,9 +1083,7 @@ const mapDispatchToProps = {
     doGetAreaById,
     doGetSaveRoom,
     doAddSaveRoom,
-    doDeleteSaveRoom,
-    doGetRoomByType,
-    doAddBookTicket
+    doDeleteSaveRoom
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(DetailRoomScreen)
