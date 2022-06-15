@@ -1,9 +1,9 @@
-import {addPaidTicket, deletePaidTicket} from "../../api/paidTicketApi";
+import {addNotification, getNotification, updateNotification} from "../../api/notificationApi";
 
 
-export const doAddPaidTicket = (paidTicket) => dispatch => {
+export const doAddNotification = (notification) => dispatch => {
     return new Promise((resolve, reject) => {
-        addPaidTicket(paidTicket)
+        addNotification(notification)
             .then(data => {
                 resolve(data);
             })
@@ -13,9 +13,21 @@ export const doAddPaidTicket = (paidTicket) => dispatch => {
     })
 }
 
-export const doDeletePaidTicket = (typeOfRoomId) => dispatch => {
+export const doGetNotification = (userId) => dispatch => {
     return new Promise((resolve, reject) => {
-        deletePaidTicket(typeOfRoomId)
+        getNotification(userId)
+            .then(data => {
+                resolve(data);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    })
+}
+
+export const doUpdateNotification = (id) => dispatch => {
+    return new Promise((resolve, reject) => {
+        updateNotification(id)
             .then(data => {
                 resolve(data);
             })

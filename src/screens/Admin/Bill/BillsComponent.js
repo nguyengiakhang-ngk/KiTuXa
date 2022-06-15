@@ -56,6 +56,7 @@ class BillsComponent extends Component {
     }
 
     getPhongData(option) {
+        // alert(JSON.stringify(option))
         this.props.doGetRoomByArea({ areaId: option.key }).then(data => {
           this.setState({
             dataRoom: data.map(item => ({
@@ -186,10 +187,10 @@ class BillsComponent extends Component {
                             ]}
                         >
                             <Icon
-                                name={item.status == 0 ? "circle-notch" : "check-circle"}
+                                name={item.status === 0 ? "circle-notch" : "check-circle"}
                                 type='font-awesome-5'
                                 size={16}
-                                color={item.status == 0 ? color_danger : color_success}
+                                color={item.status === 0 ? color_danger : color_success}
                             />
                             <Text
                                 style={[
@@ -198,7 +199,7 @@ class BillsComponent extends Component {
                                     { marginLeft: 5 }
                                 ]}
                             >
-                                {item.status == 0 ? "Chưa thanh toán" : "Đã thanh toán"}
+                                {item.status === 0 ? "Chưa thanh toán" : "Đã thanh toán"}
                             </Text>
                         </View>
                     </View>
@@ -212,13 +213,13 @@ class BillsComponent extends Component {
                         style={[
                             { marginRight: 10 }
                         ]}
-                        onPress={() => item.status == 0 ? this.deleteBill(item.id) : ""}
+                        onPress={() => item.status === 0 ? this.deleteBill(item.id) : ""}
                     >
                         <Icon
                             name={"trash-alt"}
                             type='font-awesome-5'
-                            size={item.status == 0 ? 22 : 0}
-                            color={item.status == 0 ? color_danger : "transparent"}
+                            size={item.status === 0 ? 22 : 0}
+                            color={item.status === 0 ? color_danger : "transparent"}
                         />
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -230,8 +231,8 @@ class BillsComponent extends Component {
                         <Icon
                             name={"pencil-alt"}
                             type='font-awesome-5'
-                            size={item.status == 0 ? 22 : 0}
-                            color={item.status == 0 ? color_success : "transparent"}
+                            size={item.status === 0 ? 22 : 0}
+                            color={item.status === 0 ? color_success : "transparent"}
                         />
                     </TouchableOpacity>
                     <TouchableOpacity

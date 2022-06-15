@@ -3,7 +3,7 @@ import { FlatList, Text, TouchableOpacity, View, Modal, Image } from "react-nati
 import axios from "axios";
 import { url } from "../../../constant/define";
 import { flex, font, font_weight, height, position, text_color, text_size, width, background_color } from "../../../utils/styles/MainStyle";
-import { color_danger, color_primary, color_success } from "../../../utils/theme/Color";
+import {color_danger, color_primary, color_secondary, color_success, color_dark} from "../../../utils/theme/Color";
 import { Icon } from "@rneui/base";
 import AppFAB from "../../../components/AppFAB";
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
@@ -15,8 +15,9 @@ import AppDialogSelect from "../../../components/AppDialogSelect";
 import { doGetListArea } from "../../../redux/actions/area";
 import { doGetRoomByArea } from '../../../redux/actions/room';
 import { doGetBookTicketByRoom } from '../../../redux/actions/room';
-import { doApproveBookTicket } from '../../../redux/actions/bookticket';
+import {checkedBookTicket, doApproveBookTicket} from '../../../redux/actions/bookticket';
 import { get } from 'lodash';
+import {doAddNotification, doUpdateNotification} from "../../../redux/actions/notification";
 
 class ListBookTicketScreen extends Component {
     constructor(props) {
@@ -70,14 +71,34 @@ class ListBookTicketScreen extends Component {
         })
     }
 
-    getBookTicketData(option) {
-        this.props.doGetBookTicketByRoom({ roomId: option.key }).then(data => {
+    getBookTicketData(key) {
+        this.props.doGetBookTicketByRoom({ roomId: key }).then(data => {
             console.log(">>>>>", data);
             this.setState({
                 data: data
             }, () => {
-                console.log(this.state.data[0].typeofroom.imageofrooms[0].image, '<<<<')
+                // console.log(this.state.data[0].typeofroom.imageofrooms[0].image, '<<<<')
             })
+        })
+    }
+
+    updateNotification() {
+        this.props.doUpdateNotification({id: this.state.booktickets?.id}).then(data => {
+            this.getBookTicketData(this.state.booktickets.room?.id)
+        })
+    }
+
+    checkedBook = (status) => {
+        this.props.checkedBookTicket({status: status}, {id: this.state.booktickets?.id}).then(data => {
+            this.props.doAddNotification({
+                status: 0,
+                statusView: 0,
+                RoomId: this.state.booktickets.room?.id,
+                UserId: this.state.booktickets.user?.id,
+                notificationTypeId: 1,
+                bookticketId: this.state.booktickets?.id
+            })
+            this.updateNotification();
         })
     }
 
@@ -153,17 +174,11 @@ class ListBookTicketScreen extends Component {
                                 { marginTop: 2 }
                             ]}
                         >
-                            {/* <Icon
-                                name={"calendar-day"}
-                                type='font-awesome-5'
-                                size={16}
-                                color={new Date(item.duration).getTime() < new Date().getTime() ? color_danger : color_primary}
-                            /> */}
                             <Text
                                 style={[
                                     text_size.xs,
                                     font.serif,
-                                    { marginLeft: 10, color: new Date(item.endBook).getTime() < new Date().getTime() ? color_danger : 'black' }
+                                    { color: new Date(item.endBook).getTime() < new Date().getTime() ? color_danger : 'black' }
                                 ]}
                             >
                                 Từ: {moment(item.startBook).format('DD-MM-YYYY')}{"\n"}
@@ -173,23 +188,28 @@ class ListBookTicketScreen extends Component {
                         <View
                             style={[
                                 flex.flex_row,
+                                flex.align_items_center,
                                 { marginTop: 2 }
                             ]}
                         >
                             <Icon
-                                name={item.status == 0 ? "circle-notch" : "check-circle"}
+                                name={item.status === 0 ? "circle-notch" : (item.status === 1 ? "check-circle" : "times-circle")}
                                 type='font-awesome-5'
                                 size={16}
-                                color={item.status == 0 ? color_danger : color_success}
+                                color={item.status === 0 ? color_primary : (item.status === 1 ? color_success : color_danger)}
                             />
                             <Text
                                 style={[
                                     text_size.xs,
                                     font.serif,
-                                    { marginLeft: 5 }
+                                    {
+                                        marginLeft: 5,
+                                        color: item.status === 0 ? color_primary : (item.status === 1 ? color_success : color_danger)
+                                    }
                                 ]}
                             >
-                                {item.status == 0 ? "Chưa được duyệt" : "Đã được duyệt"}
+                                {/*this.state.bookticket?.status*/}
+                                {item.status === 0 ? "Chưa duyệt" : (item.status === 1 ? "Đã duyệt" : "Không duyệt")}
                             </Text>
                         </View>
                     </View>
@@ -227,14 +247,7 @@ class ListBookTicketScreen extends Component {
                 {
                     this.state.isVisible
                         ?
-                        <Modal
-                            animationType="slide"
-                            transparent={true}
-                            visible={true}
-                            onRequestClose={() => {
-                                this.setState({ isVisible: false, booktickets: '' });
-                            }}
-                        >
+                        <Modal animationType={'fade'} isVisible={true} transparent={true}>
                             <View
                                 style={[
                                     {
@@ -250,92 +263,231 @@ class ListBookTicketScreen extends Component {
                                         {
                                             width: '90%',
                                             backgroundColor: 'white',
-                                            borderRadius: 5,
-                                            padding: 15,
+                                            borderRadius: 10,
+                                            overflow: "hidden"
                                         }
                                     ]}
                                 >
-                                    <View style={[
-                                        width.w_100,
-                                        flex.justify_content_center,
-                                    ], { margin: 10 }}>
-                                        <View style={[
-                                            flex.flex_row, width.w_100
-                                        ], { marginBottom: 10, flexDirection: 'row' }}>
-                                            <Image
-                                                source={{
-                                                    uri: `${url}/${this.state.data[0].typeofroom.imageofrooms[0].image}`
-                                                }}
-                                                resizeMode={'stretch'}
-                                                style={{
-                                                    width: 150,
-                                                    height: 150
-                                                }}
-                                            />
-                                            <View style={{ marginLeft: 10 }}>
-                                                <Text
-                                                    style={[
-                                                        font.serif,
-                                                    ], { marginBottom: 10, fontSize: 16, color: color_primary }}
-                                                >
-                                                    Tên phòng: {this.state.data[0].roomName}
-                                                </Text>
-                                                <Text style={[
-                                                    text_size.xl,
-                                                    font.serif,
-                                                ], { marginBottom: 10, fontSize: 16, color: color_primary }}>Giá: {this.state.data[0].typeofroom.priceofrooms[0].price}
-                                                </Text>
-                                                <Text
-                                                    style={[
-                                                        font.serif,
-                                                    ], { marginBottom: 10, fontSize: 16, color: color_primary }}
-                                                >
-                                                    Từ: {moment(this.state.booktickets.startBook).format('DD-MM-YYYY')}{"\n"}
-                                                    đến: {moment(this.state.booktickets.endBook).format('DD-MM-YYYY')}
-                                                </Text>
-                                                <Text
-                                                    style={[
-                                                        font.serif,
-                                                    ], { marginBottom: 10, fontSize: 16, color: color_primary }}
-                                                >
-                                                    Người thuê: {this.state.booktickets.user.name}
-                                                </Text>
-                                            </View>
-                                        </View>
-                                        <View style={[flex.flex_row, flex.align_items_center, flex.justify_content_between, width.w_100, { alignSelf: 'flex-end' }]}>
-                                            <View
+                                    <View>
+                                        <Image
+                                            source={
+                                                {
+                                                    uri: `${url}/${this.state.booktickets.room.typeofroom.imageofrooms[0]?.image}`
+                                                }
+                                            }
+                                            style={{
+                                                width: '100%',
+                                                height: 250
+                                            }}
+                                        />
+                                    </View>
+                                    <View
+                                        style={{
+                                            padding: 10,
+                                            flexDirection: "row"
+                                        }}
+                                    >
+                                        <View
+                                            style={{
+                                                width: '50%',
+                                                paddingRight: 5
+                                            }}
+                                        >
+                                            <Text
                                                 style={[
-                                                    {
-                                                        width: 150,
-                                                        marginRight: 15
-                                                    }
+                                                    text_size.xs,
+                                                    font.serif
                                                 ]}
                                             >
-                                                <AppButtonActionInf
-                                                    size={13}
-                                                    textSize={18}
-                                                    bg={color_danger}
-                                                    onPress={() => { this.setState({ isVisible: false, booktickets: '' }) }}
-                                                    title="Hủy"
-                                                />
-                                            </View>
-                                            <View
-                                                style={{
-                                                    width: 150,
-                                                }}
+                                                <Text style={[text_color.primary]}>Tên người đặt:</Text> {this.state.booktickets.user?.name}
+                                            </Text>
+                                            <Text
+                                                style={[
+                                                    text_size.xs,
+                                                    font.serif
+                                                ]}
                                             >
-                                                <AppButtonActionInf
-                                                    size={13}
-                                                    textSize={18}
-                                                    disabled={this.state.booktickets.status == 1 ? true : false}
-                                                    bg={color_primary}
-                                                    onPress={() => { this.approveBookticket(this.state.booktickets.id) }}
-                                                    //onPress={() => alert(values.Ten_HD)}
-                                                    title="Duyệt"
-                                                />
-                                            </View>
+                                                <Text style={[text_color.primary]}>SĐT:</Text> {this.state.booktickets.user?.numberPhone}
+                                            </Text>
+                                            <Text
+                                                style={[
+                                                    text_size.xs,
+                                                    font.serif
+                                                ]}
+                                            >
+                                                <Text style={[text_color.primary]}>Địa chỉ:</Text> {this.state.booktickets.user?.address}
+                                            </Text>
+                                            <Text
+                                                style={[
+                                                    text_size.xs,
+                                                    font.serif
+                                                ]}
+                                            >
+                                                <Text style={[text_color.primary]}>Đặt cọc:</Text> {this.state.booktickets?.prepayment}
+                                            </Text>
+                                        </View>
+                                        <View
+                                            style={{
+                                                width: '50%',
+                                                paddingLeft: 5
+                                            }}
+                                        >
+                                            <Text
+                                                style={[
+                                                    text_size.xs,
+                                                    font.serif
+                                                ]}
+                                            >
+                                                <Text style={[text_color.primary]}>Khu:</Text> {this.state.booktickets.room.typeofroom.area?.areaName}
+                                            </Text>
+                                            <Text
+                                                style={[
+                                                    text_size.xs,
+                                                    font.serif
+                                                ]}
+                                            >
+                                                <Text style={[text_color.primary]}>Loại phòng:</Text> {this.state.booktickets.room.typeofroom?.name}
+                                            </Text>
+                                            <Text
+                                                style={[
+                                                    text_size.xs,
+                                                    font.serif
+                                                ]}
+                                            >
+                                                <Text style={[text_color.primary]}>Phòng:</Text> {this.state.booktickets.room?.roomName}
+                                            </Text>
+                                            <Text
+                                                style={[
+                                                    text_size.xs,
+                                                    font.serif,
+                                                    text_color.danger
+                                                ]}
+                                            >
+                                                <Text style={[font_weight.bold]}>Giá:</Text> {this.state.booktickets.room.typeofroom.priceofrooms[this.state.booktickets.room.typeofroom.priceofrooms?.length-1]?.price}
+                                            </Text>
                                         </View>
                                     </View>
+                                    {
+                                        this.state.booktickets?.status ?
+                                            <View style={[
+                                                flex.flex_row,
+                                                flex.justify_content_center,
+                                                {
+                                                    padding: 10
+                                                }
+                                            ]}>
+                                                <View
+                                                    style={[
+                                                        {
+                                                            width: '30%',
+                                                            paddingHorizontal: 5
+                                                        }
+                                                    ]}
+                                                >
+                                                    <AppButtonActionInf
+                                                        size={10}
+                                                        textSize={16}
+                                                        bg={color_secondary}
+                                                        onPress={() => {
+                                                            this.setState({
+                                                                isVisible: false
+                                                            })
+                                                        }}
+                                                        title="Hủy"
+                                                    />
+                                                </View>
+                                                <View
+                                                    style={[
+                                                        {
+                                                            width: this.state.booktickets?.status === 2 ? '50%' :'40%',
+                                                            paddingHorizontal: 5
+                                                        }
+                                                    ]}
+                                                >
+                                                    {
+                                                        this.state.booktickets?.status === 2 ?
+                                                            <AppButtonActionInf
+                                                                size={10}
+                                                                textSize={16}
+                                                                bg={color_danger}
+                                                                title="Đã không duyệt"
+                                                            />
+                                                            :
+                                                            <AppButtonActionInf
+                                                                size={10}
+                                                                textSize={16}
+                                                                bg={color_primary}
+                                                                title="Đã duyệt"
+                                                            />
+                                                    }
+                                                </View>
+                                            </View>
+                                            :
+                                            <View style={[
+                                                flex.flex_row,
+                                                flex.justify_content_between,
+                                                {
+                                                    padding: 10
+                                                }
+                                            ]}>
+                                                <View
+                                                    style={[
+                                                        {
+                                                            width: '30%',
+                                                            paddingHorizontal: 5
+                                                        }
+                                                    ]}
+                                                >
+                                                    <AppButtonActionInf
+                                                        size={10}
+                                                        textSize={16}
+                                                        bg={color_secondary}
+                                                        onPress={() => {
+                                                            this.setState({
+                                                                isVisible: false
+                                                            })
+                                                        }}
+                                                        title="Hủy"
+                                                    />
+                                                </View>
+                                                <View
+                                                    style={[
+                                                        {
+                                                            width: '40%',
+                                                            paddingHorizontal: 5
+                                                        }
+                                                    ]}
+                                                >
+                                                    <AppButtonActionInf
+                                                        size={10}
+                                                        textSize={16}
+                                                        bg={color_danger}
+                                                        title="Không duyệt"
+                                                        onPress={() => {
+                                                            this.checkedBook(2)
+                                                        }}
+                                                    />
+                                                </View>
+                                                <View
+                                                    style={[
+                                                        {
+                                                            width: '30%',
+                                                            paddingHorizontal: 5
+                                                        }
+                                                    ]}
+                                                >
+                                                    <AppButtonActionInf
+                                                        size={10}
+                                                        textSize={16}
+                                                        bg={color_primary}
+                                                        title="Duyệt"
+                                                        onPress={() => {
+                                                            this.checkedBook(1)
+                                                        }}
+                                                    />
+                                                </View>
+                                            </View>
+                                    }
                                 </View>
                             </View>
                         </Modal>
@@ -370,13 +522,6 @@ class ListBookTicketScreen extends Component {
                         }
                     ]}
                 >
-                    {/* <AppFAB
-                        bg={color_primary}
-                        name='plus'
-                        size={20}
-                        color={'white'}
-                        onPress={() => this.viewAddContract(1)}
-                    /> */}
                 </View>
                 <View style={[
                     flex.flex_row, flex.justify_content_between
@@ -408,12 +553,12 @@ class ListBookTicketScreen extends Component {
                             data={this.state.dataRoom}
                             value={this.state.filterRoom}
                             field={'filterArea'}
-                            returnFilter={(key) => this.getBookTicketData(key)}
+                            returnFilter={(key) => this.getBookTicketData(key.key)}
                         />
                     </View>
                 </View>
 
-                <FlatList data={this.state.data[0]?.booktickets} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()} contentContainerStyle={{ marginHorizontal: 10, paddingVertical: 10 }} />
+                <FlatList data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()} contentContainerStyle={{ marginHorizontal: 10, paddingVertical: 10 }} />
             </SafeAreaView>
         )
     }
@@ -424,7 +569,7 @@ const mapStateToProps = ({ listContractByRoom, user }) => {
 };
 
 const mapDispatchToProps = {
-    doLoadListContractByRoom, doGetBookTicketByRoom, doGetListArea, doGetRoomByArea, doApproveBookTicket
+    doLoadListContractByRoom, doGetBookTicketByRoom, doGetListArea, doGetRoomByArea, doApproveBookTicket, checkedBookTicket, doAddNotification
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ListBookTicketScreen)

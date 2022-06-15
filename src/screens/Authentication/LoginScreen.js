@@ -17,6 +17,7 @@ import {color_primary} from "../../utils/theme/Color";
 import {connect} from "react-redux";
 import {doLogin} from "../../redux/actions/user";
 import AsyncStorage from "@react-native-community/async-storage";
+import Toast from 'react-native-toast-message';
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         {children}
@@ -24,6 +25,13 @@ const HideKeyboard = ({ children }) => (
 );
 class LoginScreen extends Component {
     state = { checkedRemember: false };
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+        }
+    }
 
     isFormValid(isValid, touched) {
         return isValid && Object.keys(touched).length !== 0;
@@ -38,11 +46,30 @@ class LoginScreen extends Component {
         this.props.doLogin({numberPhone: numberPhone, password: password})
             .then(async data => {
                 if (data === 1) {
-                    alert("Tài khoản không tồn tại");
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Đăng nhập',
+                        text2: "Tài khoản không tồn tại.",
+                        visibilityTime: 2000,
+                        autoHide: true
+                    });
                 } else if (data === 2) {
-                    alert("Sai mật khẩu!");
+                    Toast.show({
+                        type: 'error',
+                        text1: 'Đăng nhập',
+                        text2: "Sai mật khẩu.",
+                        visibilityTime: 2000,
+                        autoHide: true
+                    });
                 } else {
                     try {
+                        Toast.show({
+                            type: 'success',
+                            text1: 'Đăng nhập',
+                            text2: 'Đăng nhập thành công.',
+                            visibilityTime: 2000,
+                            autoHide: true
+                        });
                         await AsyncStorage.setItem('@user', JSON.stringify(data));
                         this.props.navigation.replace('TabUser', {userData: data});
                     } catch (e) {
@@ -187,7 +214,6 @@ class LoginScreen extends Component {
                                         <AppButton
                                             disabled = { !this.isFormValid(isValid, touched) }
                                             onPress = { handleSubmit }
-                                            //disabled = { !this.isFormValid(isValid, touched) }
                                             title="Đăng nhập"
                                         />
                                     </View>
@@ -224,6 +250,7 @@ class LoginScreen extends Component {
                                     </TouchableOpacity>
                                 </View>
                             </View>
+                            <Toast ref={(ref) => {Toast.setRef(ref)}} />
                         </SafeAreaView>
                     </HideKeyboard>
                 )}

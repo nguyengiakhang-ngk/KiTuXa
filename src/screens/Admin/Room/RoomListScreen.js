@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {
     FlatList,
-    Text, TouchableOpacity, View
+    Text, TextInput, TouchableOpacity, View
 } from 'react-native';
 import AppFAB from "../../../components/AppFAB";
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
@@ -11,11 +11,11 @@ import {
     font,
     font_weight,
     height,
-    position,
+    position, shadow,
     text_color,
     text_size
 } from "../../../utils/styles/MainStyle";
-import {color_danger, color_primary, color_success} from "../../../utils/theme/Color";
+import {color_danger, color_primary, color_secondary, color_success} from "../../../utils/theme/Color";
 import { width } from "../../../utils/styles/MainStyle";
 import {Icon} from "@rneui/base";
 import {
@@ -24,13 +24,17 @@ import {
 } from "../../../redux/actions/room";
 import {connect} from "react-redux";
 import moment from "moment";
+import ModalSelector from "react-native-modal-selector";
+import {doGetListTypeOfRoom} from "../../../redux/actions/typeOfRoom";
 
 class RoomListScreen extends Component{
     constructor(props) {
         super(props);
         this.state = {
             isLoading: true,
-            dataTypeRoom: [],
+            typeRoomData: [],
+            roomDataShow: [],
+            initValue: ''
         }
     }
 
@@ -48,6 +52,7 @@ class RoomListScreen extends Component{
         this.removeWillFocusListener = this.props.navigation.addListener(
             'focus', () => {
                 this.getRoom();
+                this.getTypeOfRoom();
             }
         );
     }
@@ -56,15 +61,67 @@ class RoomListScreen extends Component{
         this.removeWillFocusListener();
     }
 
+    getTypeOfRoom = () => {
+        this.props.doGetListTypeOfRoom({userId: this.props.user.user.id}).then(data => {
+            this.setState({
+                typeRoomData: [
+                    {
+                        key: 0,
+                        label: "Tất cả"
+                    },
+                    ...data.map(item => ({key: item.id, label: item.name}))
+                ]
+            })
+        })
+    }
+
     getRoom(){
         this.props.doGetListRoom({userId: this.props.user.user.id}).then(data => {
-            console.log(data);
+            this.setState({
+                roomDataShow: data,
+                initValue: 'Tất cả'
+            })
         })
     }
 
     updateTypeRoom(room){
         this.props.navigation.navigate("UpdateRoom", {room: room});
     }
+    filterRoom(obj) {
+        this.setState({
+            // isLoading: true,
+            initValue: obj.label,
+            roomDataShow: []
+        })
+
+        if(obj.key !== 0) {
+            let tamp = [];
+            this.props.room.roomList.map(item => {
+                if(item.typeofroomId === obj.key){
+                    tamp.push(item)
+                }
+            })
+
+            this.setState({
+                roomDataShow: tamp
+            }, () => {
+                // alert(this.state.dataTypeRoomBackup.length)
+            })
+        } else{
+            this.setState({
+                roomDataShow: this.props.room.roomList
+            }, () => {
+                // alert(this.state.dataTypeRoomBackup.length)
+            })
+        }
+
+        // setTimeout(() => {
+        //     this.setState({
+        //         isLoading: false
+        //     })
+        // }, 1000)
+    }
+
 
     _renderItem = ({item, index}) => {
         let time = new Date(item.updateAt);
@@ -203,7 +260,63 @@ class RoomListScreen extends Component{
                         onPress = { () => this.viewAddRoom() }
                     />
                 </View>
-                <FlatList showsVerticalScrollIndicator={false} data={this.props.room.roomList} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()}/>
+                <View
+                    style={{width: '50%'}}
+                >
+                    {
+                        this.state.roomDataShow ?
+                            <ModalSelector
+                                touchableStyle={[
+                                    width.w_100,
+                                    background_color.white,
+                                    shadow.shadow,
+                                    { borderRadius: 7, padding: 3, paddingLeft: 6, paddingRight: 10, marginTop: 5 },
+                                ]}
+                                selectStyle={[
+                                    { borderWidth: 0, textAlignVertical: 'right' }
+                                ]}
+                                selectedItemTextStyle={[
+                                    text_color.primary,
+                                    font_weight.bold
+                                ]}
+                                optionTextStyle={[
+                                    text_size.sm,
+                                    font.serif,
+                                    text_color.black
+                                ]}
+                                cancelTextStyle={[
+                                    text_size.sm,
+                                    font.serif,
+                                    text_color.danger,
+                                    font_weight.bold
+                                ]}
+                                cancelText={"Hủy"}
+                                childrenContainerStyle={[
+                                    flex.flex_row,
+                                    flex.align_items_center,
+                                    flex.justify_content_between
+                                ]}
+                                touchableActiveOpacity={.8}
+                                data={this.state.typeRoomData}
+                                placeholder={"Loại phòng"}
+                                onChange={(option) => { this.filterRoom(option) }}>
+
+                                <TextInput
+                                    autoCorrect={false}
+                                    style={[text_size.sm, font.serif, font_weight.f_500, { color: 'black', width: '95%' }]}
+                                    placeholder={"Loại phòng"}
+                                    value={this.state.initValue}
+                                />
+                                <Icon
+                                    name='caret-down'
+                                    type='font-awesome-5'
+                                    color={color_secondary}
+                                    size={22} />
+                            </ModalSelector>
+                            : null
+                    }
+                </View>
+                <FlatList showsVerticalScrollIndicator={false} data={this.state.roomDataShow} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()}/>
             </SafeAreaView>
         );
     }
@@ -215,7 +328,8 @@ const mapStateToProps = ({user, room}) => {
 
 const mapDispatchToProps = {
     doGetListRoom,
-    doDeleteRoom
+    doDeleteRoom,
+    doGetListTypeOfRoom
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(RoomListScreen)

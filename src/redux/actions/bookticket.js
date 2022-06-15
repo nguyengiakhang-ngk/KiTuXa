@@ -1,4 +1,4 @@
-import { 
+import {
     APPROVE_BOOKTICKET,
     APPROVE_BOOKTICKET_SUCCESS,
     APPROVE_BOOKTICKET_FAIL,
@@ -6,8 +6,8 @@ import {
     ADD_BOOKTICKET_SUCCESS,
     ADD_BOOKTICKET_FAIL
  } from "./types";
-import { 
-    approveBookTicket, addBookTicket
+import {
+    approveBookTicket, addBookTicket, checkedBookTicketApi
 } from "../../api/bookticket";
 
 
@@ -65,3 +65,15 @@ const approveBookTicketError = (dispatch, error) => {
         error: error
     });
 }
+
+export const checkedBookTicket = (bookticket, id) => dispatch => {
+    return new Promise((resolve, reject) => {
+        checkedBookTicketApi(bookticket, id)
+            .then(data => {
+                resolve(data);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    })
+};

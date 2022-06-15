@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
     Image,
     SafeAreaView, ScrollView,
-    Text, View,
+    Text, TouchableOpacity, View,
 } from 'react-native';
 import { Icon } from "@rneui/base";
 import {
@@ -135,12 +135,18 @@ class HomeScreen extends Component {
                                 </Text>
                             </View>
                         </View>
-                        <Icon
-                            name='bell'
-                            type='font-awesome-5'
-                            color='white'
-                            size={30}
-                        />
+                        <TouchableOpacity
+                            onPress={() => {
+                                this.props.navigation.navigate('Notification')
+                            }}
+                        >
+                            <Icon
+                                name='bell'
+                                type='font-awesome-5'
+                                color='white'
+                                size={30}
+                            />
+                        </TouchableOpacity>
                     </View>
                 </View>
                 <View
@@ -269,27 +275,6 @@ class HomeScreen extends Component {
 
                             />
                         </View>
-                        {/* <View
-                        style={[
-                            {
-                                width: '33.3%',
-                                paddingRight: 0.5,
-                                paddingLeft: 0.5,
-                                paddingTop: 10,
-                                paddingBottom: 5
-                            }
-                        ]}
-                    >
-                        <AppItemHome
-                            bg = {'orange'}
-                            name = 'file-invoice-dollar'
-                            size = {25}
-                            color = {'white'}
-                            colorText = {'black'}
-                            label = {'Biên nhận'}
-                            onPress = {() => this.routeScreen("ReceiptComponent") }
-                        />
-                    </View> */}
                         <View
                             style={[
                                 {
@@ -470,26 +455,6 @@ class HomeScreen extends Component {
                                 onPress={() => this.routeScreen("TroubleScreen")}
                                 label={'Quét QR Code'}
                                 onPress={() => this.routeScreen("qrcode")}
-                            />
-                        </View>
-                        <View
-                            style={[
-                                {
-                                    width: '33.3%',
-                                    paddingRight: 0.5,
-                                    paddingLeft: 0.5,
-                                    paddingBottom: 5
-                                }
-                            ]}
-                        >
-                            <AppItemHome
-                                bg={'orangered'}
-                                name='bug'
-                                size={30}
-                                color={'white'}
-                                colorText={'black'}
-                                label={'Sự cố'}
-                                onPress={() => this.routeScreen("TroubleScreen")}
                             />
                         </View>
                         <View

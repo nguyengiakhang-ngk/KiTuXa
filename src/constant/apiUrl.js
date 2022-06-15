@@ -86,10 +86,17 @@ export const ADD_SAVE = `/addSaveRoomTicket`;
 export const DELETE_SAVE = `/deleteSaveRoomTicket`;
 
 export const ADD_FREE_TICKET = `/addFreeTicket`;
-export const DELETE_ADD_FREE_TICKET = `/deleteaddFreeTicket`;
+export const DELETE_ADD_FREE_TICKET = `/deleteFreeTicket`;
 
 export const GET_BOOKTICKET_BY_ROOM = `/getBookTicketByRoom`;
 
 export const APPROVE_BOOKTICKET = `/approveBookTicket`;
+
 export const ADD_PAID_TICKET = `/addPaidTicket`;
 export const DELETE_PAID_TICKET = `/deletePaidTicket`;
+
+export const ADD_NOTIFICATION = `/addNotification`;
+export const GET_NOTIFICATION = `/getNotification`;
+export const UPDATE_NOTIFICATION = `/updateNotification`;
+
+export const CHECKED_BOOK_TICKET = `/checkedBookTicket`;

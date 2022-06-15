@@ -53,6 +53,9 @@ class HomeScreen extends Component {
     }
 
     componentWillUnmount() {
+        this.setState({
+            isLoading: true
+        })
         this.removeWillFocusListener();
     }
 
@@ -80,7 +83,7 @@ class HomeScreen extends Component {
             this.setState({
                 isLoading: false
             })
-        }, 500)
+        }, 1000)
         this.props.doGetListTypeOfRoomNew().then(data => {
             let arr = _.cloneDeep( data );
             arr.map(item => {
