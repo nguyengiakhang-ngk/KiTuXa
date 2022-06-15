@@ -1,4 +1,5 @@
-export const url = "http://192.168.1.7:3001";
+/* eslint-disable prettier/prettier */
+export const url = 'http://192.168.1.3:3001';
 export const PATH = {
-    MATERIAL: "http://192.168.1.7:3001/uploads/material/"
-}
+    MATERIAL: url + '/uploads/material/',
+};
