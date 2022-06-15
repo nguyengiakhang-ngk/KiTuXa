@@ -84,13 +84,10 @@ const ItemMaterialType = ({ item, callback, navigation }) => {
                 <TableDateCustom date={item.createdAt} />
             </View>
             <View
-                style={[
-                    flex.flex_row
-                ]}
             >
                 <TouchableOpacity
                     style={[
-                        { marginRight: 10 }
+                        { marginRight: 10, marginBottom: 10 }
                     ]}
                     onPress={confirmDelete}
                 >

@@ -2,7 +2,7 @@ import React from "react";
 import { Text, TextInput, View } from "react-native";
 import { background_color, flex, font, font_weight, padding, shadow, text_size, width } from "../utils/styles/MainStyle";
 
-const FormInput = ({ lable, style, value, editable, onChangeText, ...props }) => {
+const FormInput = ({ lable, placeholder, style, value, editable, onChangeText, ...props }) => {
     return (
         <View style={[
             width.w_100,
@@ -19,6 +19,7 @@ const FormInput = ({ lable, style, value, editable, onChangeText, ...props }) =>
             </Text>
             <TextInput
                 {...props}
+                placeholder={placeholder}
                 onChangeText={onChangeText}
                 value={value + ""}
                 editable={editable}

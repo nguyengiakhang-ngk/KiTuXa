@@ -79,6 +79,7 @@ import DetailRoomScreen from "../screens/User/DetailRoom/DetailRoomScreen";
 
 import ListBookTicketScreen from '../screens/Admin/BookTicket/ListBookTicketScreen';
 import AddMaterialScreen from "../screens/Admin/AddMaterial/AddMaterial";
+import InputMaterialToRoom from '../screens/Admin/InputMaterial/InputMaterialToRoom';
 
 const Stack = createNativeStackNavigator();
 const StackScreen: () => Node = () => {
@@ -361,6 +362,11 @@ const StackScreen: () => Node = () => {
                 <Stack.Screen
                     name="AddMaterial"
                     component={AddMaterialScreen}
+                    options={{ headerShown: false }}
+                />
+                 <Stack.Screen
+                    name="inputmaterialtoroom"
+                    component={InputMaterialToRoom}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

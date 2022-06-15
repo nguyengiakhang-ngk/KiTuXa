@@ -36,7 +36,8 @@ const MaterialType = ({ navigation }) => {
     return (
         <SafeAreaView
             style={{
-                height: "100%"
+                height: "100%",
+                paddingBottom: 30
             }}
         >
             <View
@@ -58,11 +59,9 @@ const MaterialType = ({ navigation }) => {
                 />
             </View>
             <Header>Loại vật chất ({materialTypes.length})</Header>
-            <ScrollView style={{
-                padding: 10
-            }}>
+            <View style={{ padding: 10}}>
                 <FlatList data={materialTypes} renderItem={({ item }) => <ItemMaterialType item={item} callback={fetchMaterialType} navigation={navigation} />} keyExtractor={(item, index) => index.toString()} />
-            </ScrollView>
+            </View>
         </SafeAreaView>
     )
 }
