@@ -19,7 +19,7 @@ class WelComeScreen extends Component {
             } else {
                 this.props.initUser("");
             }
-            this.props.navigation.replace("HomeScreen", { userData: user });
+            this.props.navigation.replace("statisticalmaterial", { userData: user });
             // this.props.navigation.replace("HomeScreen", { userData: user });
         }, 500);
     }

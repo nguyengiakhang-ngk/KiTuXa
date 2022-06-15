@@ -469,6 +469,24 @@ class HomeScreen extends Component {
                                 colorText={'black'}
                                 label={'Sự cố'}
                                 onPress={() => this.routeScreen("TroubleScreen")}
+                            />
+                        </View>
+                        <View
+                            style={[
+                                {
+                                    width: '33.3%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
+                                bg={'red'}
+                                name='bug'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
                                 label={'Quét QR Code'}
                                 onPress={() => this.routeScreen("qrcode")}
                             />
@@ -509,8 +527,8 @@ class HomeScreen extends Component {
                                 size={30}
                                 color={'white'}
                                 colorText={'black'}
-                                label={'Thêm vật chất phòng'}
-                                onPress={() => this.routeScreen("AddMaterial")}
+                                label={'Thống kê'}
+                                onPress={() => this.routeScreen("statisticalmaterial")}
                             />
                         </View>
                         <View
