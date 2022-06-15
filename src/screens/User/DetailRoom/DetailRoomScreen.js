@@ -46,10 +46,10 @@ class DetailRoomScreen extends Component {
             room: this.props.route.params.room,
             area: {},
             images: [
-                "http://192.168.1.2:3001/uploads/typeOfRoom/65c52eafa5c414590cac04493a1969ef.jpg",
-                "http://192.168.1.2:3001/uploads/typeOfRoom/65c52eafa5c414590cac04493a1969ef.jpg",
-                "http://192.168.1.2:3001/uploads/typeOfRoom/thiet-ke-phong-lam-viec-tai-nha-0.jpg",
-                "http://192.168.1.2:3001/uploads/typeOfRoom/thiet-ke-phong-lam-viec-tai-nha-0.jpg"
+                // "http://192.168.1.2:3001/uploads/typeOfRoom/65c52eafa5c414590cac04493a1969ef.jpg",
+                // "http://192.168.1.2:3001/uploads/typeOfRoom/65c52eafa5c414590cac04493a1969ef.jpg",
+                // "http://192.168.1.2:3001/uploads/typeOfRoom/thiet-ke-phong-lam-viec-tai-nha-0.jpg",
+                // "http://192.168.1.2:3001/uploads/typeOfRoom/thiet-ke-phong-lam-viec-tai-nha-0.jpg"
             ],
             isViewImage: false,
             viewImageIndex: 0,
@@ -68,7 +68,7 @@ class DetailRoomScreen extends Component {
             endBook: { 'endBook': new Date() },
             prepayment: "0",
             note: '',
-            roomIdBooked: []
+            roomIdBooked: [],
         }
     }
 
@@ -96,15 +96,30 @@ class DetailRoomScreen extends Component {
         this.setState({
             listRoomByType: this.state.room?.rooms.map(item => ({
                 key: item.id,
-                label: item.roomName
-            }))
+                label: item.roomName,
+            })),
+            images: this.state.room?.imageofrooms.map(item => `${url}/${item?.image}`)
         })
+
+
     }
 
     addBookTicket() {
+            // new Date(this.state.room.rooms[0].booktickets[0].endBook);
+        // alert(new Date(this.room.rooms.booktickets[0]?.endBook).getTime());
         let indexChecked = this.state.roomIdBooked.indexOf(this.state.roomBook);
-        alert(indexChecked)
-        if(indexChecked > -1){
+        if(indexChecked !== -1){
+            // let checkStartDate = true;
+            // let indexRoom = this.state.room.rooms.findIndex(x => x.id === this.state.roomBook);
+            // let startDate = new Date(this.state.startBook.startBook);
+            // let endDate = new Date(this.state.endBook.endBook);
+            //
+            // this.state.room.rooms[indexRoom].booktickets.map(item => {
+            //     let timeCheckS = new Date(item.startBook);
+            //     let timeCheckE = new Date(item.endBook);
+            //     if(startDate.getTime() > timeCheck)
+            // })
+
             let prepayment = this.state.prepayment.split(".").join("");
             let formData = {
                 "prepayment": prepayment,
@@ -128,11 +143,11 @@ class DetailRoomScreen extends Component {
                         this.state.roomIdBooked.push(this.state.roomBook);
                         this.setState({
                             isVisible: false,
-                            roomBook: null,
-                            startBook: null,
-                            endBook: null,
-                            prepayment: null,
-                            note: null,
+                            roomBook: '',
+                            startBook: '',
+                            endBook: '',
+                            prepayment: '',
+                            note: '',
                             roomIdBooked: this.state.roomIdBooked
                         });
                         Toast.show({
@@ -449,7 +464,29 @@ class DetailRoomScreen extends Component {
                                                 textSize={16}
                                                 bg={color_primary}
                                                 title="Đặt"
-                                                onPress={() => this.setState({isVisible: true})}
+                                                onPress={() => {
+                                                    if(this.state.user.id) {
+                                                        if(this.state.user.id !== this.state.area.userId) {
+                                                            this.setState({isVisible: true})
+                                                        } else{
+                                                            Toast.show({
+                                                                type: 'error',
+                                                                text1: 'Đặt phòng',
+                                                                text2: 'Vui lòng không đặt phòng thuộc khu của mình .',
+                                                                visibilityTime: 3000,
+                                                                autoHide: true
+                                                            });
+                                                        }
+                                                    } else{
+                                                        Toast.show({
+                                                            type: 'error',
+                                                            text1: 'Đặt phòng',
+                                                            text2: 'Vui lòng đăng nhập để đặt phòng.',
+                                                            visibilityTime: 3000,
+                                                            autoHide: true
+                                                        });
+                                                    }
+                                                }}
                                             />
                                         </View>
                                         <TouchableOpacity
@@ -1013,13 +1050,10 @@ class DetailRoomScreen extends Component {
                                                 <Text
                                                     style={[
                                                         text_size.sm,
-                                                        font.serif,
-                                                        {
-                                                            color: color_dark
-                                                        }
+                                                        font.serif
                                                     ]}
                                                 >
-                                                    {this.state.viewDetailService.name}
+                                                    <Text style={[text_color.primary]}>Dịch vụ:</Text> {this.state.viewDetailService.name}
                                                 </Text>
                                             </View>
                                             <View
@@ -1035,13 +1069,10 @@ class DetailRoomScreen extends Component {
                                                         <Text
                                                             style={[
                                                                 text_size.sm,
-                                                                font.serif,
-                                                                {
-                                                                    color: color_dark
-                                                                }
+                                                                font.serif
                                                             ]}
                                                         >
-                                                            {this.state.viewDetailService.unit}
+                                                            <Text style={[text_color.primary]}>Đơn vị tính:</Text> {this.state.viewDetailService.unit}
                                                         </Text>
                                                         : <View />
                                                 }
@@ -1059,13 +1090,11 @@ class DetailRoomScreen extends Component {
                                                         <Text
                                                             style={[
                                                                 text_size.sm,
-                                                                font.serif,
-                                                                {
-                                                                    color: color_dark
-                                                                }
+                                                                font.serif
                                                             ]}
                                                         >
-                                                            {this.state.viewDetailService.priceofservices[this.state.viewDetailService.priceofservices?.length - 1].price}
+                                                            <Text style={[text_color.primary]}>Giá: </Text>
+                                                            {cardExpiry(this.state.viewDetailService.priceofservices[this.state.viewDetailService.priceofservices?.length - 1].price)}
                                                         </Text>
                                                         : <View />
                                                 }
