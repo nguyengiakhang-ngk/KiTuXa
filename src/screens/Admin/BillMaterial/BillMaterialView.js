@@ -49,15 +49,10 @@ const BillMaterialView = ({ navigation, route }) => {
             ]}
         >
             <Header >Chi tiết hóa đơn vật chất</Header>
-            <ScrollView
-                style={{ flex: 1, padding: 10 }} contentContainerStyle={{ flexGrow: 1 }}
-                nestedScrollEnabled
-            >
-                {bills.length > 0 ? <FlatList data={bills} n renderItem={({ item }) => <ItemDetailBillMaterial item={item} callback={() => { }} navigation={navigation} />} keyExtractor={(item, index) => index.toString()} /> :
-                    <Text style={[
-                        font.serif, text_size.sm
-                    ]}>Hiện tại không có hóa đơn !</Text>}
-            </ScrollView>
+            {bills.length > 0 ? <FlatList data={bills} n renderItem={({ item }) => <ItemDetailBillMaterial item={item} callback={() => { }} navigation={navigation} />} keyExtractor={(item, index) => index.toString()} /> :
+                <Text style={[
+                    font.serif, text_size.sm
+                ]}>Hiện tại không có hóa đơn !</Text>}
         </SafeAreaView>
     )
 }

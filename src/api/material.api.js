@@ -10,9 +10,15 @@ const getById = async (id) => {
     return await axios.get(path + id)
 }
 
+const getRoomAdmin = async () => {
+    return await axios.get(url + "/getRoomAdmin");
+}
+
 const getDetailMaterialByStatus = async (id, status) => await axios.get(path + "detail-material/" + id + "/" + status);
 
 const getDetailMaterialById = async (id) => await axios.get(path + "detail-material/view/" + id);
+
+const statisticalByMaterialType = async (id) => await axios.get(path + "statistical/" + id);
 
 const getDetailMaterial = async (id) => await axios.get(path + "detail-material/" + id);
 
@@ -32,7 +38,9 @@ export const materialAPI = {
     get,
     getById,
     getByIdLoaivatchat,
+    statisticalByMaterialType,
     getDetailMaterialByStatus,
+    getRoomAdmin,
     getDetailMaterialById,
     getDetailMaterial,
     getStatus,

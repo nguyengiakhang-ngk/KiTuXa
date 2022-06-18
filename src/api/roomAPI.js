@@ -10,6 +10,8 @@ import {
     GET_LIST_ROOM_BY_TYPE
 } from '../constant/apiUrl'
 
+
+
 export const getRoomByArea = (areaId) => {
     return doGet(GET_ROOM_BY_AREA, areaId);
 }
