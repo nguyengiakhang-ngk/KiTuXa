@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {
+    ActivityIndicator,
     FlatList,
     Text, TouchableOpacity, View
 } from 'react-native';
@@ -20,6 +21,8 @@ import { width } from "../../../utils/styles/MainStyle";
 import {Icon} from "@rneui/base";
 import { connect } from "react-redux";
 import {doGetListArea, doDeleteArea} from "../../../redux/actions/area";
+import DialogConfirm from "../../../components/DialogConfirm";
+import Toast from "react-native-toast-message";
 
 class AreaListScreen extends Component{
     constructor(props) {
@@ -27,6 +30,8 @@ class AreaListScreen extends Component{
         this.state = {
             isLoading: true,
             listAre: this.props.area.areaList,
+            isConfirm: false,
+            idDelete: 0
         }
     }
 
@@ -34,9 +39,23 @@ class AreaListScreen extends Component{
         this.props.navigation.navigate("AddArea");
     }
 
-    deleteArea(id) {
-        this.props.doDeleteArea({id: id}).then(data => {
-            this.getAreaData();
+    deleteArea() {
+        this.setState({
+            isLoading: true
+        })
+        this.props.doDeleteArea({id: this.state.idDelete}).then(data => {
+            this.setState({
+                idDelete: 0,
+                isConfirm: false
+            })
+            this.getAreaData()
+            Toast.show({
+                type: 'success',
+                text1: 'Khu',
+                text2: 'Xóa thành công.',
+                visibilityTime: 2000,
+                autoHide: true
+            });
         })
     }
 
@@ -50,7 +69,8 @@ class AreaListScreen extends Component{
         this.removeWillBlurListener = this.props.navigation.addListener(
             'blur', () => {
                 this.setState({
-                    listAre: []
+                    listAre: [],
+                    isLoading: true
                 })
             }
         );
@@ -67,6 +87,11 @@ class AreaListScreen extends Component{
                 listAre: data
             })
         })
+        setTimeout(() => {
+            this.setState({
+                isLoading: false
+            })
+        }, 2000)
     }
 
     updateArea(area) {
@@ -156,7 +181,12 @@ class AreaListScreen extends Component{
                         style={[
                             {marginRight: 10}
                         ]}
-                        onPress={() => this.deleteArea(item.id)}
+                        onPress={() => {
+                            this.setState({
+                                idDelete: item.id,
+                                isConfirm: true
+                            })
+                        }}
                     >
                         <Icon
                             name= {"trash-alt"}
@@ -186,7 +216,8 @@ class AreaListScreen extends Component{
                     {flex: 1, padding: 2, paddingLeft: 10, paddingRight: 10},
                     height.h_100,
                     position.relative,
-                    background_color.white
+                    background_color.white,
+                    flex.justify_content_center
                 ]}
             >
                 <View
@@ -207,7 +238,28 @@ class AreaListScreen extends Component{
                         onPress = { () => this.viewAddArea() }
                     />
                 </View>
-                <FlatList showsVerticalScrollIndicator={false} data={this.state.listAre} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()}/>
+                <Toast ref={(ref) => {Toast.setRef(ref)}} />
+                {
+                    this.state.isLoading ?
+                        <ActivityIndicator size="large" color={color_primary} />
+                        :
+                        <FlatList showsVerticalScrollIndicator={false} data={this.state.listAre} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()}/>
+                }
+                {
+                    this.state.isConfirm ?
+                        <DialogConfirm
+                            content={"Bạn có chắc chắn muốn xóa?"}
+                            cancel={() => {
+                                this.setState({
+                                    isConfirm: false
+                                })
+                            }}
+                            confirm={() => {
+                                this.deleteArea();
+                            }}
+                        />
+                        : null
+                }
             </SafeAreaView>
         );
     }

@@ -18,7 +18,7 @@ import {
     color_dark,
     color_white,
     color_danger,
-    color_primary, color_success
+    color_primary
 } from "../../../utils/theme/Color";
 import {connect} from "react-redux";
 import {doAddNotification, doGetNotification, doUpdateNotification} from "../../../redux/actions/notification";
@@ -75,8 +75,22 @@ class NotificationScreen extends Component {
         })
     }
 
+    checkedBook = (status) => {
+        this.props.checkedBookTicket({status: status}, {id: this.state.ticket.bookticket?.id}).then(data => {
+            this.props.doAddNotification({
+                status: 0,
+                statusView: 0,
+                RoomId: this.state.ticket.room?.id,
+                UserId: this.state.ticket.user?.id,
+                notificationTypeId: 1,
+                bookticketId: this.state.ticket.bookticket?.id
+            })
+            this.updateNotification();
+        })
+    }
+
     _renderItem = ({ item, index }) => {
-        if(item?.notificationtypeId === 1){
+        if(item?.notificationtypeId === 2){
             return (
                 <TouchableOpacity
                     style={[
@@ -96,8 +110,6 @@ class NotificationScreen extends Component {
                         this.setState({
                             isCheckedBooked: true,
                             ticket: item
-                        }, () => {
-                            this.updateNotification();
                         })
                     }}
                 >
@@ -114,7 +126,7 @@ class NotificationScreen extends Component {
                                     <Image
                                         source={
                                             {
-                                                uri: `${url}/${item.room.typeofroom.imageofrooms[0]?.image}`
+                                                uri: `${url}/${item.user?.image}`
                                             }
                                         }
                                         style={{
@@ -155,47 +167,32 @@ class NotificationScreen extends Component {
                                             marginLeft: 10
                                         },
                                         text_size.xs,
-                                        font.serif
+                                        font.serif,
+                                        font_weight.bold,
+                                        text_color.primary
                                     ]}>
-                                        Yêu cầu đặt phòng
+                                        {`${item.user?.name} `}
+                                        <Text style={[
+                                            text_size.xs,
+                                            font.serif,
+                                            {
+                                                color: color_dark,
+                                                paddingLeft: 2
+                                            }
+                                        ]}>
+                                            đã đặt phòng
+                                        </Text>
                                         <Text style={[
                                             {
                                                 marginLeft: 10
                                             },
                                             text_size.xs,
                                             font.serif,
-                                            text_color.primary,
-                                            font_weight.bold
+                                            font_weight.bold,
+                                            text_color.primary
                                         ]}>
-                                            {` ${item.room?.roomName} `}
+                                            {` ${item.room?.roomName}`}
                                         </Text>
-                                        {`của bạn `}
-                                        {
-                                            item.bookticket?.status === 1 ?
-                                                <Text style={[
-                                                    text_size.xs,
-                                                    font.serif,
-                                                    {
-                                                        color: color_success,
-                                                        paddingLeft: 2
-                                                    },
-                                                    font_weight.bold
-                                                ]}>
-                                                    đã được duyệt
-                                                </Text>
-                                                :
-                                                <Text style={[
-                                                    text_size.xs,
-                                                    font.serif,
-                                                    {
-                                                        color: color_danger,
-                                                        paddingLeft: 2
-                                                    },
-                                                    font_weight.bold
-                                                ]}>
-                                                    đã không được duyệt
-                                                </Text>
-                                        }
                                     </Text>
                                 </View>
                                 <Text style={[
@@ -357,59 +354,127 @@ class NotificationScreen extends Component {
                                             </Text>
                                         </View>
                                     </View>
-                                    <View style={[
-                                        flex.flex_row,
-                                        flex.justify_content_center,
-                                        {
-                                            padding: 10
-                                        }
-                                    ]}>
-                                        <View
-                                            style={[
+                                    {
+                                        this.state.ticket?.status ?
+                                            <View style={[
+                                                flex.flex_row,
+                                                flex.justify_content_center,
                                                 {
-                                                    width: '30%',
-                                                    paddingHorizontal: 5
+                                                    padding: 10
                                                 }
-                                            ]}
-                                        >
-                                            <AppButtonActionInf
-                                                size={10}
-                                                textSize={16}
-                                                bg={color_secondary}
-                                                onPress={() => {
-                                                    this.setState({
-                                                        isCheckedBooked: false
-                                                    })
-                                                }}
-                                                title="Hủy"
-                                            />
-                                        </View>
-                                        <View
-                                            style={[
+                                            ]}>
+                                                <View
+                                                    style={[
+                                                        {
+                                                            width: '30%',
+                                                            paddingHorizontal: 5
+                                                        }
+                                                    ]}
+                                                >
+                                                    <AppButtonActionInf
+                                                        size={10}
+                                                        textSize={16}
+                                                        bg={color_secondary}
+                                                        onPress={() => {
+                                                            this.setState({
+                                                                isCheckedBooked: false
+                                                            })
+                                                        }}
+                                                        title="Hủy"
+                                                    />
+                                                </View>
+                                                <View
+                                                    style={[
+                                                        {
+                                                            width: this.state.ticket.bookticket?.status === 2 ? '50%' :'40%',
+                                                            paddingHorizontal: 5
+                                                        }
+                                                    ]}
+                                                >
+                                                    {
+                                                        this.state.ticket.bookticket?.status === 2 ?
+                                                            <AppButtonActionInf
+                                                                size={10}
+                                                                textSize={16}
+                                                                bg={color_danger}
+                                                                title="Đã không duyệt"
+                                                            />
+                                                            :
+                                                            <AppButtonActionInf
+                                                                size={10}
+                                                                textSize={16}
+                                                                bg={color_primary}
+                                                                title="Đã duyệt"
+                                                            />
+                                                    }
+                                                </View>
+                                            </View>
+                                            :
+                                            <View style={[
+                                                flex.flex_row,
+                                                flex.justify_content_between,
                                                 {
-                                                    width: this.state.ticket.bookticket?.status === 2 ? '70%' :'50%',
-                                                    paddingHorizontal: 5
+                                                    padding: 10
                                                 }
-                                            ]}
-                                        >
-                                            {
-                                                this.state.ticket.bookticket?.status === 2 ?
+                                            ]}>
+                                                <View
+                                                    style={[
+                                                        {
+                                                            width: '30%',
+                                                            paddingHorizontal: 5
+                                                        }
+                                                    ]}
+                                                >
+                                                    <AppButtonActionInf
+                                                        size={10}
+                                                        textSize={16}
+                                                        bg={color_secondary}
+                                                        onPress={() => {
+                                                            this.setState({
+                                                                isCheckedBooked: false
+                                                            })
+                                                        }}
+                                                        title="Hủy"
+                                                    />
+                                                </View>
+                                                <View
+                                                    style={[
+                                                        {
+                                                            width: '40%',
+                                                            paddingHorizontal: 5
+                                                        }
+                                                    ]}
+                                                >
                                                     <AppButtonActionInf
                                                         size={10}
                                                         textSize={16}
                                                         bg={color_danger}
-                                                        title="Đã không được duyệt"
+                                                        title="Không duyệt"
+                                                        onPress={() => {
+                                                            this.checkedBook(2)
+                                                        }}
                                                     />
-                                                    :
+                                                </View>
+                                                <View
+                                                    style={[
+                                                        {
+                                                            width: '30%',
+                                                            paddingHorizontal: 5
+                                                        }
+                                                    ]}
+                                                >
                                                     <AppButtonActionInf
                                                         size={10}
                                                         textSize={16}
                                                         bg={color_primary}
-                                                        title="Đã được duyệt"
+                                                        title="Duyệt"
+                                                        onPress={() => {
+                                                            this.checkedBook(1)
+                                                        }}
                                                     />
-                                            }
-                                        </View>
-                                    </View>
+                                                </View>
+                                            </View>
+                                        }
                                 </View>
                             </View>
                         </Modal>

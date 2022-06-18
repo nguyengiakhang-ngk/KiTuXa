@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {
+    ActivityIndicator, BackHandler,
     Keyboard, ScrollView, TouchableWithoutFeedback, View
 } from 'react-native';
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
@@ -17,6 +18,8 @@ import {doGetListArea, doUpdateArea} from "../../../redux/actions/area";
 import {connect} from "react-redux";
 import AppButtonActionInf from "../../../components/AppButtonActionInf";
 import {color_danger, color_primary} from "../../../utils/theme/Color";
+import Toast from "react-native-toast-message";
+import DialogConfirm from "../../../components/DialogConfirm";
 
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -30,7 +33,9 @@ class UpdateAreaScreen extends Component {
             isLoading: true,
             data: [],
             area: this.props.route.params.area,
-            ss: ""
+            ss: "",
+            ref: React.createRef(),
+            isConfirm: false
         }
     }
 
@@ -39,14 +44,40 @@ class UpdateAreaScreen extends Component {
     }
 
     componentDidMount() {
-
+        BackHandler.addEventListener("hardwareBackPress", this.backAction);
+        setTimeout(() => {
+            this.setState({
+                isLoading: false
+            })
+        }, 1000)
     }
 
     componentWillUnmount() {
+        BackHandler.removeEventListener("hardwareBackPress", this.backAction);
+    }
 
+    backAction = () => {
+        if( this.state.ref.current.values.areaName !== this.state.area.areaName ||
+            this.state.ref.current.values.address !== this.state.area.address ||
+            this.state.ref.current.values.totalRoom !== this.state.area.totalRoom ||
+            this.state.ref.current.values.time !== this.state.area.time ||
+            this.state.ref.current.values.content !== this.state.area.content ||
+            this.state.ref.current.values.description !== this.state.area.description ){
+            this.setState({
+                isConfirm: true
+            })
+
+            return true;
+        }
+
+        this.props.navigation.goBack();
+        return true;
     }
 
     updateArea = (values) => {
+        this.setState({
+            isLoading: true
+        })
         let area = {
             areaName: values.areaName,
             address: values.address,
@@ -57,210 +88,250 @@ class UpdateAreaScreen extends Component {
         }
         this.props.doUpdateArea(area, {id: this.state.area.id}).then(data => {
             if(data) {
-                // this.props.doGetListArea({userId: this.props.user.user.id}).then(data => {
-                //     if(data.length){
-                        this.props.navigation.goBack();
-                //     }
-                // });
+                Toast.show({
+                    type: 'success',
+                    text1: 'Khu',
+                    text2: 'Cập nhật thành công.',
+                    visibilityTime: 2000,
+                    autoHide: true
+                });
+                setTimeout(() => {
+                    this.props.navigation.goBack();
+                }, 2000)
             }
+        }).catch(error => {
+            Toast.show({
+                type: 'error',
+                text1: 'Khu',
+                text2: 'Đã xảy ra sự cố, vui lòng thử lại.',
+                visibilityTime: 2000,
+                autoHide: true
+            });
+            setTimeout(() => {
+                this.setState({
+                    isLoading: false
+                })
+            }, 1000)
         })
     }
     render() {
         return (
             <ScrollView
-                style={{ flex: 1}} contentContainerStyle={{ flexGrow: 1 }}
+                style={{ flex: 1}} contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
             >
-                <Formik
-                    enableReinitialize
-                    initialValues={
-                        {
-                            areaName: this.state.area.areaName,
-                            address: this.state.area.address,
-                            totalRoom: String(this.state.area.totalRoom),
-                            time: this.state.area.time,
-                            content: this.state.area.content,
-                            description: this.state.area.description
-                        }
-                    }
-                    validationSchema={AreaSchema}
-                    onSubmit={ values => {
-                            this.updateArea(values);
-                        }
-                    }
-                >
-                    {({
-                          handleChange,
-                          handleBlur,
-                          handleSubmit, values,
-                          errors,
-                          touched ,
-                          isValid
-                    }) => (
-                        <HideKeyboard>
-                            <SafeAreaView
-                                style={[
-                                    { flex: 1, paddingBottom: 15 },
-                                    background_color.white,
-                                    height.h_100
-                                ]}
-                                onPress={Keyboard.dismiss}
-                            >
-                                <View
-                                    style={[
-                                        width.w_100,
-                                        {paddingLeft: 15, paddingRight: 15, marginTop: 10}
-                                    ]}
-                                >
-                                    <AppInputInf
-                                        lable={"Tên khu:"}
-                                        secureTextEntry={false}
-                                        field={"areaName"}
-                                        handleChange={handleChange}
-                                        handleBlur={handleBlur}
-                                        values={values}
-                                    />
-                                    {errors.areaName && touched.areaName ? (
-                                        <AppError errors={ errors.areaName }/>
-                                    ) : null}
-                                </View>
-                                <View
-                                    style={[
-                                        width.w_100,
-                                        {paddingLeft: 15, paddingRight: 15, marginTop: 10}
-                                    ]}
-                                >
-                                    <AppInputInf
-                                        lable={"Địa chỉ:"}
-                                        secureTextEntry={false}
-                                        field={"address"}
-                                        handleChange={handleChange}
-                                        handleBlur={handleBlur}
-                                        values={values}
-                                    />
-                                    {errors.address && touched.address ? (
-                                        <AppError errors={ errors.address }/>
-                                    ) : null}
-                                </View>
-                                <View
-                                    style={[
-                                        {paddingLeft: 15, paddingRight: 10, marginTop: 10, flex: 1}
-                                    ]}
-                                >
-                                    <AppInputInf
-                                        lable={"Số phòng:"}
-                                        secureTextEntry={false}
-                                        keyboardType={'numeric'}
-                                        field={"totalRoom"}
-                                        handleChange={handleChange}
-                                        handleBlur={handleBlur}
-                                        values={values}
-                                    />
-                                    {errors.totalRoom && touched.totalRoom ? (
-                                        <AppError errors={ errors.totalRoom }/>
-                                    ) : null}
-                                </View>
-                                <View
-                                    style={[
-                                        width.w_100,
-                                        {paddingLeft: 15, paddingRight: 15, marginTop: 10}
-                                    ]}
-                                >
-                                    <AppInputInf
-                                        lable={"Giờ đóng-mở cửa:"}
-                                        secureTextEntry={false}
-                                        field={"time"}
-                                        handleChange={handleChange}
-                                        handleBlur={handleBlur}
-                                        values={values}
-                                    />
-                                    {errors.time && touched.time ? (
-                                        <AppError errors={ errors.time }/>
-                                    ) : null}
-                                </View>
-                                <View
-                                    style={[
-                                        width.w_100,
-                                        {paddingLeft: 15, paddingRight: 15, marginTop: 10}
-                                    ]}
-                                >
-                                    <AppInputInf
-                                        lable={"Nội dung:"}
-                                        secureTextEntry={false}
-                                        field={"content"}
-                                        handleChange={handleChange}
-                                        handleBlur={handleBlur}
-                                        values={values}
-                                        multiline={true}
-                                        number={4}
-                                    />
-                                    {errors.content && touched.content ? (
-                                        <AppError errors={ errors.content }/>
-                                    ) : null}
-                                </View>
-                                <View
-                                    style={[
-                                        width.w_100,
-                                        {paddingLeft: 15, paddingRight: 15, marginTop: 10}
-                                    ]}
-                                >
-                                    <AppInputInf
-                                        lable={"Mô tả:"}
-                                        secureTextEntry={false}
-                                        field={"description"}
-                                        handleChange={handleChange}
-                                        handleBlur={handleBlur}
-                                        values={values}
-                                        multiline={true}
-                                        number={4}
-                                    />
-                                    {errors.description && touched.description ? (
-                                        <AppError errors={ errors.description }/>
-                                    ) : null}
-                                </View>
-                                <View
-                                    style={[
-                                        width.w_100,
-                                        flex.flex_row,
-                                        {paddingLeft: 15, paddingRight: 15, marginTop: 20}
-                                    ]}
-                                >
-                                    <View
+                {
+                    this.state.isLoading ?
+                        <ActivityIndicator size="large" color={color_primary}/>
+                        :
+                        <Formik
+                            innerRef={this.state.ref}
+                            enableReinitialize
+                            initialValues={
+                                {
+                                    areaName: this.state.area.areaName,
+                                    address: this.state.area.address,
+                                    totalRoom: String(this.state.area.totalRoom),
+                                    time: this.state.area.time,
+                                    content: this.state.area.content,
+                                    description: this.state.area.description
+                                }
+                            }
+                            validationSchema={AreaSchema}
+                            onSubmit={ values => {
+                                this.updateArea(values);
+                            }
+                            }
+                        >
+                            {({
+                                  handleChange,
+                                  handleBlur,
+                                  handleSubmit, values,
+                                  errors,
+                                  touched ,
+                                  isValid
+                            }) => (
+                                <HideKeyboard>
+                                    <SafeAreaView
                                         style={[
-                                            {
-                                                flex: 1,
-                                                marginRight: 15
-                                            }
+                                            { flex: 1, paddingBottom: 15 },
+                                            background_color.white,
+                                            height.h_100
                                         ]}
+                                        onPress={Keyboard.dismiss}
                                     >
-                                        <AppButtonActionInf
-                                            size={13}
-                                            textSize={18}
-                                            bg={color_danger}
-                                            onPress = { () => { this.props.navigation.goBack() } }
-                                            title="Hủy"
-                                        />
-                                    </View>
-                                    <View
-                                        style={[
-                                            {
-                                                flex: 1
-                                            }
-                                        ]}
-                                    >
-                                        <AppButtonActionInf
-                                            size={13}
-                                            textSize={18}
-                                            bg={color_primary}
-                                            disabled = { !this.isFormValid(isValid) }
-                                            onPress = { handleSubmit }
-                                            title="Lưu"
-                                        />
-                                    </View>
-                                </View>
-                            </SafeAreaView>
-                        </HideKeyboard>
-                    )}
-                </Formik>
+                                        <View
+                                            style={[
+                                                width.w_100,
+                                                {paddingLeft: 15, paddingRight: 15, marginTop: 10}
+                                            ]}
+                                        >
+                                            <AppInputInf
+                                                lable={"Tên khu:"}
+                                                secureTextEntry={false}
+                                                field={"areaName"}
+                                                handleChange={handleChange}
+                                                handleBlur={handleBlur}
+                                                values={values}
+                                            />
+                                            {errors.areaName && touched.areaName ? (
+                                                <AppError errors={ errors.areaName }/>
+                                            ) : null}
+                                        </View>
+                                        <View
+                                            style={[
+                                                width.w_100,
+                                                {paddingLeft: 15, paddingRight: 15, marginTop: 10}
+                                            ]}
+                                        >
+                                            <AppInputInf
+                                                lable={"Địa chỉ:"}
+                                                secureTextEntry={false}
+                                                field={"address"}
+                                                handleChange={handleChange}
+                                                handleBlur={handleBlur}
+                                                values={values}
+                                            />
+                                            {errors.address && touched.address ? (
+                                                <AppError errors={ errors.address }/>
+                                            ) : null}
+                                        </View>
+                                        <View
+                                            style={[
+                                                {paddingLeft: 15, paddingRight: 10, marginTop: 10, flex: 1}
+                                            ]}
+                                        >
+                                            <AppInputInf
+                                                lable={"Số phòng:"}
+                                                secureTextEntry={false}
+                                                keyboardType={'numeric'}
+                                                field={"totalRoom"}
+                                                handleChange={handleChange}
+                                                handleBlur={handleBlur}
+                                                values={values}
+                                            />
+                                            {errors.totalRoom && touched.totalRoom ? (
+                                                <AppError errors={ errors.totalRoom }/>
+                                            ) : null}
+                                        </View>
+                                        <View
+                                            style={[
+                                                width.w_100,
+                                                {paddingLeft: 15, paddingRight: 15, marginTop: 10}
+                                            ]}
+                                        >
+                                            <AppInputInf
+                                                lable={"Giờ đóng-mở cửa:"}
+                                                secureTextEntry={false}
+                                                field={"time"}
+                                                handleChange={handleChange}
+                                                handleBlur={handleBlur}
+                                                values={values}
+                                            />
+                                            {errors.time && touched.time ? (
+                                                <AppError errors={ errors.time }/>
+                                            ) : null}
+                                        </View>
+                                        <View
+                                            style={[
+                                                width.w_100,
+                                                {paddingLeft: 15, paddingRight: 15, marginTop: 10}
+                                            ]}
+                                        >
+                                            <AppInputInf
+                                                lable={"Nội dung:"}
+                                                secureTextEntry={false}
+                                                field={"content"}
+                                                handleChange={handleChange}
+                                                handleBlur={handleBlur}
+                                                values={values}
+                                                multiline={true}
+                                                number={4}
+                                            />
+                                            {errors.content && touched.content ? (
+                                                <AppError errors={ errors.content }/>
+                                            ) : null}
+                                        </View>
+                                        <View
+                                            style={[
+                                                width.w_100,
+                                                {paddingLeft: 15, paddingRight: 15, marginTop: 10}
+                                            ]}
+                                        >
+                                            <AppInputInf
+                                                lable={"Mô tả:"}
+                                                secureTextEntry={false}
+                                                field={"description"}
+                                                handleChange={handleChange}
+                                                handleBlur={handleBlur}
+                                                values={values}
+                                                multiline={true}
+                                                number={4}
+                                            />
+                                            {errors.description && touched.description ? (
+                                                <AppError errors={ errors.description }/>
+                                            ) : null}
+                                        </View>
+                                        <View
+                                            style={[
+                                                width.w_100,
+                                                flex.flex_row,
+                                                {paddingLeft: 15, paddingRight: 15, marginTop: 20}
+                                            ]}
+                                        >
+                                            <View
+                                                style={[
+                                                    {
+                                                        flex: 1,
+                                                        marginRight: 15
+                                                    }
+                                                ]}
+                                            >
+                                                <AppButtonActionInf
+                                                    size={13}
+                                                    textSize={18}
+                                                    bg={color_danger}
+                                                    onPress = { () => { this.props.navigation.goBack() } }
+                                                    title="Hủy"
+                                                />
+                                            </View>
+                                            <View
+                                                style={[
+                                                    {
+                                                        flex: 1
+                                                    }
+                                                ]}
+                                            >
+                                                <AppButtonActionInf
+                                                    size={13}
+                                                    textSize={18}
+                                                    bg={color_primary}
+                                                    disabled = { !this.isFormValid(isValid) }
+                                                    onPress = { handleSubmit }
+                                                    title="Lưu"
+                                                />
+                                            </View>
+                                        </View>
+                                    </SafeAreaView>
+                                </HideKeyboard>
+                            )}
+                        </Formik>
+                }
+                <Toast ref={(ref) => {Toast.setRef(ref)}} />
+                {
+                    this.state.isConfirm ?
+                        <DialogConfirm
+                            content={"Bạn không lưu các thay đổi?"}
+                            cancel={() => {
+                                this.setState({
+                                    isConfirm: false
+                                })
+                            }}
+                            confirm={() => {
+                                this.props.navigation.goBack();
+                            }}
+                        />
+                        : null
+                }
             </ScrollView>
         );
     }

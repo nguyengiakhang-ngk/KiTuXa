@@ -27,6 +27,11 @@ import {doAddPriceTypeOfRoom} from "../../../redux/actions/priceTypeOfRoom";
 import {doAddImageOfTypeRoom, doDeleteImageOfTypeRoom} from "../../../redux/actions/imageTypeOfRoom";
 import {connect} from "react-redux";
 import AppDialogSelect from "../../../components/AppDialogSelect";
+import {doGetListFreeService} from "../../../redux/actions/freeService";
+import {doGetListPaidService} from "../../../redux/actions/paidService";
+import ModalSelectMutiselect from "../../../components/ModalSelectMutiselect";
+import {doAddFreeTicket, doDeleteAddFreeTicket} from "../../../redux/actions/freeTocket";
+import {doAddPaidTicket, doDeletePaidTicket} from "../../../redux/actions/paidTicket";
 
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -42,7 +47,9 @@ class UpdateRoomTypeScreen extends Component {
             areaData: [],
             data: [],
             imageList: [],
-            initValue: ""
+            initValue: "",
+            dataFreeService: [],
+            dataPaidService: [],
         }
     }
 
@@ -52,6 +59,44 @@ class UpdateRoomTypeScreen extends Component {
 
     componentDidMount() {
         this.getAreaList();
+        this.getFreeServiceData();
+    }
+
+    getFreeServiceData(){
+        this.props.doGetListFreeService({userId: this.props.user.user.id}).then(data =>{
+            this.setState({
+                dataFreeService: data.map(item => ({id: item.id, name: item.name, checked: false}))
+            });
+            if(this.state.typeOfRoom.freetickets?.length){
+                this.state.dataFreeService.map(item => {
+                    this.state.typeOfRoom.freetickets?.map(it => {
+                        if(item.id === it.freeserviceId){
+                            item.checked = true;
+                        }
+                    })
+                })
+                this.setState({
+                    dataFreeService: this.state.dataFreeService
+                });
+            }
+        });
+        this.props.doGetListPaidService({userId: this.props.user.user.id}).then(data =>{
+            this.setState({
+                dataPaidService: data.map(item => ({id: item.id, name: item.name, checked: false}))
+            })
+            if(this.state.typeOfRoom.paidtickets?.length){
+                this.state.dataPaidService.map(item => {
+                    this.state.typeOfRoom.paidtickets?.map(it => {
+                        if(item.id === it.paidServiceId ){
+                            item.checked = true;
+                        }
+                    })
+                })
+                this.setState({
+                    dataPaidService: this.state.dataPaidService
+                });
+            }
+        });
     }
 
     componentWillUnmount() {
@@ -257,8 +302,27 @@ class UpdateRoomTypeScreen extends Component {
             areaId: values.areaId
         }
         this.props.doUpdateTypeOfRoom(typeOfRoom, {id: this.state.typeOfRoom.id}).then(data => {
-            // alert(data);
             if(data) {
+                this.props.doDeleteAddFreeTicket({typeOfRoomId: this.state.typeOfRoom.id}).then(data => {
+
+                })
+                this.props.doDeletePaidTicket({typeOfRoomId: this.state.typeOfRoom.id}).then(data => {
+
+                })
+                this.state.dataFreeService.map(item => {
+                    if(item.checked) {
+                        this.props.doAddFreeTicket({typeOfRoomId: this.state.typeOfRoom.id, freeServiceId: item.id}).then(data => {
+                            // alert(data);
+                        })
+                    }
+                })
+                this.state.dataPaidService.map(item => {
+                    if(item.checked) {
+                        this.props.doAddPaidTicket({typeOfRoomId: this.state.typeOfRoom.id, paidServiceId: item.id}).then(data => {
+                            // alert(data);
+                        })
+                    }
+                })
                 let price = values.price.split(".").join("");
                 if(price !== this.state.typeOfRoom.priceofrooms[0].price) {
                     this.props.doAddPriceTypeOfRoom({price: price, typeOfRoomId: this.state.typeOfRoom.id}).then(data => {
@@ -483,6 +547,54 @@ class UpdateRoomTypeScreen extends Component {
                                     <View
                                         style={[
                                             width.w_100,
+                                            {paddingLeft: 15, paddingRight: 15, marginTop: 15}
+                                        ]}
+                                    >
+                                        <Text
+                                            style={[
+                                                text_size.sm,
+                                                font.serif
+                                            ]}
+                                        >
+                                            Dịch vụ miễn phí:
+                                        </Text>
+                                        <ModalSelectMutiselect
+                                            data={this.state.dataFreeService}
+                                            onChangeSelect={(value) => {
+                                                this.state.dataFreeService[value].checked = !this.state.dataFreeService[value].checked;
+                                                this.setState({
+                                                    dataFreeService: this.state.dataFreeService
+                                                })
+                                            }}
+                                        />
+                                    </View>
+                                    <View
+                                        style={[
+                                            width.w_100,
+                                            {paddingLeft: 15, paddingRight: 15, marginTop: 10}
+                                        ]}
+                                    >
+                                        <Text
+                                            style={[
+                                                text_size.sm,
+                                                font.serif
+                                            ]}
+                                        >
+                                            Dịch vụ có phí:
+                                        </Text>
+                                        <ModalSelectMutiselect
+                                            data={this.state.dataPaidService}
+                                            onChangeSelect={(value) => {
+                                                this.state.dataPaidService[value].checked = !this.state.dataPaidService[value].checked;
+                                                this.setState({
+                                                    dataPaidService: this.state.dataPaidService
+                                                })
+                                            }}
+                                        />
+                                    </View>
+                                    <View
+                                        style={[
+                                            width.w_100,
                                             {paddingLeft: 15, paddingRight: 15, marginTop: 10}
                                         ]}
                                     >
@@ -587,7 +699,13 @@ const mapDispatchToProps = {
     doUpdateTypeOfRoom,
     doDeleteImageOfTypeRoom,
     doAddPriceTypeOfRoom,
-    doAddImageOfTypeRoom
+    doAddImageOfTypeRoom,
+    doGetListFreeService,
+    doGetListPaidService,
+    doAddFreeTicket,
+    doAddPaidTicket,
+    doDeleteAddFreeTicket,
+    doDeletePaidTicket
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(UpdateRoomTypeScreen)

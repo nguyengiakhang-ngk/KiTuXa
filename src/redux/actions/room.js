@@ -1,6 +1,6 @@
-import { 
-    GET_ROOM_BY_AREA, 
-    GET_ROOM_BY_AREA_SUCCESS, 
+import {
+    GET_ROOM_BY_AREA,
+    GET_ROOM_BY_AREA_SUCCESS,
     GET_ROOM_BY_AREA_ERROR,
     GET_ROOM_BY_ID,
     GET_ROOM_BY_ID_SUCCESS,
@@ -33,14 +33,14 @@ import {
     GET_LIST_ROOM_BY_TYPE_SUCCESS,
     GET_LIST_ROOM_BY_TYPE_FAIL
 } from "./types";
-import { 
-    getRoomByArea, 
-    getRoomById, 
-    getRoomByBookTicket, 
-    addNumberElectric, 
+import {
+    getRoomByArea,
+    getRoomById,
+    getRoomByBookTicket,
+    addNumberElectric,
     addNumberWater,
-    addRoom, 
-    deleteRoom, 
+    addRoom,
+    deleteRoom,
     updateRoom,
     getListRoom,
     getBookTicketByRoom,

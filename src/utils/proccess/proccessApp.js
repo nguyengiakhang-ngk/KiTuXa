@@ -1,4 +1,8 @@
 export const cardExpiry = (val) => {
+    val = String(val);
+    if(val.indexOf(".")){
+        val = val.split(".").join("");
+    }
     val = Number(val);
     val = String(val);
     if (val.length > 3) {
