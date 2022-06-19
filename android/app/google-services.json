@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "123613151945",
+    "project_id": "confirm-otp",
+    "storage_bucket": "confirm-otp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:123613151945:android:85bb7652946dadf2f9c318",
+        "android_client_info": {
+          "package_name": "com.kitucxa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "123613151945-dga0j8bandnoes608v8sn90mahglstdo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kitucxa",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "123613151945-1irqclk4c8f1p792d4is8t72m09u0o6a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCg8w70muS-zVrSIWqPEv37Jw2RdShpwA8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "123613151945-1irqclk4c8f1p792d4is8t72m09u0o6a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

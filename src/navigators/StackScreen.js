@@ -80,6 +80,7 @@ import DetailRoomScreen from "../screens/User/DetailRoom/DetailRoomScreen";
 import ListBookTicketScreen from '../screens/Admin/BookTicket/ListBookTicketScreen';
 import AddMaterialScreen from "../screens/Admin/AddMaterial/AddMaterial";
 import NotificationScreen from "../screens/Admin/Notification/NotificationScreen";
+import ForgotPasswordScreen from "../screens/Authentication/ForgotPasswordScreen";
 
 const Stack = createNativeStackNavigator();
 const StackScreen: () => Node = () => {
@@ -367,6 +368,11 @@ const StackScreen: () => Node = () => {
                 <Stack.Screen
                     name="Notification"
                     component={NotificationScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="ForgotPassword"
+                    component={ForgotPasswordScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

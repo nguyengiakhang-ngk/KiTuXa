@@ -1,24 +1,27 @@
-import { 
-    LOGIN, 
-    LOGIN_SUCCESS, 
-    LOGIN_ERROR, 
-    SIGN_UP, 
-    SIGN_UP_SUCCESS, 
+import {
+    LOGIN,
+    LOGIN_SUCCESS,
+    LOGIN_ERROR,
+    SIGN_UP,
+    SIGN_UP_SUCCESS,
     SIGN_UP_ERROR,
     GET_USER_BY_BOOKTICKET,
     GET_USER_BY_BOOKTICKET_SUCCESS,
     GET_USER_BY_BOOKTICKET_ERROR,
-    GET_USER_BY_ID,
     GET_USER_BY_ID_SUCCESS,
     GET_USER_BY_ID_ERROR,
-    UPDATE_USER,
     UPDATE_USER_SUCCESS,
     UPDATE_USER_FAIL,
-    UPDATE_TYPE_OF_ROOM_SUCCESS,
-    UPDATE_TYPE_OF_ROOM_FAIL,
-    DELETE_TYPE_OF_ROOM_SUCCESS, DELETE_TYPE_OF_ROOM_FAIL
  } from "./types";
-import { login, signUp, getUserByBookTicket, getUserById, getUser, updateUser } from "../../api/userAPI";
+import {
+    login,
+    signUp,
+    getUserByBookTicket,
+    getUserById,
+    getUser,
+    updateUser,
+    checkUserDuplicate, changePass
+} from "../../api/userAPI";
 import {deleteTypeOfRoom, updateTypeOfRoom} from "../../api/typeOfRoomAPI";
 
 export const initUser = (user) => dispatch => {
@@ -208,3 +211,31 @@ const getUserError = (dispatch, error) => {
         error: error
     });
 }
+
+// Get User
+export const doCheckUserDuplicate = (numberPhone) => dispatch => {
+    return new Promise((resolve, reject) => {
+        checkUserDuplicate(numberPhone)
+            .then(data => {
+                getUserSuccess(dispatch, data);
+                resolve(data);
+            })
+            .catch(error => {
+                getUserError(dispatch, error);
+                reject(error);
+            });
+    })
+};
+
+// Change Pass
+export const doChangePass = (pass, numberPhone) => dispatch => {
+    return new Promise((resolve, reject) => {
+        changePass(pass, numberPhone)
+            .then(data => {
+                resolve(data);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    })
+};

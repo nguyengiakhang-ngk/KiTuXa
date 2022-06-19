@@ -128,7 +128,7 @@ class LoginScreen extends Component {
                                         text_size.title
                                     ]}
                                 >
-                                    Ký túc xá
+                                    Quản lý vật chất
                                 </Text>
                             </View>
                             <View
@@ -147,9 +147,9 @@ class LoginScreen extends Component {
                                     >
                                         <AppInputAuth
                                             secureTextEntry={false}
-                                            placeholder={"Tên tài khoản"}
+                                            placeholder={"Số điện thoại"}
                                             field={"numberPhone"}
-                                            icon={"user-alt"}
+                                            icon={"phone-alt"}
                                             handleChange={handleChange}
                                             handleBlur={handleBlur}
                                             values={values}
@@ -180,30 +180,27 @@ class LoginScreen extends Component {
                                     <View
                                         style={[
                                             width.w_100,
-                                            { paddingLeft: 15, paddingRight: 15, marginTop: 15 },
+                                            { paddingLeft: 15, paddingRight: 15, marginTop: 15, justifyContent: "flex-end" },
                                             flex.flex_row,
-                                            flex.align_items_center,
-                                            flex.justify_content_between
+                                            flex.align_items_center
                                         ]}
                                     >
-                                        <AppCheckBox
-                                            title={"Nhớ mật khẩu"}
-                                            values={this.state.checkedRemember}
+                                        <TouchableOpacity
                                             onPress={() => {
-                                                this.setState({ checkedRemember: !this.state.checkedRemember })
-                                                this.props.navigation.navigate("Tab");
+                                                this.props.navigation.navigate("ForgotPassword")
                                             }}
-                                        />
-                                        <Text
-                                            style={[
-                                                font_weight.f_500,
-                                                font.serif,
-                                                text_size.sm,
-                                                text_color.primary
-                                            ]}
                                         >
-                                            Quên mật khẩu?
-                                        </Text>
+                                            <Text
+                                                style={[
+                                                    font_weight.f_500,
+                                                    font.serif,
+                                                    text_size.sm,
+                                                    text_color.primary
+                                                ]}
+                                            >
+                                                Quên mật khẩu?
+                                            </Text>
+                                        </TouchableOpacity>
                                     </View>
                                     <View
                                         style={[
