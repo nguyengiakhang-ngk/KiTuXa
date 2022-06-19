@@ -2,57 +2,49 @@ import React, {Component} from 'react';
 import {
     ActivityIndicator,
     Keyboard, Modal,
-    SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity,
+    ScrollView, Text, TextInput, TouchableOpacity,
     TouchableWithoutFeedback,
     View
 } from 'react-native';
-import { Formik } from 'formik';
-import {SignupSchema} from "../../utils/validation/ValidateSignUp";
 import {
     background_color,
     flex, font, font_weight,
-    height, padding, shadow, text_color, text_size,
+    padding, shadow, text_color, text_size,
     width
 } from "../../utils/styles/MainStyle";
-import AppInputInf from "../../components/AppInputInf";
 import AppError from "../../components/AppError";
-import AppButton from "../../components/AppButton";
-import AppRadioButton from "../../components/AppRadioButton";
 import { connect } from 'react-redux';
-import {doCheckUserDuplicate, doSignUp} from '../../redux/actions/user';
+import {doChangePass, doCheckUserDuplicate} from '../../redux/actions/user';
 import AppButtonActionInf from "../../components/AppButtonActionInf";
 import {color_danger, color_dark, color_primary, color_warning} from "../../utils/theme/Color";
 import OTPInput from "react-native-otp";
 import auth from "@react-native-firebase/auth";
 import Toast from "react-native-toast-message";
+import {Icon} from "@rneui/base";
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
         {children}
     </TouchableWithoutFeedback>
 );
-class SignUpScreen extends Component{
+class ForgotPasswordScreen extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            genders: [
-                {
-                    label: 'Nam',
-                    value: '0'
-                },
-                {
-                    label: 'Nữ',
-                    value: '1'
-                },
-            ],
-            isCheckPhone: true,
+            isCheckPhone: false,
             isOTP: false,
             otp: '',
             otpConfirm: '',
             text: null,
-            refUser: React.createRef(),
             isLoading: false,
             isErrorOTP: false,
-            user: null
+            isChangePass: false,
+            numberPhone: null,
+            passNew: null,
+            rePassNew: null,
+            isErrorPhone: false,
+            isPass: false,
+            isPassText: '',
+            isRePass: false,
         }
     }
 
@@ -60,24 +52,21 @@ class SignUpScreen extends Component{
         return isValid && Object.keys(touched).length !== 0;
     }
 
-    signUp = async (values) => {
-        this.props.doCheckUserDuplicate({numberPhone: values.numberPhone}).then(data => {
-            if(data){
+    signUp = async () => {
+        this.props.doCheckUserDuplicate({numberPhone: this.state.numberPhone}).then(data => {
+            if(!data){
+                // Toast.show({
+                //     type: 'error',
+                //     text1: 'Tài khoản',
+                //     text2: 'Tài khoản không tồn tại.',
+                //     visibilityTime: 4000,
+                //     autoHide: true
+                // });
                 this.setState({
-                    isCheckPhone: false
+                    isErrorPhone: true
                 })
-                Toast.show({
-                    type: 'error',
-                    text1: 'Tài khoản',
-                    text2: 'Số điện thoại đã được sử dụng.',
-                    visibilityTime: 2000,
-                    autoHide: true
-                });
             }else{
-                this.setState({
-                    user: values
-                })
-                let phoneNumber = values.numberPhone.substring(1, values.numberPhone.length);
+                let phoneNumber = this.state.numberPhone.substring(1, this.state.numberPhone.length);
                 this.signInWithPhoneNumber(`+84${phoneNumber}`);
             }
         });
@@ -115,10 +104,14 @@ class SignUpScreen extends Component{
             let confirm = await this.state.otpConfirm.confirm(this.state.otp);
             if(confirm) {
                 this.setState({
-                    isOTP: false
-                }, () => {
-                    this.doSignUp();
+                    isLoading: true
                 })
+                setTimeout(() => {
+                    this.setState({
+                        isOTP: false,
+                        isChangePass: true
+                    })
+                }, 1000)
             } else {
                 this.setState({
                     isErrorOTP: true
@@ -138,16 +131,16 @@ class SignUpScreen extends Component{
         })
     }
 
-    doSignUp = () => {
+    doChangePass = () => {
         this.setState({
             isLoading: true
         })
-        this.props.doSignUp(this.state.user).then(data => {
+        this.props.doChangePass({password: this.state.passNew}, {numberPhone: this.state.numberPhone}).then(data => {
             if(data){
                 Toast.show({
                     type: 'success',
                     text1: 'Tài khoản',
-                    text2: 'Đăng ký thành công.',
+                    text2: 'Đổi mật khẩu thành công.',
                     visibilityTime: 2000,
                     autoHide: true
                 });
@@ -183,230 +176,209 @@ class SignUpScreen extends Component{
                     this.state.isLoading ?
                         <ActivityIndicator size="large" color={color_primary}/>
                         :
-                        <Formik
-                            innerRef={this.state.refUser}
-                            initialValues={{name: '', yearOfBirth: '', gender: 0, address: '', identityNumber: '', numberPhone: '', password: '', rePass: '', permission: 0}}
-                            validationSchema={SignupSchema}
-                            onSubmit={values => {
-                                this.signUp(values);
+                        <View
+                            style={{
+                                flex: 1
                             }}
                         >
-                            {({
-                                  handleChange,
-                                  handleBlur,
-                                  handleSubmit, values,
-                                  errors,
-                                  touched ,
-                                  isValid
-                            }) => (
-                                <HideKeyboard>
-                                    <SafeAreaView
-                                        style={[
-                                            { flex: 1, paddingBottom: 15 },
-                                            background_color.white,
-                                            height.h_100
-                                        ]}
-                                        onPress={Keyboard.dismiss}
-                                    >
+                            <View
+                                style={[
+                                    flex.justify_content_center,
+                                    flex.align_items_center,
+                                    {
+                                        paddingVertical: 30
+                                    }
+                                ]}
+                                onPress={Keyboard.dismiss}
+                            >
+                                <Icon
+                                    raised
+                                    name='hotel'
+                                    type='font-awesome-5'
+                                    color={color_primary}
+                                    size={50}
+                                />
+                                <Text
+                                    style={[
+                                        text_color.primary,
+                                        font.serif,
+                                        font_weight.bold,
+                                        text_size.title
+                                    ]}
+                                >
+                                    Quản lý vật chất
+                                </Text>
+                            </View>
+                            {
+                                !this.state.isChangePass ?
+                                    <HideKeyboard>
                                         <View
-                                            style={[
-                                                width.w_100,
-                                                {paddingLeft: 15, paddingRight: 15, marginTop: 10}
-                                            ]}
+                                            style={{flex: 1, padding: 10}}
                                         >
-                                            <AppInputInf
-                                                lable={"Họ và tên:"}
-                                                secureTextEntry={false}
-                                                field={"name"}
-                                                handleChange={handleChange}
-                                                handleBlur={handleBlur}
-                                                values={values}
-                                                returnKeyType="next"
-                                            />
-                                            {errors.fullName && touched.fullName ? (
-                                                <AppError errors={ errors.fullName }/>
-                                            ) : null}
-                                        </View>
-                                        <View
-                                            style={[
-                                                flex.flex_row,
+                                            <View style={[
                                                 width.w_100,
-                                            ]}
-                                        >
-                                            <View
-                                                style={[
-                                                    {paddingLeft: 15, paddingRight: 10, marginTop: 10, flex: 1}
-                                                ]}
-                                            >
-                                                <AppInputInf
-                                                    lable={"Năm sinh:"}
-                                                    secureTextEntry={false}
+                                                flex.justify_content_center
+                                            ]}>
+                                                <Text
+                                                    style={[
+                                                        text_size.sm,
+                                                        font.serif
+                                                    ]}
+                                                >
+                                                    Số điện thoại
+                                                </Text>
+                                                <TextInput
+                                                    autoCorrect={false}
+                                                    placeholder={'Nhập số điện thoại'}
                                                     keyboardType={'numeric'}
-                                                    field={"yearOfBirth"}
-                                                    handleChange={handleChange}
-                                                    handleBlur={handleBlur}
-                                                    values={values}
-                                                    returnKeyType="next"
-                                                />
-                                                {errors.yearOfBirth && touched.yearOfBirth ? (
-                                                    <AppError errors={ errors.yearOfBirth }/>
-                                                ) : null}
-                                            </View>
-                                            <View
-                                                style={[
-                                                    {paddingLeft: 10, paddingRight: 15, marginTop: 10, flex: 1}
-                                                ]}
-                                            >
-                                                <AppRadioButton
-                                                    label="Giới tính"
-                                                    data={this.state.genders}
-                                                    field={"gender"}
-                                                    values={values}
-                                                    defaultValue={values.gender}
+                                                    style={[
+                                                        text_size.sm,
+                                                        font_weight.f_500,
+                                                        font.serif,
+                                                        padding.p_0,
+                                                        width.w_100,
+                                                        background_color.white,
+                                                        shadow.shadow,
+                                                        { borderRadius: 7, padding: 12, paddingLeft: 10, paddingRight: 10, marginTop: 5, textAlignVertical: 'top', },
+                                                    ]}
+                                                    onChangeText={(text) => {
+                                                        this.setState({
+                                                            numberPhone: text,
+                                                            isErrorPhone: false
+                                                        })
+                                                    }}
+                                                    value={this.state.numberPhone}
                                                 />
                                             </View>
-                                        </View>
-                                        <View
-                                            style={[
-                                                width.w_100,
-                                                {paddingLeft: 15, paddingRight: 15, marginTop: 10}
-                                            ]}
-                                        >
-                                            <AppInputInf
-                                                lable={"Địa chỉ:"}
-                                                secureTextEntry={false}
-                                                field={"address"}
-                                                handleChange={handleChange}
-                                                handleBlur={handleBlur}
-                                                values={values}
-                                                returnKeyType="next"
-                                            />
-                                            {errors.address && touched.address ? (
-                                                <AppError errors={ errors.address }/>
+                                            {this.state.isErrorPhone ? (
+                                                <AppError errors={ 'Tài khoản không tồn tại.' }/>
                                             ) : null}
-                                        </View>
-                                        <View
-                                            style={[
-                                                width.w_100,
-                                                {paddingLeft: 15, paddingRight: 15, marginTop: 10}
-                                            ]}
-                                        >
-                                            <AppInputInf
-                                                lable={"Số CMNN/CCCD:"}
-                                                keyboardType={'numeric'}
-                                                secureTextEntry={false}
-                                                field={"identityNumber"}
-                                                handleChange={handleChange}
-                                                handleBlur={handleBlur}
-                                                values={values}
-                                                returnKeyType="next"
-                                            />
-                                            {errors.identityCardNumber && touched.identityCardNumber ? (
-                                                <AppError errors={ errors.identityCardNumber }/>
-                                            ) : null}
-                                        </View>
-                                        <View
-                                            style={[
-                                                width.w_100,
-                                                {paddingLeft: 15, paddingRight: 15, marginTop: 10}
-                                            ]}
-                                        >
-                                            <AppInputInf
-                                                lable={"Số Điện Thoại:"}
-                                                keyboardType={'numeric'}
-                                                secureTextEntry={false}
-                                                field={"numberPhone"}
-                                                handleChange={handleChange}
-                                                handleBlur={handleBlur}
-                                                values={values}
-                                                returnKeyType="next"
-                                            />
-                                            {errors.phoneNumber && touched.phoneNumber ? (
-                                                <AppError errors={ errors.phoneNumber }/>
-                                            ) : null}
-                                        </View>
-                                        <View
-                                            style={[
-                                                width.w_100,
-                                                {paddingLeft: 15, paddingRight: 15, marginTop: 10}
-                                            ]}
-                                        >
-                                            <AppInputInf
-                                                lable={"Mật khẩu:"}
-                                                secureTextEntry={true}
-                                                field={"password"}
-                                                handleChange={handleChange}
-                                                handleBlur={handleBlur}
-                                                values={values}
-                                                returnKeyType="next"
-                                            />
-                                            {errors.pass && touched.pass ? (
-                                                <AppError errors={ errors.pass }/>
-                                            ) : null}
-                                        </View>
-                                        <View
-                                            style={[
-                                                width.w_100,
-                                                {paddingLeft: 15, paddingRight: 15, marginTop: 10}
-                                            ]}
-                                        >
-                                            <AppInputInf
-                                                lable={"Nhập lại mật khẩu:"}
-                                                secureTextEntry={true}
-                                                field={"rePass"}
-                                                handleChange={handleChange}
-                                                handleBlur={handleBlur}
-                                                values={values}
-                                                returnKeyType="done"
-                                            />
-                                            {errors.rePass && touched.rePass ? (
-                                                <AppError errors={errors.rePass}/>
-                                            ) : null}
-                                        </View>
-                                        <View
-                                            style={[
-                                                width.w_100,
-                                                flex.flex_row,
-                                                {paddingLeft: 15, paddingRight: 15, marginTop: 20}
-                                            ]}
-                                        >
-                                            <View
-                                                style={[
-                                                    {
-                                                        flex: 1,
-                                                        marginRight: 15
-                                                    }
-                                                ]}
-                                            >
-                                                <AppButtonActionInf
-                                                    size={13}
-                                                    textSize={18}
-                                                    bg={color_danger}
-                                                    onPress = { () => { this.backAction() } }
-                                                    title="Hủy"
-                                                />
-                                            </View>
-                                            <View
-                                                style={[
-                                                    {
-                                                        flex: 1
-                                                    }
-                                                ]}
-                                            >
-                                                <AppButtonActionInf
-                                                    size={13}
-                                                    textSize={18}
-                                                    bg={color_primary}
-                                                    disabled = { !this.isFormValid(isValid, touched) || values.password !== values.rePass }
-                                                    onPress = { handleSubmit }
-                                                    title="Đăng ký"
-                                                />
+                                            <View style={[flex.align_items_center, { marginTop: 20 }]}>
+                                                <View
+                                                    style={[
+                                                        {
+                                                            width: '50%',
+                                                            paddingHorizontal: 16
+                                                        }
+                                                    ]}
+                                                >
+                                                    <AppButtonActionInf
+                                                        disabled={!this.state.numberPhone}
+                                                        size={12}
+                                                        textSize={18}
+                                                        bg={color_primary}
+                                                        onPress={() => { this.signUp() }}
+                                                        title="Tiếp tục"
+                                                    />
+                                                </View>
                                             </View>
                                         </View>
-                                    </SafeAreaView>
-                                </HideKeyboard>
-                            )}
-                        </Formik>
+                                    </HideKeyboard>
+                                    :
+                                    <HideKeyboard>
+                                        <View
+                                            style={{flex: 1, padding: 10}}
+                                        >
+                                            <View style={[
+                                                width.w_100,
+                                                flex.justify_content_center
+                                            ]}>
+                                                <Text
+                                                    style={[
+                                                        text_size.sm,
+                                                        font.serif
+                                                    ]}
+                                                >
+                                                    Mật khẩu mới
+                                                </Text>
+                                                <TextInput
+                                                    autoCorrect={false}
+                                                    placeholder={'Nhập mật khẩu mới'}
+                                                    style={[
+                                                        text_size.sm,
+                                                        font_weight.f_500,
+                                                        font.serif,
+                                                        padding.p_0,
+                                                        width.w_100,
+                                                        background_color.white,
+                                                        shadow.shadow,
+                                                        { borderRadius: 7, padding: 12, paddingLeft: 10, paddingRight: 10, marginTop: 5, textAlignVertical: 'top', },
+                                                    ]}
+                                                    onChangeText={(text) => {
+                                                        this.setState({
+                                                            passNew: text,
+                                                            isPass: false
+                                                        })
+                                                    }}
+                                                    value={this.state.passNew}
+                                                />
+                                            </View>
+                                            {this.state.isPass ? (
+                                                <AppError errors={this.state.isPassText}/>
+                                            ) : null}
+                                            <View style={[
+                                                width.w_100,
+                                                flex.justify_content_center,
+                                                {
+                                                    marginTop: 10
+                                                }
+                                            ]}>
+                                                <Text
+                                                    style={[
+                                                        text_size.sm,
+                                                        font.serif
+                                                    ]}
+                                                >
+                                                    Xác nhận mật khẩu
+                                                </Text>
+                                                <TextInput
+                                                    autoCorrect={false}
+                                                    placeholder={'Nhập lại mật khẩu mới'}
+                                                    style={[
+                                                        text_size.sm,
+                                                        font_weight.f_500,
+                                                        font.serif,
+                                                        padding.p_0,
+                                                        width.w_100,
+                                                        background_color.white,
+                                                        shadow.shadow,
+                                                        { borderRadius: 7, padding: 12, paddingLeft: 10, paddingRight: 10, marginTop: 5, textAlignVertical: 'top', },
+                                                    ]}
+                                                    onChangeText={(text) => {
+                                                        this.setState({
+                                                            rePassNew: text,
+                                                            isRePass: false
+                                                        })
+                                                    }}
+                                                    value={this.state.rePassNew}
+                                                />
+                                            </View>
+                                            {this.state.isRePass ? (
+                                                <AppError errors={'Mật khẩu không trùng khớp.'}/>
+                                            ) : null}
+                                            <View style={[flex.align_items_center, { marginTop: 20 }]}>
+                                                <View
+                                                    style={[
+                                                        {
+                                                            width: '50%',
+                                                            paddingHorizontal: 16
+                                                        }
+                                                    ]}
+                                                >
+                                                    <AppButtonActionInf
+                                                        disabled={!this.state.passNew || !this.state.rePassNew}
+                                                        size={12}
+                                                        textSize={18}
+                                                        bg={color_primary}
+                                                        onPress={() => { this.doChangePass() }}
+                                                        title="Xác nhận"
+                                                    />
+                                                </View>
+                                            </View>
+                                        </View>
+                                    </HideKeyboard>
+                            }
+                        </View>
                 }
                 {
                     this.state.isOTP
@@ -524,7 +496,7 @@ class SignUpScreen extends Component{
                                                 <TouchableOpacity
                                                     onPress={() => {
                                                         if(this.state.text === '(Gửi lại)'){
-                                                            let phoneNumber = this.state.user.numberPhone.substring(1, this.state.user.numberPhone.length);
+                                                            let phoneNumber = this.state.numberPhone.substring(1, this.state.numberPhone.length);
                                                             this.signInWithPhoneNumber(`+84${phoneNumber}`);
                                                         }
                                                     }}
@@ -595,13 +567,13 @@ class SignUpScreen extends Component{
     }
 }
 
-const mapStateToProps = (doSignUp) => {
-    return doSignUp;
+const mapStateToProps = ({user}) => {
+    return user;
 };
 
 const mapDispatchToProps = {
-    doSignUp,
-    doCheckUserDuplicate
+    doCheckUserDuplicate,
+    doChangePass
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignUpScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(ForgotPasswordScreen)

@@ -104,71 +104,103 @@ class DetailRoomScreen extends Component {
 
     }
 
-    addBookTicket() {
-            // new Date(this.state.room.rooms[0].booktickets[0].endBook);
-        // alert(new Date(this.room.rooms.booktickets[0]?.endBook).getTime());
+    async addBookTicket() {
         let indexChecked = this.state.roomIdBooked.indexOf(this.state.roomBook);
-        if(indexChecked !== -1){
-            // let checkStartDate = true;
-            // let indexRoom = this.state.room.rooms.findIndex(x => x.id === this.state.roomBook);
-            // let startDate = new Date(this.state.startBook.startBook);
-            // let endDate = new Date(this.state.endBook.endBook);
-            //
-            // this.state.room.rooms[indexRoom].booktickets.map(item => {
-            //     let timeCheckS = new Date(item.startBook);
-            //     let timeCheckE = new Date(item.endBook);
-            //     if(startDate.getTime() > timeCheck)
-            // })
+        if (indexChecked === -1) {
+            let startDate = new Date(this.state.startBook.startBook);
+            let endDate = new Date(this.state.endBook.endBook);
+            if(startDate.getTime() <= endDate.getTime()){
+                let checkDate = true;
+                let indexRoom = this.state.room.rooms.findIndex(x => x.id === this.state.roomBook);
+                await this.state.room.rooms[indexRoom].booktickets.map(item => {
+                    if(item.status === 1) {
+                        let timeCheckS = new Date(item.startBook);
+                        let timeCheckE = new Date(item.endBook);
+                        // alert(item.endBook)
+                        if (
+                            startDate.getTime() >= timeCheckS.getTime() && startDate.getTime() <= timeCheckE.getTime() ||
+                            endDate.getTime() >= timeCheckS.getTime() && endDate.getTime() <= timeCheckE.getTime() ||
+                            startDate.getTime() < timeCheckS.getTime() && endDate.getTime() > timeCheckE.getTime()
+                        ) {
+                            checkDate = false;
+                        }
+                    }
+                })
 
-            let prepayment = this.state.prepayment.split(".").join("");
-            let formData = {
-                "prepayment": prepayment,
-                "status": "0",
-                "note": this.state.note.note,
-                "startBook": this.state.startBook.startBook,
-                "endBook": this.state.endBook.endBook,
-                "roomId": this.state.roomBook,
-                "userId": this.props.user.user.id
-            }
-            this.props.doAddBookTicket(formData).then(data1 => {
-                if (data1) {
-                    this.props.doAddNotification({
-                        status: 0,
-                        statusView: 0,
-                        RoomId: this.state.roomBook,
-                        UserId: this.props.user.user.id,
-                        notificationTypeId: 2,
-                        bookticketId: data1.id
-                    }).then(data => {
-                        this.state.roomIdBooked.push(this.state.roomBook);
-                        this.setState({
-                            isVisible: false,
-                            roomBook: '',
-                            startBook: '',
-                            endBook: '',
-                            prepayment: '',
-                            note: '',
-                            roomIdBooked: this.state.roomIdBooked
-                        });
-                        Toast.show({
-                            type: 'success',
-                            text1: 'Đặt phòng',
-                            text2: 'Đặt phòng, xin vui lòng chờ xém duyệt.',
-                            visibilityTime: 3000,
-                            autoHide: true
-                        });
+                if(checkDate) {
+                    let prepayment = this.state.prepayment.split(".").join("");
+                    let formData = {
+                        "prepayment": prepayment,
+                        "status": "0",
+                        "note": this.state.note.note,
+                        "startBook": this.state.startBook.startBook,
+                        "endBook": this.state.endBook.endBook,
+                        "roomId": this.state.roomBook,
+                        "userId": this.props.user.user.id
+                    }
+                    this.props.doAddBookTicket(formData).then(data1 => {
+                        if (data1) {
+                            this.props.doAddNotification({
+                                status: 0,
+                                statusView: 0,
+                                RoomId: this.state.roomBook,
+                                UserId: this.state.area?.userId,
+                                notificationTypeId: 2,
+                                bookticketId: data1.id
+                            }).then(data => {
+                                this.state.roomIdBooked.push(this.state.roomBook);
+                                this.setState({
+                                    isVisible: false,
+                                    roomBook: '',
+                                    startBook: '',
+                                    endBook: '',
+                                    prepayment: '',
+                                    note: '',
+                                    roomIdBooked: this.state.roomIdBooked
+                                });
+                                Toast.show({
+                                    type: 'success',
+                                    text1: 'Đặt phòng',
+                                    text2: 'Đặt phòng, xin vui lòng chờ xém duyệt.',
+                                    visibilityTime: 3000,
+                                    autoHide: true
+                                });
+                            })
+                        } else {
+                            Toast.show({
+                                type: 'error',
+                                text1: 'Đặt phòng',
+                                text2: 'Đã xảy ra lỗi! Vui lòng thử lại.',
+                                visibilityTime: 3000,
+                                autoHide: true
+                            });
+                        }
                     })
-                } else {
+                }else {
+                    this.setState({
+                        isVisible: false
+                    })
                     Toast.show({
                         type: 'error',
                         text1: 'Đặt phòng',
-                        text2: 'Đã xảy ra lỗi! Vui lòng thử lại.',
-                        visibilityTime: 3000,
+                        text2: 'Phòng đã được đặt trong khoảng thời gian này.',
+                        visibilityTime: 4000,
                         autoHide: true
                     });
                 }
-            })
-        } else{
+            } else {
+                this.setState({
+                    isVisible: false
+                })
+                Toast.show({
+                    type: 'error',
+                    text1: 'Đặt phòng',
+                    text2: 'Thời gian bắt đầu phải lớn hơn kết thúc.',
+                    visibilityTime: 4000,
+                    autoHide: true
+                });
+            }
+        } else {
             this.setState({
                 isVisible: false
             })
@@ -578,11 +610,16 @@ class DetailRoomScreen extends Component {
                                             },
                                             flex.align_items_center
                                         ]}
-                                        onPress={() => {
-                                            this.setState({
-                                                isMap: true
-                                            })
-                                        }}
+                                        onPress={
+                                            this.state.area?.lat && this.state.area?.lng ?
+                                                () => {
+                                                    this.setState({
+                                                        isMap: true
+                                                    })
+                                                }
+                                                :
+                                                createOpenLink({query: this.state.area?.address, zoom: 30})
+                                        }
                                     >
                                         <Icon
                                             name='my-location'

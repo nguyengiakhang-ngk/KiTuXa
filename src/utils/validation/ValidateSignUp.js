@@ -12,8 +12,12 @@ export const SignupSchema = Yup.object().shape({
     address: Yup.string()
         .required('Địa chỉ rỗng!'),
     identityNumber: Yup.string()
+        .min(9, 'Số CMNN/CCCD không hợp lệ!')
+        .max(12, 'Số CMNN/CCCD không hợp lệ!')
         .required('Số CMNN/CCCD rỗng!'),
     numberPhone: Yup.string()
+        .min(10, 'Số điện thoại không hợp lệ!')
+        .max(10, 'Số điện thoại không hợp lệ!')
         .required('Số điện thoại rỗng!'),
     password: Yup.string()
         .min(6, 'Mật khẩu quá ngắn!')

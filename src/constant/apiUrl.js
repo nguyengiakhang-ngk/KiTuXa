@@ -6,6 +6,8 @@ export const DELETE_AREA = `/deleteArea`;
 
 export const LOGIN = `/login`;
 export const SIGNUP = `/addUser`;
+export const CHANGE_PASS = `/changePass`;
+export const CHECK_DUPLICATE = `/checkUserDuplicate`;
 export const GET_USER_BY_BOOKTICKET = `/getUserByBookTicket`;
 export const GET_USER_BY_ID = `/getUser`;
 export const UPDATE_USER = `/updateUser`;
