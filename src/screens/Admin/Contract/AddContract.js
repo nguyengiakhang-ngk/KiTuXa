@@ -15,6 +15,7 @@ import { background_color, flex, font, font_weight, padding, shadow, text_size, 
 import AppError from '../../../components/AppError';
 import { Formik } from 'formik';
 import AppInputInf from '../../../components/AppInputInf';
+import Toast from "react-native-toast-message";
 import AppDialogSelect from '../../../components/AppDialogSelect';
 import AppButton from '../../../components/AppButton';
 import axios from 'axios';
@@ -47,6 +48,7 @@ class AddContract extends Component {
       termList: 0,
       termData: [],
       dataP: [],
+      ref: React.createRef(),
       dataBookTicket: [],
       dataArea: [],
       dayIn: new Date(),
@@ -116,8 +118,17 @@ class AddContract extends Component {
   addContract = (values) => {
     this.props.doAddContract(values).then(data => {
       if (data) {
-        alert("Thêm hợp đồng thành công!");
-        this.props.navigation.goBack(null);
+        this.setState({isLoading: true})
+        Toast.show({
+          type: 'success',
+          text1: 'Hợp đồng',
+          text2: 'Thêm thành công.',
+          visibilityTime: 2000,
+          autoHide: true
+      });
+      setTimeout(() => {
+          this.props.navigation.goBack();
+      }, 2000)
       } else {
         alert("Thêm hợp đồng không thành công! Vui lòng thử lại!");
       }
@@ -175,6 +186,7 @@ class AddContract extends Component {
                   <SafeAreaView
                     style={[styles.container, background_color.white, height.h_100]}
                     onPress={Keyboard.dismiss}>
+                      <Toast ref={(ref) => {Toast.setRef(ref)}} />
                     <View
                       style={[width.w_100, styles.splitView]}>
                       <AppDialogSelect

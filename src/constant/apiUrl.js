@@ -51,6 +51,7 @@ export const APPROVE_CONTRACT = `/approveContract`;
 export const DELETE_CONTRACT = `/deleteContract`;
 
 export const GET_BILL_BY_CONTRACT = `/getBill`;
+export const GET_BILL_BY_AREA = `/getBillByArea`;
 export const GET_BILL_BY_ID = `/getBillById`;
 export const ADD_BILL = `/addBill`;
 export const UPDATE_BILL = `/updateBill`;

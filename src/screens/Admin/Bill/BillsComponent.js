@@ -1,18 +1,20 @@
 import React, { Component } from 'react';
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Text, TouchableOpacity, View, ActivityIndicator } from "react-native";
 import axios from "axios";
 import { flex, font, font_weight, height, position, text_color, text_size, width, background_color } from "../../../utils/styles/MainStyle";
-import { color_danger, color_primary, color_success } from "../../../utils/theme/Color";
+import { color_danger, color_primary, color_success, color_secondary } from "../../../utils/theme/Color";
 import { Icon } from "@rneui/base";
 import AppFAB from "../../../components/AppFAB";
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
 import moment from "moment/moment";
 import { connect } from "react-redux";
-import { doLoadListBillByContract, doDeleteBill } from "../../../redux/actions/bill";
+import { doLoadListBillByContract, doDeleteBill, doLoadListBillByArea } from "../../../redux/actions/bill";
 import AppDialogSelect from "../../../components/AppDialogSelect";
 import { doGetListArea } from "../../../redux/actions/area";
 import { doGetRoomByArea } from '../../../redux/actions/room';
 import { doLoadListContractByRoom } from "../../../redux/actions/contract";
+import DialogConfirm from "../../../components/DialogConfirm";
+import Toast from "react-native-toast-message";
 
 class BillsComponent extends Component {
     constructor(props) {
@@ -21,12 +23,21 @@ class BillsComponent extends Component {
             isLoading: true,
             data: [],
             dataArea: [],
+            dataType: [],
             dataRoom: [],
             dataContract: [],
             filterArea: [],
+            filterType: [],
             filterRoom: [],
             filterContract: [],
-            typeOfRoom: []
+            typeOfRoom: [],
+            dataAll: [],
+            isConfirm: false,
+            AreaSelect: -1,
+            TypeSelect: -1,
+            RoomSelect: -1,
+            ContractSelect: -1,
+            billDelete: ''
         }
     }
 
@@ -43,83 +54,303 @@ class BillsComponent extends Component {
         });
     }
 
-    // getListArea() {
-    //     this.props.doGetListArea({ userId: this.props.user.user.id }).then(data => {
-    //       this.setState({
-    //         dataArea: [
-    //             {
-    //                 key: 0,
-    //                 label: "Tất cả"
-    //             },
-    //             ...data.map(item => ({key: item.id, label: item.areaName}))
-    //         ],
-    //       })
-    //     })
-    // }
+    getListArea() {
+        this.props.doGetListArea({ userId: this.props.user.user.id }).then(data => {
+            this.setState({
+                dataArea: [
+                    {
+                        key: 0,
+                        label: "Tất cả"
+                    },
+                    ...data.map(item => ({ key: item.id, label: item.areaName }))
+                ],
+            })
+        })
+    }
 
-    // getTypeRoom(option){
-    //     this.props.doGetTypeOfRoomByArea({areaId: option.key}).then(data => {
-    //         this.setState({
-    //             typeOfRoom: [
-    //                 {
-    //                     key: 0,
-    //                     label: "Tất cả"
-    //                 },
-    //                 ...data.map(item => ({key: item.id, label: item.name}))
-    //             ]
-    //         })
-    //     });
-    // }
+    getTypeRoom(option) {
+        this.props.doGetTypeOfRoomByArea({ areaId: option.key }).then(data => {
+            this.setState({
+                typeOfRoom: [
+                    {
+                        key: 0,
+                        label: "Tất cả"
+                    },
+                    ...data.map(item => ({ key: item.id, label: item.name }))
+                ]
+            })
+        });
+    }
 
-    // getPhongData(option) {
-    //     // alert(JSON.stringify(option))
-    //     this.props.doGetRoomByArea({ areaId: option.key }).then(data => {
-    //       this.setState({
-    //         dataRoom: data.map(item => ({
-    //           key: item.id,
-    //           label: item.roomName,
-    //         })),
-    //       })
-    //     })
-    // }
+    filterType(option) {
+        if (option.key === -1) {
+            const listContract = [];
+            const listBill = [];
+            this.state.dataAll.map(item => {
+                item?.typeofrooms.map(itemType => {
+                    itemType.rooms.map(itemRoom => {
+                        itemRoom.contracts.map(itemTr => {
+                            itemTr.bills.map(itemB => {
+                                listBill.push(itemB);
+                            })
+                        })
+                    })
+                })
+            })
+            this.setState({
+                data: listBill,
+                filterContract: [],
+                dataContract: [],
+                filterRoom: [],
+                dataRoom: [],
+                filterType: [],
+                dataType: [],
+            })
+        } else {
+            const listType = [];
+            const listBill = [];
+            this.state.dataAll.filter(item => item.id === option.key).map(item => {
+                item?.typeofrooms.map(itemType => {
+                    listType.push(itemType);
+                    itemType.rooms.map(itemRoom => {
+                        itemRoom.contracts.map(itemTr => {
+                            itemTr.bills.map(itemB => {
+                                listBill.push(itemB);
+                            })
+                        })
+                    })
+                })
+            })
+            this.setState({
+                data: listBill,
+                filterContract: [],
+                dataContract: [],
+                filterRoom: [],
+                dataRoom: [],
+                filterType: [],
+                AreaSelect: option.key,
+                dataType: [
+                    {
+                        key: -1,
+                        label: "Tất cả"
+                    },
+                    ...listType.map(item => ({ key: item.id, label: item.name }))
+                ],
+            })
+        }
+    }
 
-    // getContractData(option) {
-    //     this.props.doLoadListContractByRoom({ roomId: option.key }).then(data => {
-    //         this.setState({
-    //             dataContract: data.map(item => ({
-    //                 key: item.id,
-    //                 label: "Mã HĐ: "+item.id,
-    //               }))
-    //         })
-    //     })
-    // }
+    getRoomData(option) {
+        console.log(option)
+        if (option.key === -1) {
+            const listBill = [];
+            this.state.dataAll.filter(item => item.id === this.state.AreaSelect).map(item => {
+                item?.typeofrooms.map(itemType => {
+                    itemType.rooms.map(itemRoom => {
+                        itemRoom.contracts.map(itemTr => {
+                            listContract.push(itemTr);
+                            itemTr.bills.map(itemB => {
+                                listBill.push(itemB);
+                            })
+                        })
+                    })
+                })
+            })
+            this.setState({
+                data: listBill,
+                filterContract: [],
+                dataContract: [],
+                filterRoom: [],
+                dataRoom: [],
+            })
+        } else {
+            const listRoom = [];
+            const listBill = [];
+            this.state.dataAll.filter(item => item.id === this.state.AreaSelect).map(item => {
+                item?.typeofrooms.filter(item => item.id === option.key).map(itemType => {
+                    itemType.rooms.map(itemRoom => {
+                        listRoom.push(itemRoom);
+                        itemRoom.contracts.map(itemTr => {
+                            itemTr.bills.map(itemB => {
+                                listBill.push(itemB);
+                            })
+                        })
+                    })
+                })
+            })
+            this.setState({
+                data: listBill,
+                filterContract: [],
+                dataContract: [],
+                filterRoom: [],
+                TypeSelect: option.key,
+                dataRoom: [
+                    {
+                        key: -1,
+                        label: "Tất cả",
+                    },
+                    ...listRoom.map(item => ({ key: item.id, label: item.roomName }))
+                ],
+            })
+        }
+    }
 
-    // getBillsData(option) {
-    //     this.props.doLoadListBillByContract({ contractId: option.key }).then(data => {
-    //         this.setState({
-    //             data: data
-    //         })
-    //     })
-    // }
+    getContractData(option) {
+        if (option.key === -1) {
+            const listBill = [];
+            this.state.dataAll.filter(item => item.id === this.state.AreaSelect).map(item => {
+                item?.typeofrooms.filter(item => item.id === this.state.TypeSelect).map(itemType => {
+                    itemType.rooms.map(itemRoom => {
+                        itemRoom.contracts.map(itemTr => {
+                            itemTr.bills.map(itemB => {
+                                listBill.push(itemB);
+                            })
+                        })
+                    })
+                })
+            })
+            this.setState({
+                data: listBill,
+                filterContract: [],
+                dataContract: [],
+                filterRoom: [],
+                dataRoom: [],
+            })
+        } else {
+            const listContract = [];
+            const listBill = [];
+            console.log('hi')
+            this.state.dataAll.filter(item => item.id === this.state.AreaSelect).map(item => {
+                item?.typeofrooms.filter(item => item.id === this.state.TypeSelect).map(itemType => {
+                    itemType.rooms.filter(item => item.id === option.key).map(itemRoom => {
+                        itemRoom.contracts.map(itemTr => {
+                            listContract.push(itemTr);
+                            itemTr.bills.map(itemB => {
+                                listBill.push(itemB);
+                            })
+                        })
+                    })
+                })
+            })
+            this.setState({
+                data: listBill,
+                filterContract: [],
+                RoomSelect: option.key,
+                dataContract: [
+                    {
+                        key: -1,
+                        label: 'Tất cả'
+                    },
+                    ...listContract.map(item => ({ key: item.id, label: "Mã HĐ: "+item.id }))
+                ],
+            })
+        }
+    }
+
+    getBillsData(option) {
+        if (option.key === -1) {
+            const listBill = [];
+            this.state.dataAll.filter(item => item.id === this.state.AreaSelect).map(item => {
+                item?.typeofrooms.filter(item => item.id === this.state.TypeSelect).map(itemType => {
+                    itemType.rooms.filter(item => item.id === this.state.RoomSelect).map(itemRoom => {
+                        itemRoom.contracts.map(itemTr => {
+                            itemTr.bills.map(itemB => {
+                                listBill.push(itemB);
+                            })
+                        })
+                    })
+                })
+            })
+            this.setState({
+                data: listBill,
+            })
+        } else {
+            const listBill = [];
+            this.state.dataAll.filter(item => item.id === this.state.AreaSelect).map(item => {
+                item?.typeofrooms.filter(item => item.id === this.state.TypeSelect).map(itemType => {
+                    itemType.rooms.filter(item => item.id === this.state.RoomSelect).map(itemRoom => {
+                        itemRoom.contracts.filter(item => item.id === option.key).map(itemTr => {
+                            itemTr.bills.map(itemB => {
+                                listBill.push(itemB);
+                            })
+                        })
+                    })
+                })
+            })
+            this.setState({
+                data: listBill,
+            })
+        }
+    }
+
+    getListAreaAll() {
+        this.props.doLoadListBillByArea({ userId: this.props.user.user.id }).then(data => {
+            // console.log(data);
+            const listRoom = [];
+            const listType = [];
+            const listContract = [];
+            const listBill = [];
+            data.map(item => {
+                item?.typeofrooms.map(itemType => {
+                    listType.push(itemType);
+                    itemType.rooms.map(itemRoom => {
+                        listRoom.push(itemRoom);
+                        itemRoom.contracts.map(itemTr => {
+                            listContract.push(itemTr)
+                            itemTr.bills.map(itemB => {
+                                listBill.push(itemB);
+                            })
+                        })
+                    })
+                })
+            });
+            this.setState({
+                dataAll: data,
+                data: listBill,
+                dataArea: [
+                    {
+                        key: -1,
+                        label: 'Tất cả'
+                    },
+                    ...data.map(item => ({ key: item.id, label: item.areaName }))
+                ],
+            })
+        })
+        
+        setTimeout(() => {
+            this.setState({
+                isLoading: false
+            })
+        }, 2000)
+    }
+
+
 
     deleteBill(id) {
         this.props.doDeleteBill({ id: id }).then(data => {
-            if (data) {
-                alert("Xóa hóa đơn thành công!");
-                this.refresh();
-            } else {
-                alert("Xóa hóa đơn thất bại! Vui lòng thử lại!");
-            }
+            this.setState({
+                billDelete: '',
+                isConfirm: false
+            })
+            this.refresh()
+            Toast.show({
+                type: 'success',
+                text1: 'Hóa đơn',
+                text2: 'Xóa thành công.',
+                visibilityTime: 2000,
+                autoHide: true
+            });
         })
         console.log(this.state.data);
     }
 
     componentDidMount() {
-        this.getListArea();
+        // this.getListArea();
+        this.getListAreaAll()
     }
 
     refresh() {
-        this.getListArea();
+        this.getListAreaAll()
     }
 
 
@@ -147,7 +378,7 @@ class BillsComponent extends Component {
                                 padding: 15,
                                 borderRadius: 10,
                                 marginRight: 10,
-                                justifyContent:'center'
+                                justifyContent: 'center'
                             }
                         ]}
                     >
@@ -198,10 +429,10 @@ class BillsComponent extends Component {
                             ]}
                         >
                             <Icon
-                                name={item.status === 0 ? "circle-notch" : "check-circle"}
+                                name={item.status === '0' ? "circle-notch" : "check-circle"}
                                 type='font-awesome-5'
                                 size={16}
-                                color={item.status === 0 ? color_danger : color_success}
+                                color={item.status === '0' ? color_danger : color_success}
                             />
                             <Text
                                 style={[
@@ -210,7 +441,7 @@ class BillsComponent extends Component {
                                     { marginLeft: 5 }
                                 ]}
                             >
-                                {item.status === 0 ? "Chưa thanh toán" : "Đã thanh toán"}
+                                {item.status === '0' ? "Chưa thanh toán" : "Đã thanh toán"}
                             </Text>
                         </View>
                     </View>
@@ -224,13 +455,13 @@ class BillsComponent extends Component {
                         style={[
                             { marginRight: 10 }
                         ]}
-                        onPress={() => item.status === 0 ? this.deleteBill(item.id) : ""}
+                        onPress={() => item.status === '0' ? this.setState({ isConfirm: true, billDelete: item.id }) : ""}
                     >
                         <Icon
                             name={"trash-alt"}
                             type='font-awesome-5'
-                            size={item.status === 0 ? 22 : 0}
-                            color={item.status === 0 ? color_danger : "transparent"}
+                            size={item.status === '0' ? 22 : 0}
+                            color={item.status === '0' ? color_danger : "transparent"}
                         />
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -242,8 +473,8 @@ class BillsComponent extends Component {
                         <Icon
                             name={"pencil-alt"}
                             type='font-awesome-5'
-                            size={item.status === 0 ? 22 : 0}
-                            color={item.status === 0 ? color_success : "transparent"}
+                            size={item.status === '0' ? 22 : 0}
+                            color={item.status === '0' ? color_success : "transparent"}
                         />
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -257,6 +488,30 @@ class BillsComponent extends Component {
                         />
                     </TouchableOpacity>
                 </View>
+            </View>
+        )
+    }
+
+    _renderEmpty = () => {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: 'center'
+                }}
+            >
+                <Text
+                    style={[
+                        text_size.lg,
+                        font.serif,
+                        {
+                            color: color_secondary
+                        }
+                    ]}
+                >
+                    Không có dữ liệu
+                </Text>
             </View>
         )
     }
@@ -308,7 +563,7 @@ class BillsComponent extends Component {
                     />
                 </View>
                 <View style={[
-                    flex.flex_row, flex.justify_content_between, {marginHorizontal: 5}
+                    flex.flex_row, flex.justify_content_between, { marginHorizontal: 5 }
                 ]}>
                     <View
                         style={{
@@ -317,9 +572,10 @@ class BillsComponent extends Component {
                         }}>
                         <AppDialogSelect
                             lable={'Khu:'}
+                            placeholder={'Tất cả'}
                             data={this.state.dataArea}
                             value={this.state.filterArea}
-                            returnFilter={(key) => this.getPhongData(key)}
+                            returnFilter={(key) => this.filterType(key)}
                         />
                     </View>
                     <View
@@ -329,9 +585,10 @@ class BillsComponent extends Component {
                         }}>
                         <AppDialogSelect
                             lable={'Loại Phòng:'}
-                            data={this.state.dataRoom}
-                            value={this.state.filterRoom}
-                            returnFilter={(key) => this.getContractData(key)}
+                            placeholder={'Tất cả'}
+                            data={this.state.dataType}
+                            value={this.state.filterType}
+                            returnFilter={(key) => this.getRoomData(key)}
                         />
                     </View>
                     <View
@@ -341,6 +598,7 @@ class BillsComponent extends Component {
                         }}>
                         <AppDialogSelect
                             lable={'Phòng:'}
+                            placeholder={'Tất cả'}
                             data={this.state.dataRoom}
                             value={this.state.filterRoom}
                             returnFilter={(key) => this.getContractData(key)}
@@ -348,20 +606,49 @@ class BillsComponent extends Component {
                     </View>
                 </View>
                 <View
-                        style={{
-                            paddingLeft: 15,
-                            paddingRight: 15,
-                            marginTop: 5,
-                            width: '100%'
-                        }}>
-                        <AppDialogSelect
-                            lable={'Hợp đồng:'}
-                            data={this.state.dataContract}
-                            value={this.state.filterContract}
-                            returnFilter={(key) => this.getBillsData(key)}
+                    style={{
+                        paddingLeft: 15,
+                        paddingRight: 15,
+                        marginTop: 5,
+                        width: '100%'
+                    }}>
+                    <AppDialogSelect
+                        lable={'Hợp đồng:'}
+                        placeholder={'Tất cả'}
+                        data={this.state.dataContract}
+                        value={this.state.filterContract}
+                        returnFilter={(key) => this.getBillsData(key)}
+                    />
+                </View>
+                {
+                    this.state.isConfirm ?
+                        <DialogConfirm
+                            content={"Bạn có chắc chắn muốn xóa?"}
+                            cancel={() => {
+                                this.setState({
+                                    isConfirm: false
+                                })
+                            }}
+                            confirm={() => {
+                                this.deleteBill(this.state.billDelete);
+                            }}
                         />
-                    </View>
-                <FlatList data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()} contentContainerStyle={{ paddingHorizontal: 10, paddingVertical: 5 }} />
+                        : null
+                }
+                <Toast ref={(ref) => {Toast.setRef(ref)}} />
+                {
+                    this.state.isLoading
+                    ?
+                    <ActivityIndicator size="large" color={color_primary} />
+                    :
+                    (
+                        this.state.data.length > 0
+                        ?
+                        <FlatList data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()} contentContainerStyle={{ paddingHorizontal: 10, paddingVertical: 5 }} />
+                        :
+                        this._renderEmpty()
+                    )
+                }
             </SafeAreaView>
         )
     }
@@ -371,7 +658,8 @@ const mapStateToProps = ({ listBillByContract, user }) => {
 };
 
 const mapDispatchToProps = {
-    doLoadListBillByContract, doDeleteBill, doGetListArea, doGetRoomByArea, doLoadListContractByRoom
+    doLoadListBillByContract, doDeleteBill, doGetListArea, doGetRoomByArea,
+    doLoadListContractByRoom, doLoadListBillByArea
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BillsComponent)

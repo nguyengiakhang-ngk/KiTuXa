@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Text, TouchableOpacity, View, ActivityIndicator } from "react-native";
 import axios from "axios";
 import { path } from "../../../constant/define";
 import { flex, font, font_weight, height, position, text_color, text_size, width, background_color } from "../../../utils/styles/MainStyle";
-import { color_danger, color_primary, color_success } from "../../../utils/theme/Color";
+import { color_danger, color_primary, color_success, color_secondary } from "../../../utils/theme/Color";
 import { Icon } from "@rneui/base";
 import AppFAB from "../../../components/AppFAB";
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
@@ -13,7 +13,9 @@ import { doLoadListContractByRoom, doDeleteContract } from "../../../redux/actio
 import AppDialogSelect from "../../../components/AppDialogSelect";
 import { doGetListArea } from "../../../redux/actions/area";
 import { doGetRoomByArea } from '../../../redux/actions/room';
-
+import Toast from "react-native-toast-message";
+import DialogConfirm from "../../../components/DialogConfirm";
+import { doLoadListBillByArea } from '../../../redux/actions/bill';
 
 class ContractScreen extends Component {
     constructor(props) {
@@ -25,10 +27,33 @@ class ContractScreen extends Component {
             dataRoom: [],
             filterArea: [],
             filterRoom: [],
+            isConfirm: false,
+            contractDelete: ''
         }
     }
 
     getListArea() {
+        this.props.doLoadListBillByArea({ userId: this.props.user.user.id }).then(data => {
+            // console.log(data);
+            const listRoom = [];
+            const listType = [];
+            const listContract = [];
+            data.map(item => {
+                item?.typeofrooms.map(itemType => {
+                    listType.push(itemType);
+                    itemType.rooms.map(itemRoom => {
+                        listRoom.push(itemRoom);
+                        itemRoom.contracts.map(itemTr => {
+                            listContract.push(itemTr)
+                        })
+                    })
+                })
+            });
+            this.setState({
+                data: listContract,
+            })
+        })
+
         this.props.doGetListArea({ userId: this.props.user.user.id }).then(data => {
           this.setState({
             dataArea: data.map(item => ({
@@ -39,6 +64,12 @@ class ContractScreen extends Component {
             console.log('dataA: ', this.state.dataArea);
           })
         })
+        
+        setTimeout(() => {
+            this.setState({
+                isLoading: false
+            })
+        }, 2000)
     }
 
     getPhongData(option) {
@@ -74,7 +105,6 @@ class ContractScreen extends Component {
     viewAddContract(userId) {
         this.props.navigation.navigate("AddContract",
             {
-                userId: userId,
                 refresh: () => { this.refresh() }
             });
     }
@@ -98,12 +128,18 @@ class ContractScreen extends Component {
 
     deleteContract(id) {
         this.props.doDeleteContract({ id: id }).then(data => {
-            if (data) {
-                alert("Xóa hợp đồng thành công!");
-                this.refresh()
-            } else {
-                alert("Xóa hợp đồng không thành công! Vui lòng thử lại!");
-            }
+            this.setState({
+                contractDelete: '',
+                isConfirm: false
+            })
+            this.refresh()
+            Toast.show({
+                type: 'success',
+                text1: 'Hợp đồng',
+                text2: 'Xóa thành công.',
+                visibilityTime: 2000,
+                autoHide: true
+            });
         })
     }
 
@@ -223,7 +259,7 @@ class ContractScreen extends Component {
                         style={[
                             { marginRight: 10 }
                         ]}
-                        onPress={() => this.deleteContract(item.id)}
+                        onPress={() => item.status === '0' ? this.setState({ isConfirm: true, contractDelete: item.id }) : ""}
                     >
                         <Icon
                             name={"trash-alt"}
@@ -256,6 +292,30 @@ class ContractScreen extends Component {
                         />
                     </TouchableOpacity>
                 </View>
+            </View>
+        )
+    }
+
+    _renderEmpty = () => {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: 'center'
+                }}
+            >
+                <Text
+                    style={[
+                        text_size.lg,
+                        font.serif,
+                        {
+                            color: color_secondary
+                        }
+                    ]}
+                >
+                    Không có dữ liệu
+                </Text>
             </View>
         )
     }
@@ -320,6 +380,7 @@ class ContractScreen extends Component {
                             lable={'Khu:'}
                             data={this.state.dataArea}
                             value={this.state.filterArea}
+                            placeholder={'Tất cả'}
                             returnFilter={(key) => this.getPhongData(key)}
                         />
                     </View>
@@ -334,11 +395,40 @@ class ContractScreen extends Component {
                             lable={'Phòng:'}
                             data={this.state.dataRoom}
                             value={this.state.filterRoom}
+                            placeholder={'Tất cả'}
                             returnFilter={(key) => this.getContractData(key)}
                         />
                     </View>
                 </View>
-                <FlatList data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()} contentContainerStyle={{ marginHorizontal: 10, paddingVertical: 10 }} />
+                <Toast ref={(ref) => {Toast.setRef(ref)}} />
+                {
+                    this.state.isConfirm ?
+                        <DialogConfirm
+                            content={"Bạn có chắc chắn muốn xóa?"}
+                            cancel={() => {
+                                this.setState({
+                                    isConfirm: false
+                                })
+                            }}
+                            confirm={() => {
+                                this.deleteContract(this.state.contractDelete);
+                            }}
+                        />
+                        : null
+                }
+                {
+                    this.state.isLoading
+                    ?
+                    <ActivityIndicator size="large" color={color_primary} />
+                    :
+                    (
+                        this.state.data.length > 0
+                        ?
+                        <FlatList data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()} contentContainerStyle={{ marginHorizontal: 10, paddingVertical: 10 }} />
+                        :
+                        this._renderEmpty()
+                    )
+                }
             </SafeAreaView>
         )
     }
@@ -349,7 +439,7 @@ const mapStateToProps = ({ listContractByRoom, user }) => {
 };
 
 const mapDispatchToProps = {
-    doLoadListContractByRoom, doDeleteContract, doGetListArea, doGetRoomByArea
+    doLoadListContractByRoom, doDeleteContract, doGetListArea, doGetRoomByArea, doLoadListBillByArea
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ContractScreen)

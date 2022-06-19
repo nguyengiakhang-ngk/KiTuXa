@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { FlatList, Text, TouchableOpacity, View, Image, Modal } from "react-native";
+import { FlatList, Text, TouchableOpacity, View, Image, Modal, ActivityIndicator } from "react-native";
 import axios from "axios";
 import { path } from "../../../constant/define";
 import { flex, font, font_weight, height, position, text_color, text_size, width, background_color } from "../../../utils/styles/MainStyle";
-import { color_danger, color_primary, color_success } from "../../../utils/theme/Color";
+import { color_danger, color_primary, color_success, color_secondary } from "../../../utils/theme/Color";
 import { Icon } from "@rneui/base";
 import AppFAB from "../../../components/AppFAB";
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
@@ -13,6 +13,8 @@ import { doGetListTroubleByRoom, doDeleteTrouble } from '../../../redux/actions/
 import AppDialogSelect from "../../../components/AppDialogSelect";
 import { doGetListArea } from "../../../redux/actions/area";
 import { doGetRoomByArea } from '../../../redux/actions/room';
+import DialogConfirm from "../../../components/DialogConfirm";
+import Toast from "react-native-toast-message";
 
 
 class TroubleScreen extends Component {
@@ -25,7 +27,9 @@ class TroubleScreen extends Component {
             dataRoom: [],
             filterArea: [],
             filterRoom: [],
-            isVisible: false
+            isVisible: false,
+            isConfirm: false,
+            troubleDelete: ''
         }
     }
 
@@ -42,6 +46,12 @@ class TroubleScreen extends Component {
                 console.log('dataA: ', this.state.dataArea);
             })
         })
+
+        setTimeout(() => {
+            this.setState({
+                isLoading: false
+            })
+        }, 2000)
     }
 
     getPhongData(option) {
@@ -72,7 +82,18 @@ class TroubleScreen extends Component {
     }
     deleteTrouble(trouble) {
         this.props.doDeleteTrouble({ id: trouble.id, image: trouble.image }).then(data => {
+            this.setState({
+                troubleDelete: '',
+                isConfirm: false
+            })
             this.refresh()
+            Toast.show({
+                type: 'success',
+                text1: 'Sự cố',
+                text2: 'Xóa thành công.',
+                visibilityTime: 2000,
+                autoHide: true
+            });
         })
     }
 
@@ -97,6 +118,30 @@ class TroubleScreen extends Component {
 
     refresh() {
         this.getPhongData(this.state.filterArea.filterArea);
+    }
+
+    _renderEmpty = () => {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: 'center'
+                }}
+            >
+                <Text
+                    style={[
+                        text_size.lg,
+                        font.serif,
+                        {
+                            color: color_secondary
+                        }
+                    ]}
+                >
+                    Không có dữ liệu
+                </Text>
+            </View>
+        )
     }
 
 
@@ -186,7 +231,7 @@ class TroubleScreen extends Component {
                                     style={[
                                         { marginRight: 10 }
                                     ]}
-                                    onPress={() => this.deleteTrouble(item)}
+                                    onPress={() => item.status === '0' ? this.setState({ isConfirm: true, troubleDelete: item }) : ""}
                                 >
                                     <Icon
                                         name={"trash-alt"}
@@ -287,6 +332,7 @@ class TroubleScreen extends Component {
                             lable={'Khu:'}
                             data={this.state.dataArea}
                             value={this.state.filterArea}
+                            placeholder={'Tất cả'}
                             field={'filterArea'}
                             returnFilter={(key) => this.getPhongData(key)}
                         />
@@ -301,13 +347,43 @@ class TroubleScreen extends Component {
                         <AppDialogSelect
                             lable={'Phòng:'}
                             data={this.state.dataRoom}
+                            placeholder={'Tất cả'}
                             value={this.state.filterRoom}
                             field={'filterRoom'}
                             returnFilter={(key) => this.getTroubleData(key)}
                         />
                     </View>
                 </View>
-                <FlatList contentContainerStyle={{ paddingHorizontal: 10 }} data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()} />
+                {
+                    this.state.isConfirm ?
+                        <DialogConfirm
+                            content={"Bạn có chắc chắn muốn xóa?"}
+                            cancel={() => {
+                                this.setState({
+                                    isConfirm: false
+                                })
+                            }}
+                            confirm={() => {
+                                this.deleteTrouble(this.state.troubleDelete);
+                            }}
+                        />
+                        : null
+                }
+                <Toast ref={(ref) => {Toast.setRef(ref)}} />
+                {
+                    this.state.isLoading
+                    ?
+                    <ActivityIndicator size="large" color={color_primary} />
+                    :
+                    (
+                        this.state.data.length > 0
+                        ?
+                        <FlatList contentContainerStyle={{ paddingHorizontal: 10 }} data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()} />
+                        :
+                        this._renderEmpty()
+                    )
+                }
+                
             </SafeAreaView>
         )
     }

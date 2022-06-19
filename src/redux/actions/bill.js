@@ -13,9 +13,13 @@ import {
     UPDATE_BILL_FAIL,
     DELETE_BILL,
     DELETE_BILL_SUCCESS,
-    DELETE_BILL_FAIL
+    DELETE_BILL_FAIL,
+    GET_BILL_BY_AREA,
+    GET_BILL_BY_AREA_SUCCESS,
+    GET_BILL_BY_AREA_FAIL
  } from "./types";
-import { getListBillByContract,getBillById ,addBill, updateBill, deleteBill } from "../../api/billAPI";
+import { getListBillByContract,getBillById ,addBill, updateBill, deleteBill,
+getListBillByArea } from "../../api/billAPI";
 
 
 
@@ -28,6 +32,20 @@ export const doLoadListBillByContract = (contractId) => dispatch => {
             })
             .catch(error => {
                 getListBillByContractError(dispatch, error);
+                reject(error);
+            });
+    })
+};
+
+export const doLoadListBillByArea = (areaId) => dispatch => {
+    return new Promise((resolve, reject) => {
+        getListBillByArea(areaId)
+            .then(data => {
+                getListBillByAreaSuccess(dispatch, data);
+                resolve(data);
+            })
+            .catch(error => {
+                getListBillByAreaError(dispatch, error);
                 reject(error);
             });
     })
@@ -106,6 +124,19 @@ const getListBillByContractError = (dispatch, error) => {
 const getBillByIdSuccess = (dispatch) => {
     dispatch({
         type: GET_BILL_BY_ID_SUCCESS,
+    });
+}
+
+const getListBillByAreaSuccess = (dispatch, error) => {
+    dispatch({
+        type: GET_BILL_BY_AREA_SUCCESS,
+        error: error
+    });
+}
+
+const getListBillByAreaError = (dispatch) => {
+    dispatch({
+        type: GET_BILL_BY_AREA_FAIL,
     });
 }
 
