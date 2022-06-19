@@ -25,9 +25,9 @@ import { doAddBill } from '../../../redux/actions/bill';
 import { color_danger, color_primary } from '../../../utils/theme/Color';
 import AppButtonActionInf from "../../../components/AppButtonActionInf";
 import { doGetListArea } from "../../../redux/actions/area";
-import { doGetRoomByArea } from '../../../redux/actions/room';
+import { doGetRoomByType } from '../../../redux/actions/room';
 import { doLoadListContractByRoom } from "../../../redux/actions/contract";
-import { doGetPriceOfRoom } from '../../../redux/actions/typeOfRoom';
+import { doGetPriceOfRoom, doGetTypeOfRoomByArea } from '../../../redux/actions/typeOfRoom';
 
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -46,7 +46,9 @@ class AddBill extends Component {
             dataP: [],
             dataC: [],
             total: "0",
-            price: "0"
+            price: "0",
+            typeOfRoom: [],
+            typeOfRoomSelect: {'type': ''}
         }
 
     }
@@ -57,7 +59,6 @@ class AddBill extends Component {
 
     getListArea() {
         this.props.doGetListArea({ userId: this.props.user.user.id }).then(data => {
-            console.log("arra:", data);
             this.setState({
                 dataArea: data.map(item => ({
                     key: item.id,
@@ -67,34 +68,58 @@ class AddBill extends Component {
         })
     }
 
+    getTypeRoom(option){
+        this.props.doGetTypeOfRoomByArea({areaId: option.key}).then(data => {
+            this.setState({
+                typeOfRoom: data.map(item => ({
+                    key: item.id,
+                    label: item.name,
+                }))
+            })
+        });
+    }
+
     getPhongData(option) {
-        this.props.doGetRoomByArea({ areaId: option.key }).then(data => {
+        // console.log(option.key);
+        this.props.doGetRoomByType({ typeOfRoomId: option.key }).then(data => {
             this.setState({
                 dataP: data.map(item => ({
                     key: item.id,
                     label: item.roomName,
-                    typeOfRoomId: item.typeOfRoomId
                 })),
+            })
+        })
+        this.props.doGetPriceOfRoom({ typeOfRoomId: option.key }).then(data => {
+            this.setState({
+                price: data[0].price,
+                // total: data[0].price
             })
         })
     }
 
     getContractData(option) {
-        this.props.doLoadListContractByRoom({ roomId: option.key }).then(data => {
+        this.props.doLoadListContractByRoom({ roomId: option.key }).then(dataContract => {
             this.setState({
-                dataC: data.map(item => ({
+                dataC: dataContract.map(item => ({
                     key: item.id,
                     label: 'Mã HĐ: ' + item.id,
+                    dayIn: item.dayIn,
+                    duration: item.duration
                 })),
             })
         })
-        this.props.doGetPriceOfRoom({ typeOfRoomId: option.typeOfRoomId }).then(data => {
-            this.setState({
-                price: data[0].price,
-                total: data[0].price
-            })
-            console.log(option.typeOfRoomId, "price: ", data);
+    }
+
+    calculatePrice = (option) => {
+        let dayIn = new Date(option.dayIn);
+        let duration = new Date(option.duration)
+        let result = duration.getTime() - dayIn.getTime();
+        let price = new Date(result).getDate() * this.state.price;
+        this.setState({
+            total: String(price),
+            price: String(price)
         })
+
     }
 
     isFormValid = (isValid, touched) => {
@@ -131,8 +156,8 @@ class AddBill extends Component {
                     }}
                     validationSchema={BillsSchema}
                     onSubmit={values => {
-                        let price = Number(this.state.price) - (Number(this.state.price)*(Number(values.discount)/100))  + Number(values.forfeit)
-                        if(price !== Number(values.total)){
+                        let price = Number(this.state.price) - (Number(this.state.price) * (Number(values.discount) / 100)) + Number(values.forfeit)
+                        if (price !== Number(values.total)) {
                             values.total = String(price)
                         }
                         this.addBill(values);
@@ -168,7 +193,22 @@ class AddBill extends Component {
                                             data={this.state.dataArea}
                                             placeholder={'Vui lòng chọn khu...'}
                                             value={values}
-                                            returnFilter={(key) => this.getPhongData(key)}
+                                            returnFilter={(key) => this.getTypeRoom(key)}
+                                        />
+                                    </View>
+                                    <View
+                                        style={[width.w_100, {
+                                            paddingLeft: 15,
+                                            paddingRight: 15,
+                                            marginTop: 10
+                                        }]}>
+                                        <AppDialogSelect
+                                            lable={'Loại Phòng:'}
+                                            data={this.state.typeOfRoom}
+                                            placeholder={'Vui lòng chọn loại phòng...'}
+                                            value={this.state.typeOfRoomSelect}
+                                            field={'type'}
+                                            returnFilter={(option) => this.getPhongData(option)}
                                         />
                                     </View>
                                     <View
@@ -198,6 +238,7 @@ class AddBill extends Component {
                                             placeholder={'Vui lòng chọn hợp đồng...'}
                                             value={values}
                                             field={'contractId'}
+                                            returnFilter={(option) => this.calculatePrice(option)}
                                         />
                                     </View>
                                     <View
@@ -297,19 +338,21 @@ class AddBill extends Component {
                                                 placeholder={this.state.total}
                                             />
                                         </View>
-                                        <TouchableOpacity 
-                                            style={{borderColor: color_primary, borderWidth: 1, marginTop: 25, paddingHorizontal: 10,
-                                                paddingVertical: 12, marginLeft: 5, borderRadius: 10 }}
+                                        <TouchableOpacity
+                                            style={{
+                                                borderColor: color_primary, borderWidth: 1, marginTop: 25, paddingHorizontal: 10,
+                                                paddingVertical: 12, marginLeft: 5, borderRadius: 10
+                                            }}
                                             onPress={() => {
-                                                let price = Number(this.state.price) - (Number(this.state.price)*(Number(values.discount)/100))  + Number(values.forfeit);
-                                                this.setState({total: String(price)})
+                                                let price = Number(this.state.price) - (Number(this.state.price) * (Number(values.discount) / 100)) + Number(values.forfeit);
+                                                this.setState({ total: String(price) })
                                                 values.total = String(price);
                                             }}
-                                         >
-                                            <Text style={{textAlignVertical: 'center', fontSize: 20}}>Tính tổng</Text>
+                                        >
+                                            <Text style={{ textAlignVertical: 'center', fontSize: 20 }}>Tính tổng</Text>
                                         </TouchableOpacity>
                                         {errors.total && touched.total ? (
-                                            <View/>// <AppError errors={errors.total} />
+                                            <View />// <AppError errors={errors.total} />
                                         ) : null}
                                     </View>
                                     <View
@@ -401,7 +444,7 @@ const mapStateToProps = ({ user }) => {
 };
 
 const mapDispatchToProps = {
-    doAddBill, doGetRoomByArea, doLoadListContractByRoom, doGetListArea, doGetPriceOfRoom
+    doAddBill, doGetRoomByType, doLoadListContractByRoom, doGetListArea, doGetPriceOfRoom, doGetTypeOfRoomByArea
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddBill)

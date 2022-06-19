@@ -85,6 +85,7 @@ import NotificationScreen from "../screens/Admin/Notification/NotificationScreen
 import TroubleMaterial from '../screens/Admin/trouble-material/trouble-material';
 import TroubleMaterialView from '../screens/Admin/trouble-material/trouble-material-view';
 import ViewMaterialInRoom from '../screens/Admin/view-material-in-room/view-material-in-room';
+import ForgotPasswordScreen from "../screens/Authentication/ForgotPasswordScreen";
 
 const Stack = createNativeStackNavigator();
 const StackScreen: () => Node = () => {
@@ -397,6 +398,11 @@ const StackScreen: () => Node = () => {
                 <Stack.Screen
                     name="viewmaterialinroom"
                     component={ViewMaterialInRoom}
+                    options={{ headerShown: false }}
+                />
+                  <Stack.Screen
+                    name="ForgotPassword"
+                    component={ForgotPasswordScreen}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

@@ -6,6 +6,8 @@ export const DELETE_AREA = `/deleteArea`;
 
 export const LOGIN = `/login`;
 export const SIGNUP = `/addUser`;
+export const CHANGE_PASS = `/changePass`;
+export const CHECK_DUPLICATE = `/checkUserDuplicate`;
 export const GET_USER_BY_BOOKTICKET = `/getUserByBookTicket`;
 export const GET_USER_BY_ID = `/getUser`;
 export const UPDATE_USER = `/updateUser`;
@@ -22,6 +24,7 @@ export const UPDATE_PAID_SERVICE = `/updatePaidService`;
 export const DELETE_PAID_SERVICE = `/deletePaidService`;
 
 export const GET_LIST_TYPE_OF_ROOM = `/getListTypeofroom`;
+export const GET_TYPE_OF_ROOM_BY_AREA = `/getTypeOfRoomByArea`;
 export const ADD_TYPE_OF_ROOM = `/addTypeofroom`;
 export const UPDATE_TYPE_OF_ROOM = `/updateTypeofroom`;
 export const DELETE_TYPE_OF_ROOM = `/deleteTypeofroom`;

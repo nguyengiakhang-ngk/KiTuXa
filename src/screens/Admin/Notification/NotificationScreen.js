@@ -26,6 +26,7 @@ import {url} from "../../../constant/define";
 import moment from "moment";
 import AppButtonActionInf from "../../../components/AppButtonActionInf";
 import {checkedBookTicket} from "../../../redux/actions/bookticket";
+import Toast from "react-native-toast-message";
 
 class NotificationScreen extends Component {
 
@@ -64,7 +65,8 @@ class NotificationScreen extends Component {
     getNotifications = () => {
         this.props.doGetNotification({userId: this.props.user.user.id}).then(data => {
             this.setState({
-                notifications: data
+                notifications: data,
+                isCheckedBooked: false
             })
         })
     }
@@ -75,18 +77,61 @@ class NotificationScreen extends Component {
         })
     }
 
-    checkedBook = (status) => {
-        this.props.checkedBookTicket({status: status}, {id: this.state.ticket.bookticket?.id}).then(data => {
-            this.props.doAddNotification({
-                status: 0,
-                statusView: 0,
-                RoomId: this.state.ticket.room?.id,
-                UserId: this.state.ticket.user?.id,
-                notificationTypeId: 1,
-                bookticketId: this.state.ticket.bookticket?.id
+    checkedBook = async (status) => {
+        if (status === 1) {
+            let checkDate = true;
+            let startDate = new Date(this.state.ticket.bookticket?.startBook);
+            let endDate = new Date(this.state.ticket.bookticket?.endBook);
+            this.state.notifications.map(item => {
+                if (item.bookticket?.status === 1) {
+                    let timeCheckS = new Date(item.bookticket?.startBook);
+                    let timeCheckE = new Date(item.bookticket?.endBook);
+                    if (
+                        startDate.getTime() >= timeCheckS.getTime() && startDate.getTime() <= timeCheckE.getTime() ||
+                        endDate.getTime() >= timeCheckS.getTime() && endDate.getTime() <= timeCheckE.getTime() ||
+                        startDate.getTime() < timeCheckS.getTime() && endDate.getTime() > timeCheckE.getTime()
+                    ) {
+                        checkDate = false;
+                    }
+                }
             })
-            this.updateNotification();
-        })
+            if(checkDate) {
+                this.props.checkedBookTicket({status: status}, {id: this.state.ticket.bookticket?.id}).then(data => {
+                    this.props.doAddNotification({
+                        status: 0,
+                        statusView: 0,
+                        RoomId: this.state.ticket.room?.id,
+                        UserId: this.state.ticket.user?.id,
+                        notificationTypeId: 1,
+                        bookticketId: this.state.ticket.bookticket?.id
+                    })
+                    this.updateNotification();
+                })
+            } else{
+                this.setState({
+                    isCheckedBooked: false
+                })
+                Toast.show({
+                    type: 'error',
+                    text1: 'Duyệt phòng',
+                    text2: 'Phòng đã được duyệt trong khoảng thời gian này.',
+                    visibilityTime: 4000,
+                    autoHide: true
+                });
+            }
+        } else{
+            this.props.checkedBookTicket({status: status}, {id: this.state.ticket.bookticket?.id}).then(data => {
+                this.props.doAddNotification({
+                    status: 0,
+                    statusView: 0,
+                    RoomId: this.state.ticket.room?.id,
+                    UserId: this.state.ticket.user?.id,
+                    notificationTypeId: 1,
+                    bookticketId: this.state.ticket.bookticket?.id
+                })
+                this.updateNotification();
+            })
+        }
     }
 
     _renderItem = ({ item, index }) => {
@@ -480,6 +525,7 @@ class NotificationScreen extends Component {
                         </Modal>
                         : null
                 }
+                <Toast ref={(ref) => {Toast.setRef(ref)}} />
             </View>
         );
     }

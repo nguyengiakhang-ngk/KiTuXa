@@ -8,11 +8,16 @@ import {
     GET_LIST_TYPE_OF_ROOM_SEARCH_ADDRESS,
     UPDATE_TYPE_OF_ROOM,
     GET_LIST_TYPEOFROOM_BY_SAVEROOMTICKET, 
-    GET_PRICE_OF_ROOM
+    GET_PRICE_OF_ROOM,
+    GET_TYPE_OF_ROOM_BY_AREA
 } from '../constant/apiUrl'
 
 export const getListTypeOfRoom = async (userId) => {
     return doGet(GET_LIST_TYPE_OF_ROOM, userId);
+}
+
+export const getTypeOfRoomByArea = async (areaId) => {
+    return doGet(GET_TYPE_OF_ROOM_BY_AREA, areaId);
 }
 
 export const getListTypeOfRoomNew = async () => {

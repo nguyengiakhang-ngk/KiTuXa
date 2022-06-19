@@ -25,7 +25,8 @@ class BillsComponent extends Component {
             dataContract: [],
             filterArea: [],
             filterRoom: [],
-            filterContract: []
+            filterContract: [],
+            typeOfRoom: []
         }
     }
 
@@ -42,54 +43,64 @@ class BillsComponent extends Component {
         });
     }
 
-    getListArea() {
-        this.props.doGetListArea({ userId: this.props.user.user.id }).then(data => {
-          this.setState({
-            dataArea: data.map(item => ({
-              key: item.id,
-              label: item.areaName,
-            })),
-          }, () => {
-            console.log('dataA: ', this.state.dataArea);
-          })
-        })
-    }
+    // getListArea() {
+    //     this.props.doGetListArea({ userId: this.props.user.user.id }).then(data => {
+    //       this.setState({
+    //         dataArea: [
+    //             {
+    //                 key: 0,
+    //                 label: "Tất cả"
+    //             },
+    //             ...data.map(item => ({key: item.id, label: item.areaName}))
+    //         ],
+    //       })
+    //     })
+    // }
 
-    getPhongData(option) {
-        // alert(JSON.stringify(option))
-        this.props.doGetRoomByArea({ areaId: option.key }).then(data => {
-          this.setState({
-            dataRoom: data.map(item => ({
-              key: item.id,
-              label: item.roomName,
-            })),
-          }, () => {
-            console.log('dataP: ', this.state.dataP);
-          })
-        })
-    }
+    // getTypeRoom(option){
+    //     this.props.doGetTypeOfRoomByArea({areaId: option.key}).then(data => {
+    //         this.setState({
+    //             typeOfRoom: [
+    //                 {
+    //                     key: 0,
+    //                     label: "Tất cả"
+    //                 },
+    //                 ...data.map(item => ({key: item.id, label: item.name}))
+    //             ]
+    //         })
+    //     });
+    // }
 
-    getContractData(option) {
-        this.props.doLoadListContractByRoom({ roomId: option.key }).then(data => {
-            this.setState({
-                dataContract: data.map(item => ({
-                    key: item.id,
-                    label: "Mã HĐ: "+item.id,
-                  }))
-            }, () => {
-                console.log(this.state.dataContract)
-            })
-        })
-    }
+    // getPhongData(option) {
+    //     // alert(JSON.stringify(option))
+    //     this.props.doGetRoomByArea({ areaId: option.key }).then(data => {
+    //       this.setState({
+    //         dataRoom: data.map(item => ({
+    //           key: item.id,
+    //           label: item.roomName,
+    //         })),
+    //       })
+    //     })
+    // }
 
-    getBillsData(option) {
-        this.props.doLoadListBillByContract({ contractId: option.key }).then(data => {
-            this.setState({
-                data: data
-            })
-        })
-        console.log(this.state.data);
-    }
+    // getContractData(option) {
+    //     this.props.doLoadListContractByRoom({ roomId: option.key }).then(data => {
+    //         this.setState({
+    //             dataContract: data.map(item => ({
+    //                 key: item.id,
+    //                 label: "Mã HĐ: "+item.id,
+    //               }))
+    //         })
+    //     })
+    // }
+
+    // getBillsData(option) {
+    //     this.props.doLoadListBillByContract({ contractId: option.key }).then(data => {
+    //         this.setState({
+    //             data: data
+    //         })
+    //     })
+    // }
 
     deleteBill(id) {
         this.props.doDeleteBill({ id: id }).then(data => {
@@ -297,14 +308,12 @@ class BillsComponent extends Component {
                     />
                 </View>
                 <View style={[
-                    flex.flex_row, flex.justify_content_between
+                    flex.flex_row, flex.justify_content_between, {marginHorizontal: 5}
                 ]}>
                     <View
                         style={{
-                            paddingLeft: 15,
-                            paddingRight: 15,
                             marginTop: 10,
-                            width: '33%'
+                            width: '30%'
                         }}>
                         <AppDialogSelect
                             lable={'Khu:'}
@@ -315,10 +324,20 @@ class BillsComponent extends Component {
                     </View>
                     <View
                         style={{
-                            paddingLeft: 15,
-                            paddingRight: 15,
                             marginTop: 10,
-                            width: '33%'
+                            width: '30%'
+                        }}>
+                        <AppDialogSelect
+                            lable={'Loại Phòng:'}
+                            data={this.state.dataRoom}
+                            value={this.state.filterRoom}
+                            returnFilter={(key) => this.getContractData(key)}
+                        />
+                    </View>
+                    <View
+                        style={{
+                            marginTop: 10,
+                            width: '30%'
                         }}>
                         <AppDialogSelect
                             lable={'Phòng:'}
@@ -327,12 +346,13 @@ class BillsComponent extends Component {
                             returnFilter={(key) => this.getContractData(key)}
                         />
                     </View>
-                    <View
+                </View>
+                <View
                         style={{
                             paddingLeft: 15,
                             paddingRight: 15,
-                            marginTop: 10,
-                            width: '33%'
+                            marginTop: 5,
+                            width: '100%'
                         }}>
                         <AppDialogSelect
                             lable={'Hợp đồng:'}
@@ -341,7 +361,6 @@ class BillsComponent extends Component {
                             returnFilter={(key) => this.getBillsData(key)}
                         />
                     </View>
-                </View>
                 <FlatList data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()} contentContainerStyle={{ paddingHorizontal: 10, paddingVertical: 5 }} />
             </SafeAreaView>
         )

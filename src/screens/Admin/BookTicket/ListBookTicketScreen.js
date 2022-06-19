@@ -18,6 +18,7 @@ import { doGetBookTicketByRoom } from '../../../redux/actions/room';
 import {checkedBookTicket, doApproveBookTicket} from '../../../redux/actions/bookticket';
 import { get } from 'lodash';
 import {doAddNotification, doUpdateNotification} from "../../../redux/actions/notification";
+import Toast from "react-native-toast-message";
 
 class ListBookTicketScreen extends Component {
     constructor(props) {
@@ -60,11 +61,6 @@ class ListBookTicketScreen extends Component {
         })
     }
 
-    refresh() {
-        this.getListArea();
-        this.getBookTicketData({'key': this.state.filterRoom.filterRoom})
-    }
-
     onSelectUser = (user) => {
         this.setState({
             selectUser: user
@@ -73,6 +69,9 @@ class ListBookTicketScreen extends Component {
 
     getBookTicketData(key) {
         this.props.doGetBookTicketByRoom({ roomId: key }).then(data => {
+            this.setState({
+                isVisible: false
+            })
             console.log(">>>>>", data);
             this.setState({
                 data: data
@@ -83,34 +82,66 @@ class ListBookTicketScreen extends Component {
     }
 
     updateNotification() {
-        this.props.doUpdateNotification({id: this.state.booktickets?.id}).then(data => {
-            this.getBookTicketData(this.state.booktickets.room?.id)
+        this.props.doUpdateNotification({id: this.state.booktickets.id}).then(data => {
+            this.getBookTicketData(this.state.booktickets?.roomId)
         })
     }
 
     checkedBook = (status) => {
-        this.props.checkedBookTicket({status: status}, {id: this.state.booktickets?.id}).then(data => {
-            this.props.doAddNotification({
-                status: 0,
-                statusView: 0,
-                RoomId: this.state.booktickets.room?.id,
-                UserId: this.state.booktickets.user?.id,
-                notificationTypeId: 1,
-                bookticketId: this.state.booktickets?.id
+        if(status === 1){
+            let checkDate = true;
+            let startDate = new Date(this.state.booktickets?.startBook);
+            let endDate = new Date(this.state.booktickets?.endBook);
+            this.state.data.map(item => {
+                if (item?.status === 1) {
+                    let timeCheckS = new Date(item?.startBook);
+                    let timeCheckE = new Date(item?.endBook);
+                    if (
+                        startDate.getTime() >= timeCheckS.getTime() && startDate.getTime() <= timeCheckE.getTime() ||
+                        endDate.getTime() >= timeCheckS.getTime() && endDate.getTime() <= timeCheckE.getTime() ||
+                        startDate.getTime() < timeCheckS.getTime() && endDate.getTime() > timeCheckE.getTime()
+                    ) {
+                        checkDate = false;
+                    }
+                }
             })
-            this.updateNotification();
-        })
-    }
-
-    approveBookticket(id) {
-        this.props.doApproveBookTicket({id: id}).then(data =>{
-            if(data){
-                this.setState({isVisible: false, booktickets: ''})
-                this.refresh()
-            }else{
-                alert("Duyệt thất bại! Vui lòng thử lại!")
+            if(checkDate) {
+                this.props.checkedBookTicket({status: status}, {id: this.state.booktickets?.id}).then(data => {
+                    this.props.doAddNotification({
+                        status: 0,
+                        statusView: 0,
+                        RoomId: this.state.booktickets?.roomId,
+                        UserId: this.state.booktickets?.userId,
+                        notificationTypeId: 1,
+                        bookticketId: this.state.booktickets?.id
+                    })
+                    this.updateNotification();
+                })
+            } else{
+                this.setState({
+                    isVisible: false
+                })
+                Toast.show({
+                    type: 'error',
+                    text1: 'Duyệt phòng',
+                    text2: 'Phòng đã được duyệt trong khoảng thời gian này.',
+                    visibilityTime: 4000,
+                    autoHide: true
+                });
             }
-        })
+        } else {
+            this.props.checkedBookTicket({status: status}, {id: this.state.booktickets?.id}).then(data => {
+                this.props.doAddNotification({
+                    status: 0,
+                    statusView: 0,
+                    RoomId: this.state.booktickets?.roomId,
+                    UserId: this.state.booktickets?.userId,
+                    notificationTypeId: 1,
+                    bookticketId: this.state.booktickets?.id
+                })
+                this.updateNotification();
+            })
+        }
     }
 
     viewBookTicket(item) {
@@ -123,6 +154,7 @@ class ListBookTicketScreen extends Component {
     }
 
     _renderItem = ({ item, index }) => {
+        // if(item.)
         return (
             <View
                 style={[
@@ -494,24 +526,24 @@ class ListBookTicketScreen extends Component {
                         :
                         <View />
                 }
-                <Text
-                    style={[
-                        text_size.xs,
-                        font.serif,
-                        font_weight.bold,
-                        text_color.white,
-                        width.w_100,
-                        background_color.blue,
-                        {
-                            textAlign: 'center',
-                            paddingVertical: 15,
-                            lineHeight: 20,
-                            letterSpacing: 0,
-                        }
-                    ]}
-                >
-                    Danh sách phiếu đặt
-                </Text>
+                {/*<Text*/}
+                {/*    style={[*/}
+                {/*        text_size.xs,*/}
+                {/*        font.serif,*/}
+                {/*        font_weight.bold,*/}
+                {/*        text_color.white,*/}
+                {/*        width.w_100,*/}
+                {/*        background_color.blue,*/}
+                {/*        {*/}
+                {/*            textAlign: 'center',*/}
+                {/*            paddingVertical: 15,*/}
+                {/*            lineHeight: 20,*/}
+                {/*            letterSpacing: 0,*/}
+                {/*        }*/}
+                {/*    ]}*/}
+                {/*>*/}
+                {/*    Danh sách phiếu đặt*/}
+                {/*</Text>*/}
                 <View
                     style={[
                         position.absolute,
@@ -559,6 +591,7 @@ class ListBookTicketScreen extends Component {
                 </View>
 
                 <FlatList data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()} contentContainerStyle={{ marginHorizontal: 10, paddingVertical: 10 }} />
+                <Toast ref={(ref) => {Toast.setRef(ref)}} />
             </SafeAreaView>
         )
     }
@@ -569,7 +602,7 @@ const mapStateToProps = ({ listContractByRoom, user }) => {
 };
 
 const mapDispatchToProps = {
-    doLoadListContractByRoom, doGetBookTicketByRoom, doGetListArea, doGetRoomByArea, doApproveBookTicket, checkedBookTicket, doAddNotification
+    doLoadListContractByRoom, doGetBookTicketByRoom, doGetListArea, doGetRoomByArea, doApproveBookTicket, checkedBookTicket, doAddNotification, doUpdateNotification
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ListBookTicketScreen)

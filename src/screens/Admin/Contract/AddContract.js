@@ -30,7 +30,7 @@ import { doAddContract } from '../../../redux/actions/contract';
 import { color_danger, color_primary } from '../../../utils/theme/Color';
 import AppButtonActionInf from "../../../components/AppButtonActionInf";
 import { doGetListArea } from "../../../redux/actions/area";
-
+import { doGetBookTicketByRoom } from '../../../redux/actions/room';
 
 const HideKeyboard = ({ children }) => (
   <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -47,8 +47,10 @@ class AddContract extends Component {
       termList: 0,
       termData: [],
       dataP: [],
-      dataK: [],
-      dataArea: []
+      dataBookTicket: [],
+      dataArea: [],
+      dayIn: new Date(),
+      duration: new Date()
     };
   }
 
@@ -64,7 +66,7 @@ class AddContract extends Component {
           label: item.areaName,
         })),
       }, () => {
-        console.log('dataP: ', this.state.dataP);
+        // console.log('dataP: ', this.state.dataP);
       })
     })
   }
@@ -77,21 +79,28 @@ class AddContract extends Component {
           label: item.roomName,
         })),
       }, () => {
-        console.log('dataP: ', this.state.dataP);
+        // console.log('dataP: ', this.state.dataP);
       })
     })
   }
   getUserData(option) {
-    this.props.doGetUserByBookTicket({ roomId: option.key }).then(data => {
+    this.props.doGetBookTicketByRoom({ roomId: option.key }).then(data => {
       this.setState({
-        dataK: data.map(item => ({
-          key: item.id,
-          label: item.name,
-          roomId: item.roomId
+        dataBookTicket: data.filter(item => item.status === 1).map(item => ({
+          key: item.userId,
+          label: "Mã: "+item.id+" - Tên: "+item.user.name,
+          roomId: item.roomId,
+          startBook: item.startBook,
+          endBook: item.endBook
         })),
-      }, () => {
-        console.log('dataK: ', this.state.dataK);
       })
+    })
+  }
+
+  setStartAndEnd = (option) => {
+    this.setState({
+      dayIn: option.startBook,
+      duration: option.endBook
     })
   }
 
@@ -143,11 +152,11 @@ class AddContract extends Component {
             initialValues={{
               userId: "",
               roomId: "",
-              duration: new Date(),
+              duration: this.state.duration,
               dateOfPayment: new Date(),
               numberOfElectric: '',
               numberOfWater: '',
-              dayIn: new Date(),
+              dayIn: this.state.dayIn,
               status: 0,
               term: ''
             }}
@@ -195,11 +204,12 @@ class AddContract extends Component {
                     <View
                       style={[width.w_100, styles.splitView]}>
                       <AppDialogSelect
-                        lable={'Khách thuê:'}
-                        data={this.state.dataK}
-                        placeholder={'Vui lòng chọn khách...'}
+                        lable={'Phiếu đặt:'}
+                        data={this.state.dataBookTicket}
+                        placeholder={'Vui lòng chọn phiếu đặt phòng'}
                         value={values}
                         field={'userId'}
+                        returnFilter={(option) => this.setStartAndEnd(option)}
                       />
                       {errors.userId && touched.userId ? (
                         <AppError errors={errors.userId} />
@@ -212,7 +222,8 @@ class AddContract extends Component {
                         label={'Ngày Vào:'}
                         value={values}
                         field={'dayIn'}
-                        alreadydate={new Date()}
+                        alreadydate={this.state.dayIn}
+                        isDisabled={true}
                       />
                       {errors.dayIn ? (
                         <AppError errors={errors.dayIn} />
@@ -225,8 +236,9 @@ class AddContract extends Component {
                         label={'Thời Hạn:'}
                         value={values}
                         field={'duration'}
-                        alreadydate={new Date()}
+                        alreadydate={this.state.duration}
                         minimumDate={values.dayIn}
+                        isDisabled={true}
                       />
                       {errors.duration ? (
                         <AppError errors={errors.duration} />
@@ -359,7 +371,7 @@ const mapStateToProps = ({ userAddContract, user }) => {
 };
 
 const mapDispatchToProps = {
-  doGetUserByBookTicket, doGetRoomByArea, doAddContract, doGetListArea
+  doGetUserByBookTicket, doGetRoomByArea, doAddContract, doGetListArea, doGetBookTicketByRoom
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddContract)
