@@ -54,8 +54,9 @@ const ItemMaterial = ({ item, callback, navigation }) => {
     return (
         <View
             style={[
-                width.w_100,
                 {
+                    width: "100%",
+                    maxWidth: "100%",
                     marginTop: 10,
                     padding: 5,
                     borderRadius: 5
@@ -73,6 +74,7 @@ const ItemMaterial = ({ item, callback, navigation }) => {
             <View>
                 <Text
                     style={[
+                        {maxWidth: 100},
                         text_size.xs,
                         font.serif,
                         { marginLeft: 4, marginBottom: -1 }
@@ -84,15 +86,12 @@ const ItemMaterial = ({ item, callback, navigation }) => {
             <View>
                 <TableDateCustom date={item.createdAt} />
             </View>
-            <View
-                style={[
-                    flex.flex_row
-                ]}
-            >
+            <View>
                 <TouchableOpacity
                     onPress={viewDetail}
                     style={{
-                        marginRight: 5
+                        marginRight: 5,
+                        marginBottom:5
                     }}
                 >
                     <Icon
@@ -104,7 +103,8 @@ const ItemMaterial = ({ item, callback, navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={{
-                        marginRight: 5
+                        marginRight: 5,
+                        marginBottom:5
                     }}
                     onPress={viewEdit}
                 >

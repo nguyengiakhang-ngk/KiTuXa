@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Icon } from "@rneui/base";
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
@@ -5,13 +6,15 @@ import { formatMoney } from "../../../helps/formatMoney";
 import { background_color, flex, font, text_size, width } from "../../../utils/styles/MainStyle";
 import { color_danger, color_success } from "../../../utils/theme/Color";
 
-const ItemInputMaterial = ({ item, materials, statuses, onDelete }) => {
-  
+const ItemInputMaterial = ({ item, materials, statuses, rooms, onDelete }) => {
     const getNameStatus = () => {
         return statuses.filter(status => status.key === item.status)[0].label;
     }
     const getNameMaterial = () => {
-        return materials.filter(material => material.key === item.material)[0].label;
+        return materials.filter(material => material.key === item.material)[0]?.label || "";
+    }
+    const getNamePhong = () => {
+        return rooms.filter(room => +item.room === +room.id)[0]?.roomName || ""
     }
     return (
         <View
@@ -33,8 +36,22 @@ const ItemInputMaterial = ({ item, materials, statuses, onDelete }) => {
                     style={[
                         text_size.xs,
                         font.serif,
-                        { marginLeft: 4, marginBottom: -1,
-                        maxWidth: "90%" }
+                        {
+                            marginLeft: 4, marginBottom: -1,
+                            maxWidth: "90%"
+                        }
+                    ]}
+                >
+                    Phòng: {getNamePhong()}
+                </Text>
+                <Text
+                    style={[
+                        text_size.xs,
+                        font.serif,
+                        {
+                            marginLeft: 4, marginBottom: -1,
+                            maxWidth: "90%"
+                        }
                     ]}
                 >
                     Tên: {getNameMaterial()}

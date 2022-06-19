@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
 import {
     Image,
@@ -122,7 +123,7 @@ class HomeScreen extends Component {
                                         { marginLeft: 10 }
                                     ]}
                                 >
-                                    {this.state.user.name}
+                                    {this.state?.user?.name}
                                 </Text>
                                 <Text
                                     style=
@@ -169,7 +170,7 @@ class HomeScreen extends Component {
 
                     {/*Icon menu*/}
                     <ScrollView
-                        contentContainerStyle={{flexDirection: "row", flexWrap: "wrap"}}
+                        contentContainerStyle={{ flexDirection: "row", flexWrap: "wrap" }}
                     >
                         <View
                             style={[
@@ -453,6 +454,24 @@ class HomeScreen extends Component {
                                 colorText={'black'}
                                 label={'Sự cố'}
                                 onPress={() => this.routeScreen("TroubleScreen")}
+                            />
+                        </View>
+                        <View
+                            style={[
+                                {
+                                    width: '33.3%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
+                                bg={'red'}
+                                name='bug'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
                                 label={'Quét QR Code'}
                                 onPress={() => this.routeScreen("qrcode")}
                             />
@@ -473,7 +492,70 @@ class HomeScreen extends Component {
                                 size={30}
                                 color={'white'}
                                 colorText={'black'}
-                                label={'Thêm vật chất phòng'}
+                                label={'Sự cố'}
+                                onPress={() => this.routeScreen("TroubleScreen")}
+                            />
+                        </View>
+                        <View
+                            style={[
+                                {
+                                    width: '33.3%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
+                                bg={'orangered'}
+                                name='bug'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
+                                label={'Thống kê'}
+                                onPress={() => this.routeScreen("statisticalmaterial")}
+                            />
+                        </View>
+                        <View
+                            style={[
+                                {
+                                    width: '33.3%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
+                                bg={'orangered'}
+                                name='bug'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
+                                label={"Nhập vật chất vào phòng"}
+                                onPress={() => this.routeScreen("inputmaterialtoroom")}
+                                
+                            />
+                        </View>
+                         <View
+                            style={[
+                                {
+                                    width: '33.3%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
+                                bg={'orangered'}
+                                name='bug'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
+                                label={"Nhập vật chất vào phòng"}
+                                onPress={() => this.routeScreen("inputmaterialtoroom")}
+                               label={'Thêm vật chất phòng'}
                                 onPress={() => this.routeScreen("AddMaterial")}
                             />
                         </View>

@@ -79,6 +79,8 @@ import DetailRoomScreen from "../screens/User/DetailRoom/DetailRoomScreen";
 
 import ListBookTicketScreen from '../screens/Admin/BookTicket/ListBookTicketScreen';
 import AddMaterialScreen from "../screens/Admin/AddMaterial/AddMaterial";
+import InputMaterialToRoom from '../screens/Admin/InputMaterial/InputMaterialToRoom';
+import StatisticalMaterial from '../screens/Admin/statisttical/statisticalMaterial';
 import NotificationScreen from "../screens/Admin/Notification/NotificationScreen";
 import ForgotPasswordScreen from "../screens/Authentication/ForgotPasswordScreen";
 
@@ -366,6 +368,16 @@ const StackScreen: () => Node = () => {
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
+                    name="statisticalmaterial"
+                    component={StatisticalMaterial}
+                    options={{ headerShown: false }}
+                />
+                 <Stack.Screen
+                    name="inputmaterialtoroom"
+                    component={InputMaterialToRoom}
+                    options={{ headerShown: false }}
+                  />
+                  <Stack.Screen
                     name="Notification"
                     component={NotificationScreen}
                     options={{ headerShown: false }}

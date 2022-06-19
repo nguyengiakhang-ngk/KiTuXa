@@ -95,11 +95,11 @@ const Material = ({ navigation }) => {
             <View style={{ padding: 10 }}>
                 <FormSelect label={"Loại vật chất"} data={materialTypes} onChange={onChangeMaterialType} />
             </View>
-            <ScrollView style={{
+            <View style={{
                 padding: 10
             }}>
                 <FlatList data={materials} renderItem={({ item }) => <ItemMaterial item={item} callback={() => fetchMaterial(initMaterialType)} navigation={navigation} />} keyExtractor={(item, index) => index.toString()} />
-            </ScrollView>
+            </View>
         </SafeAreaView>
     )
 }
