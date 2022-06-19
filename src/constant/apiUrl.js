@@ -22,6 +22,7 @@ export const UPDATE_PAID_SERVICE = `/updatePaidService`;
 export const DELETE_PAID_SERVICE = `/deletePaidService`;
 
 export const GET_LIST_TYPE_OF_ROOM = `/getListTypeofroom`;
+export const GET_TYPE_OF_ROOM_BY_AREA = `/getTypeOfRoomByArea`;
 export const ADD_TYPE_OF_ROOM = `/addTypeofroom`;
 export const UPDATE_TYPE_OF_ROOM = `/updateTypeofroom`;
 export const DELETE_TYPE_OF_ROOM = `/deleteTypeofroom`;

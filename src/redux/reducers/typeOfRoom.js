@@ -1,3 +1,4 @@
+import { GET_TYPE_OF_ROOM_BY_AREA } from '../../constant/apiUrl';
 import {
     LOAD_LIST_TYPE_OF_ROOM,
     LOAD_LIST_TYPE_OF_ROOM_SUCCESS,
@@ -16,7 +17,10 @@ import {
     UPDATE_TYPE_OF_ROOM_FAIL,
     DELETE_TYPE_OF_ROOM,
     DELETE_TYPE_OF_ROOM_SUCCESS,
-    DELETE_TYPE_OF_ROOM_FAIL
+    DELETE_TYPE_OF_ROOM_FAIL,
+    LOAD_TYPE_OF_ROOM_BY_AREA,
+    LOAD_TYPE_OF_ROOM_BY_AREA_SUCCESS,
+    LOAD_TYPE_OF_ROOM_BY_AREA_FAIL
 } from '../actions/types';
 
 const INITIAL_STATE = {
@@ -80,6 +84,20 @@ export default (preState = INITIAL_STATE, action) => {
                 ...preState
             }
         case GET_PRICE_OF_ROOM_FAIL:
+            return {
+                ...preState,
+                error: action.error
+            }
+        //Get by area
+        case LOAD_TYPE_OF_ROOM_BY_AREA:
+            return {
+                ...preState
+            }
+        case LOAD_TYPE_OF_ROOM_BY_AREA_SUCCESS:
+            return {
+                ...preState
+            }
+        case LOAD_TYPE_OF_ROOM_BY_AREA_FAIL:
             return {
                 ...preState,
                 error: action.error

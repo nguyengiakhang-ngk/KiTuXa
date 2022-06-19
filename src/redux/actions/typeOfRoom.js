@@ -10,7 +10,8 @@ import {
     GET_PRICE_OF_ROOM_FAIL,
     LOAD_LIST_TYPE_OF_ROOM, LOAD_LIST_TYPE_OF_ROOM_SUCCESS, LOAD_LIST_TYPE_OF_ROOM_FAIL,
     UPDATE_TYPE_OF_ROOM, UPDATE_TYPE_OF_ROOM_SUCCESS, UPDATE_TYPE_OF_ROOM_FAIL,
-    DELETE_TYPE_OF_ROOM, DELETE_TYPE_OF_ROOM_SUCCESS, DELETE_TYPE_OF_ROOM_FAIL
+    DELETE_TYPE_OF_ROOM, DELETE_TYPE_OF_ROOM_SUCCESS, DELETE_TYPE_OF_ROOM_FAIL,
+    LOAD_TYPE_OF_ROOM_BY_AREA, LOAD_TYPE_OF_ROOM_BY_AREA_SUCCESS, LOAD_TYPE_OF_ROOM_BY_AREA_FAIL
 } from "./types";
 import {
     addTypeOfRoom, 
@@ -19,7 +20,8 @@ import {
     deleteTypeOfRoom,
     getListTypeOfRoom,
     getListTypeOfRoomNew, getListTypeOfRoomSearch, getListTypeOfRoomSearchAddress,
-    updateTypeOfRoom
+    updateTypeOfRoom,
+    getTypeOfRoomByArea
 } from "../../api/typeOfRoomAPI";
 
 // Load List Type Of Room
@@ -54,6 +56,34 @@ const loadListTypeOfRoomSuccess = (dispatch, typeOfRoomList) => {
 const loadListTypeOfRoomFail = (dispatch, error) => {
     dispatch({
         type: LOAD_LIST_TYPE_OF_ROOM_FAIL,
+        error: error
+    });
+}
+
+export const doGetTypeOfRoomByArea = (areaId) => dispatch => {
+    loadGetTypeOfRoom(dispatch);
+    return new Promise((resolve, reject) => {
+        getTypeOfRoomByArea(areaId)
+            .then(data => {
+                getTypeOfRoomByAreaSuccess(dispatch, data);
+                resolve(data);
+            })
+            .catch(error => {
+                getTypeOfRoomByAreaFail(dispatch, error);
+                reject(error);
+            });
+    })
+}
+
+const getTypeOfRoomByAreaSuccess = (dispatch) => {
+    dispatch({
+        type: LOAD_TYPE_OF_ROOM_BY_AREA_SUCCESS,
+    });
+}
+
+const getTypeOfRoomByAreaFail = (dispatch, error) => {
+    dispatch({
+        type: LOAD_TYPE_OF_ROOM_BY_AREA_FAIL,
         error: error
     });
 }

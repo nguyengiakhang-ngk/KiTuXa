@@ -40,7 +40,7 @@ export class AppDatePicker extends Component{
     };
 
     showDatepicker = () => {
-        this.showMode('date');
+        this.props.isDisabled ? '' : this.showMode('date');
     };
 
     render(){
@@ -60,9 +60,9 @@ export class AppDatePicker extends Component{
                             font.serif,
                             padding.p_0,
                             width.w_100,
-                            background_color.white,
                             shadow.shadow,
-                            {borderRadius: 7, padding: 12, paddingLeft: 10, paddingRight: 10, marginTop: 5, textAlignVertical: 'top',},
+                            this.props.isDisabled ? {backgroundColor: '#ccc', opacity: .7} : background_color.white,
+                            {borderRadius: 7, padding: 12, paddingLeft: 10, paddingRight: 10, marginTop: 5, textAlignVertical: 'top'},
                         ]}>{this.state.isF ? moment(this.props.alreadydate).format('DD-MM-YYYY') : moment(this.state.date).format('DD-MM-YYYY')}</Text>
                     </Pressable>
                     {this.state.show && (

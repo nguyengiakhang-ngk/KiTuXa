@@ -47,6 +47,11 @@ export const DELETE_PAID_SERVICE_FAIL = 'delete_paid_service_fail';
 export const LOAD_LIST_TYPE_OF_ROOM = 'load_list_type_of_room';
 export const LOAD_LIST_TYPE_OF_ROOM_SUCCESS = 'load_list_type_of_room_success';
 export const LOAD_LIST_TYPE_OF_ROOM_FAIL = 'load_list_type_of_room_fail';
+
+export const LOAD_TYPE_OF_ROOM_BY_AREA = 'load_type_of_room_by_area';
+export const LOAD_TYPE_OF_ROOM_BY_AREA_SUCCESS = 'load_type_of_room_by_area_success';
+export const LOAD_TYPE_OF_ROOM_BY_AREA_FAIL = 'load_type_of_room_by_area_fail';
+
 export const ADD_TYPE_OF_ROOM = 'add_type_of_room';
 export const ADD_TYPE_OF_ROOM_SUCCESS = 'add_type_of_room_success';
 export const ADD_TYPE_OF_ROOM_FAIL = 'add_type_of_room_fail';
