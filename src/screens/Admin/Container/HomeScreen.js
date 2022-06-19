@@ -452,48 +452,8 @@ class HomeScreen extends Component {
                                 size={30}
                                 color={'white'}
                                 colorText={'black'}
-                                label={'Sự cố'}
-                                onPress={() => this.routeScreen("TroubleScreen")}
-                            />
-                        </View>
-                        <View
-                            style={[
-                                {
-                                    width: '33.3%',
-                                    paddingRight: 0.5,
-                                    paddingLeft: 0.5,
-                                    paddingBottom: 5
-                                }
-                            ]}
-                        >
-                            <AppItemHome
-                                bg={'red'}
-                                name='bug'
-                                size={30}
-                                color={'white'}
-                                colorText={'black'}
                                 label={'Quét QR Code'}
                                 onPress={() => this.routeScreen("qrcode")}
-                            />
-                        </View>
-                        <View
-                            style={[
-                                {
-                                    width: '33.3%',
-                                    paddingRight: 0.5,
-                                    paddingLeft: 0.5,
-                                    paddingBottom: 5
-                                }
-                            ]}
-                        >
-                            <AppItemHome
-                                bg={'orangered'}
-                                name='bug'
-                                size={30}
-                                color={'white'}
-                                colorText={'black'}
-                                label={'Sự cố'}
-                                onPress={() => this.routeScreen("TroubleScreen")}
                             />
                         </View>
                         <View
@@ -534,10 +494,10 @@ class HomeScreen extends Component {
                                 colorText={'black'}
                                 label={"Nhập vật chất vào phòng"}
                                 onPress={() => this.routeScreen("inputmaterialtoroom")}
-                                
+
                             />
                         </View>
-                         <View
+                        <View
                             style={[
                                 {
                                     width: '33.3%',
@@ -553,10 +513,28 @@ class HomeScreen extends Component {
                                 size={30}
                                 color={'white'}
                                 colorText={'black'}
-                                label={"Nhập vật chất vào phòng"}
-                                onPress={() => this.routeScreen("inputmaterialtoroom")}
-                               label={'Thêm vật chất phòng'}
-                                onPress={() => this.routeScreen("AddMaterial")}
+                                label={'Sự cố vật chất'}
+                                onPress={() => this.routeScreen("troublemateial")}
+                            />
+                        </View>
+                        <View
+                            style={[
+                                {
+                                    width: '33.3%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
+                                bg={'orangered'}
+                                name='bug'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
+                                label={'Xem vật chất trong phòng'}
+                                onPress={() => this.routeScreen("viewmaterialinroom")}
                             />
                         </View>
                     </ScrollView>

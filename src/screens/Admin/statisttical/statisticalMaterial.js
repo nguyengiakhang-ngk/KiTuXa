@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react';
-import { FlatList, ScrollView, View } from 'react-native';
+import { FlatList, ScrollView, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { materialTypeAPI } from '../../../api/material-type.api';
 import ModalSelector from 'react-native-modal-selector';
@@ -116,7 +116,8 @@ const StatisticalMaterial = ({ navigation }) => {
             <View style={{
                 padding: 10
             }}>
-                <FlatList data={materials} renderItem={({ item }) => <ItemStatisticalMaterial item={item} callback={() => fetchMaterials()} navigation={navigation} />} keyExtractor={(item, index) => index.toString()} />
+                {materials.length > 0 ? <FlatList data={materials} renderItem={({ item }) => <ItemStatisticalMaterial item={item} callback={() => fetchMaterials()} navigation={navigation} />} keyExtractor={(item, index) => index.toString()} />: 
+                selected !== "" ? <Text>Không có số lượng vật chất để thống kê</Text> : <Text>Chọn loại vật chất cần thống kê</Text>}
             </View>
         </SafeAreaView>
     )

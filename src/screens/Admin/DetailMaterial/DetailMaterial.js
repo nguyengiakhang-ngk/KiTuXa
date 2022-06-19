@@ -66,29 +66,16 @@ const DetailMaterial = ({ navigation, route }) => {
     }, [id])
     return (
         <SafeAreaView style={{ height: "100%", paddingBottom: 10 }}>
-            <Header>Vật chất: {title} ({total.length})</Header>
-            <View style={{ padding: 10, display: "flex", flexDirection: "row", justifyContent: "space-around" }}>
-                <Text style={[
-                    text_size.sm
-                ]}>Mới: {total.filter(item => item.idStatus === 1).length}</Text>
-                <Text style={[
-                    text_size.sm
-                ]}>Đã qua sử dụng: {total.filter(item => item.idStatus === 2).length}</Text>
-                <Text style={[
-                    text_size.sm
-                ]}>Đang sử dụng: {total.filter(item => item.idStatus === 3).length}</Text>
-            </View>
+            <Header>Vật chất: {title}</Header>
             <View style={{ padding: 10 }}>
                 <FormSelect label='Trạng thái' data={statuses} onChange={(option) => setStatus(option.key)} />
             </View>
-            <ScrollView style={{
-                padding: 10,
-            }}>
+            <View style={{padding:10}}>
                 {datas.length > 0 ? <FlatList data={datas} renderItem={({ item }) => <ItemDetailMaterial item={item} navigation={navigation} />} /> :
                     <Text style={[
                         font.serif, text_size.lg
                     ]}>Hiện tại không có vật chất nào</Text>}
-            </ScrollView>
+            </View>
         </SafeAreaView>
     )
 }

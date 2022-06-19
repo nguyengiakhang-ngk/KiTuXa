@@ -2,7 +2,7 @@ import React from "react";
 import { Text, TextInput, View } from "react-native";
 import { background_color, flex, font, font_weight, padding, shadow, text_size, width } from "../utils/styles/MainStyle";
 
-const FormInput = ({ lable, placeholder, style, value, editable, onChangeText, ...props }) => {
+const FormInput = ({ lable, placeholder, style, value, editable, onChangeText, numberOfLines, ...props }) => {
     return (
         <View style={[
             width.w_100,
@@ -23,6 +23,8 @@ const FormInput = ({ lable, placeholder, style, value, editable, onChangeText, .
                 onChangeText={onChangeText}
                 value={value + ""}
                 editable={editable}
+                multiline={numberOfLines ? true : false}
+                numberOfLines={numberOfLines ? numberOfLines : 1}
                 style={[
                     text_size.sm,
                     font_weight.f_500,

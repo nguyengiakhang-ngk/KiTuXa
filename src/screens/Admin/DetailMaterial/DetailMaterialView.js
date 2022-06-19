@@ -50,8 +50,8 @@ const DetailMaterialView = ({ navigation, route }) => {
             <ScrollView style={{
                 padding: 10
             }}>
-                <FormInput editable={false} lable={"Tên loại vật chất"} value={detailMaterial.nameMaterialType} />
-                <FormInput editable={false} lable={"Tên vật chất"} value={detailMaterial.nameMaterial} />
+                <FormInput  editable={false} lable={"Tên loại vật chất"} value={detailMaterial.nameMaterialType} />
+                <FormInput numberOfLines={5} editable={false} lable={"Tên vật chất"} value={detailMaterial.nameMaterial} />
                 <FormInput editable={false} lable={"Tình trạng"} value={detailMaterial.status} />
                 <FormInput editable={false} lable={"Ngày nhập"} value={moment(detailMaterial.createdAt).format("DD/MM/YYYY HH:mm:ss")} />
                 <Image

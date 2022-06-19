@@ -15,65 +15,29 @@ import RNQRGenerator from "rn-qr-generator";
 import Header from '../../../components/Header';
 
 const InputMaterialToRoom = ({ navigation }) => {
+    const title = "Nhập vật chất vào phòng"
+    const [rooms, setRooms] = useState([]);
+    const [room, setRoom] = useState("");
+    const [loading, setLoading] = useState(false);
     const [statuses, setStatuses] = useState([]);
     const [materials, setMaterials] = useState([]);
     const [data, setData] = useState([]);
     const [status, setStatus] = useState("");
-    const [room, setRoom] = useState("");
-    const [price, setPrice] = useState(0);
-    const [quantity, setQuantity] = useState(0);
+    const [price, setPrice] = useState("");
+    const [quantity, setQuantity] = useState("");
     const [material, setMaterial] = useState("");
     const [total, setTotal] = useState(0);
     const [address, setAddress] = useState("");
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
-    const [rooms, setRooms] = useState([]);
-    const fetchMaterial = async () => {
-        try {
-            const { data } = await materialAPI.get();
-            let tmp = [{ key: "", label: "--- Chọn vật chất ---" }];
-            data.forEach((item) => {
-                tmp.push({
-                    key: item?.id,
-                    label: item.name,
-                });
-            });
-            setMaterials(tmp);
-        } catch (error) {
-            alert(error);
-        }
-    };
-
-    useEffect(() => {
-        fetchMaterial();
-        fetchStatus();
-        fetchRoom();
-    }, []);
 
     useEffect(() => {
         let tmp = 0;
-        data.forEach((item) => {
-            tmp += +item.price * +item.quantity;
-        });
+        data.forEach(item => {
+            tmp += (+item.price * +item.quantity);
+        })
         setTotal(tmp);
-    }, [data]);
-
-    const fetchStatus = async () => {
-        try {
-            const { data } = await materialAPI.getStatus();
-            let tmp = [{ key: "", label: "--- Chọn tình trạng ---" }];
-            data.slice(0, 2).forEach((item) => {
-                tmp.push({
-                    key: item?.id,
-                    label: item.name,
-                });
-            });
-            setStatuses(tmp);
-        } catch (error) {
-            alert(error.message);
-        }
-    };
-
+    }, [data])
     const fetchRoom = async () => {
         try {
             const { data } = await materialAPI.getRoomAdmin();
@@ -89,23 +53,50 @@ const InputMaterialToRoom = ({ navigation }) => {
             alert(error.message);
         }
     }
-    navigation.addListener("focus", () => {
-        fetchStatus();
-        fetchMaterial();
-        fetchRoom();
-        setData([]);
-    });
+    const fetchMaterial = async () => {
+        try {
+            const { data } = await materialAPI.get();
+            let tmp = [{ key: "", label: "--- Chọn vật chất ---" }];
+            data.forEach((item) => {
+                tmp.push({
+                    key: item?.id,
+                    label: item.name,
+                });
+            });
+            setMaterials(tmp);
+        } catch (error) {
+            alert(error);
+        }
+    }
+    const fetchStatus = async () => {
+        try {
+            const { data } = await materialAPI.getStatus();
+            let tmp = [{ key: "", label: "--- Chọn tình trạng ---" }];
+            data.slice(0, 2).forEach((item) => {
+                tmp.push({
+                    key: item?.id,
+                    label: item.name,
+                });
+            });
+            setStatuses(tmp);
+        } catch (error) {
+            alert(error.message);
+        }
+    }
 
     const checkValue = () => {
+        if (room === "") {
+            alert("Chọn phòng !");
+            return false
+        }
         if (material === "") {
             alert("Chọn vật chất !");
-            return false;
+            return false
         }
         if (status === "") {
             alert("Chọn tình trạng vật chất !");
             return false;
         }
-
         if (quantity <= 0) {
             alert("Nhập số lượng lớn hơn 0 !");
             return false;
@@ -114,41 +105,14 @@ const InputMaterialToRoom = ({ navigation }) => {
             alert("Nhập giá lớn hơn 0 !");
             return false;
         }
-        const tmp = data.filter(
-            (item) => item.material === material && item.status === status
-        );
+        const tmp = data.filter(item => item.material === material && item.status === status && item.room === room)
         if (tmp.length > 0) {
-            alert("Đã có vật chất và tình trạng này rồi !");
+            alert("Đã có vật chất và tình trạng vật chất trong phòng này rồi !");
             return false;
         }
-        return true;
-    };
-
-    const getVatchatByIdVatchat = (id) => {
-        return materials.filter(item => item.id === id)[0]?.name
-    }
-    const getTypeByValueType = (status) => {
-        return statuses.filter(item => item.id === status)[0]?.name
+        return true
     }
 
-    const checkQuantity = async () => {
-        try {
-            const { data } = await materialAPI.getDetailMaterialByStatus(material, status)
-            console.log(data);
-            if (data.length === 0) {
-                alert("Hiên tại chưa có vật chất này !");
-                return false
-            }
-            if (+quantity > data.length) {
-                alert(`Số lượng "${getVatchatByIdVatchat(material)} (${getTypeByValueType(status)})"  không đủ cung cấp, hiện tại chỉ còn ${data.length} !`)
-                return false;
-            }
-        } catch (error) {
-            alert(error.message)
-            return false;
-        }
-        return true;
-    }
 
     const handleAdd = async () => {
         if (checkValue() && await checkQuantity()) {
@@ -170,33 +134,27 @@ const InputMaterialToRoom = ({ navigation }) => {
         }
     }
 
-    const removeData = (item) => {
-        let tmp = data;
-        tmp = tmp.filter((t) => t !== item);
-        setData(tmp);
-    };
-
     const checkInfo = () => {
         if (phone === "") {
             alert("Vui lòng nhập số điện thoại !");
-            return false;
+            return false
         }
         if (address === "") {
             alert("Vui lòng nhập địa chỉ !");
-            return false;
+            return false
         }
-        return true;
-    };
+        return true
+    }
 
     const updateDetailMaterial = async (id, status, quantity, room) => {
-        const { data } = await materialAPI.getDetailMaterialByStatus(id, status);
+        const { data } = await materialService.getDetailMaterialByStatus(id, status);
         await data.slice(0, quantity).forEach(item => {
             const detailMaterial = {
                 ...item,
                 owner: room,
                 idStatusMaterial: 3
             }
-            materialAPI.updateDetailMaterial(detailMaterial)
+            materialService.updateDetailMaterial(detailMaterial)
         })
     }
 
@@ -214,14 +172,38 @@ const InputMaterialToRoom = ({ navigation }) => {
                 await billMaterialAPI.createDetailBill(detailBill)
                 await updateDetailMaterial(detailBill.idMaterial, detailBill.idStatusMaterial, detailBill.quantity, detailBill.idRoom);
             })
-            alert("Thêm thành công!");
-            navigation.navigate("billmaterial");
+            TOAST.SUCCESS("Thêm thành công!");
+            history.push({
+                pathname: "/Admin/Bill-Material",
+                state: {
+                    selected: 3.2
+                }
+            });
         } catch (error) {
             alert(error.message);
         }
     }
 
+    const checkQuantity = async () => {
+        try {
+            const { data } = await materialAPI.getDetailMaterialByStatus(material, status)
+            if (data.length === 0) {
+                alert("Hiện tại chưa có vật chất này !");
+                return false
+            }
+            if (+quantity > data.length) {
+                alert(`Số lượng "${getVatchatByIdVatchat(material)} (${getTypeByValueType(status)})"  không đủ cung cấp, hiện tại chỉ còn ${data.length} !`)
+                return false;
+            }
+        } catch (error) {
+            alert(error.message)
+            return false;
+        }
+        return true;
+    }
+
     const submit = async () => {
+        setLoading(true)
         try {
             if (checkInfo()) {
                 const { data } = await billMaterialAPI.create({ total, address, name, phone, kind: "export" })
@@ -231,10 +213,39 @@ const InputMaterialToRoom = ({ navigation }) => {
                     alert("Tạo hóa đơn thất bại !");
                 }
             }
+            setLoading(false)
         } catch (error) {
             alert(error.message)
+            setLoading(false)
         }
     }
+    const removeData = (item) => {
+        let tmp = data;
+        tmp = tmp.filter(t => t !== item)
+        setData(tmp)
+    }
+    useEffect(() => {
+        fetchRoom();
+        fetchMaterial();
+        fetchStatus();
+    }, [])
+    const getVatchatByIdVatchat = (id) => {
+        return materials.filter(item => item.id === id)[0].name
+    }
+    const getTypeByValueType = (status) => {
+        return statuses.filter(item => item.id === status)[0].name
+    }
+    const getRoomByValueRoom = (room) => {
+        return rooms.filter(item => item.id === room)[0].roomName
+    }
+
+    navigation.addListener("focus", () => {
+        fetchStatus();
+        fetchMaterial();
+        fetchRoom();
+        setData([]);
+    });
+
 
     return (
         <SafeAreaView
@@ -308,7 +319,7 @@ const InputMaterialToRoom = ({ navigation }) => {
                             statuses={statuses}
                             materials={materials}
                             item={item}
-                            rooms = {rooms}
+                            rooms={rooms}
                         />
                     ))}
                 </View>

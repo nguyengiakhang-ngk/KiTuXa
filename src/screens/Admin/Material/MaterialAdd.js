@@ -139,7 +139,7 @@ const MaterialAdd = ({ navigation }) => {
                 nestedScrollEnabled
             >
                 <FormSelect label='Loại vật chất' data={materialTypes} onChange={onChangeMaterialType} />
-                <FormInput lable={"Tên vật chất"} value={material.name} onChangeText={e => setMaterial({ ...material, name: e })} />
+                <FormInput numberOfLines={4} lable={"Tên vật chất"} value={material.name} onChangeText={e => setMaterial({ ...material, name: e })} />
                 <View
                     style={[
                         width.w_100,

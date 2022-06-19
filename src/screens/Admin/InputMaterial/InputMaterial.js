@@ -133,7 +133,7 @@ const InputMaterial = ({ navigation }) => {
       return false;
     }
     if (address === "") {
-        alert("Vui lòng nhập địa chỉ !");
+      alert("Vui lòng nhập địa chỉ !");
       return false;
     }
     return true;
@@ -158,9 +158,8 @@ const InputMaterial = ({ navigation }) => {
             arrTmp.forEach(async (_) => {
               i++;
               let detailMaterial = {
-                id: `${Date.now()}-${item.material}-${item.status}-${
-                  item.quantity
-                }-${item.price}-${i}`,
+                id: `${Date.now()}-${item.material}-${item.status}-${item.quantity
+                  }-${item.price}-${i}`,
                 idMaterial: item.material,
                 idDetailBill: rs.data.id,
                 qr: "",
@@ -179,7 +178,7 @@ const InputMaterial = ({ navigation }) => {
                   };
                   const { data } = await uploadAPI.uploadImage(file);
                   detailMaterial = { ...detailMaterial, qr: data.name };
-                  materialAPI.addDetailMaterial(detailMaterial);
+                  await materialAPI.addDetailMaterial(detailMaterial);
                 })
                 .catch((error) => console.log("Cannot create QR code", error));
             });
@@ -294,17 +293,17 @@ const InputMaterial = ({ navigation }) => {
             <FormInput
               placeholder={"Họ và tên"}
               value={name}
-              onChangeText={(e) => {setName(e)}}
+              onChangeText={(e) => { setName(e) }}
             />
             <FormInput
               placeholder={"Số điện thọai"}
               value={phone}
-              onChangeText={(e) => {setPhone(e)}}
+              onChangeText={(e) => { setPhone(e) }}
             />
             <FormInput
               placeholder={"Địa chỉ"}
               value={address}
-              onChangeText={(e) => {setAddress(e)}}
+              onChangeText={(e) => { setAddress(e) }}
             />
 
             <View style={{ marginTop: 10, marginBottom: 20 }}>

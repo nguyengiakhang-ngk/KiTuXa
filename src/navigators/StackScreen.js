@@ -82,6 +82,9 @@ import AddMaterialScreen from "../screens/Admin/AddMaterial/AddMaterial";
 import InputMaterialToRoom from '../screens/Admin/InputMaterial/InputMaterialToRoom';
 import StatisticalMaterial from '../screens/Admin/statisttical/statisticalMaterial';
 import NotificationScreen from "../screens/Admin/Notification/NotificationScreen";
+import TroubleMaterial from '../screens/Admin/trouble-material/trouble-material';
+import TroubleMaterialView from '../screens/Admin/trouble-material/trouble-material-view';
+import ViewMaterialInRoom from '../screens/Admin/view-material-in-room/view-material-in-room';
 
 const Stack = createNativeStackNavigator();
 const StackScreen: () => Node = () => {
@@ -371,14 +374,29 @@ const StackScreen: () => Node = () => {
                     component={StatisticalMaterial}
                     options={{ headerShown: false }}
                 />
-                 <Stack.Screen
+                <Stack.Screen
                     name="inputmaterialtoroom"
                     component={InputMaterialToRoom}
                     options={{ headerShown: false }}
-                  />
-                  <Stack.Screen
+                />
+                <Stack.Screen
                     name="Notification"
                     component={NotificationScreen}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="troublemateialview"
+                    component={TroubleMaterialView}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="troublemateial"
+                    component={TroubleMaterial}
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="viewmaterialinroom"
+                    component={ViewMaterialInRoom}
                     options={{ headerShown: false }}
                 />
             </Stack.Navigator>

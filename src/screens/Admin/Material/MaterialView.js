@@ -139,7 +139,7 @@ const MaterialView = ({ navigation, route }) => {
             <ScrollView style={{ padding: 10 }}
             >
                 <FormSelect label='Loại vật chất' data={materialTypes} onChange={onChangeMaterialType} selectedKey={material.idMaterialType} />
-                <FormInput lable={"Tên vật chất"} value={material.name} onChangeText={e => setMaterial({ ...material, name: e })} />
+                <FormInput numberOfLines={4} lable={"Tên vật chất"} value={material.name} onChangeText={e => setMaterial({ ...material, name: e })} />
                 <View
                     style={[
                         width.w_100,
