@@ -102,3 +102,4 @@ export const GET_NOTIFICATION = `/getNotification`;
 export const UPDATE_NOTIFICATION = `/updateNotification`;
 
 export const CHECKED_BOOK_TICKET = `/checkedBookTicket`;
+export const BILL_MATERIAL_ROOM = `/billMaterialByRoomId`;

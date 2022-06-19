@@ -44,7 +44,7 @@ import {
     updateRoom,
     getListRoom,
     getBookTicketByRoom,
-    getRoomByType
+    getRoomByType, getBillMaterialRoom
 } from "../../api/roomAPI";
 
 export const doGetRoomByArea = (areaId) => dispatch => {
@@ -358,4 +358,16 @@ const getBookTicketByRoomFail = (dispatch, error) => {
         type: DELETE_ROOM_FAIL,
         error: error
     });
+}
+
+export const doGetBillMaterialRoom = (roomId) => dispatch => {
+    return new Promise((resolve, reject) => {
+        getBillMaterialRoom(roomId)
+            .then(data => {
+                resolve(data);
+            })
+            .catch(error => {
+                reject(error);
+            });
+    })
 }

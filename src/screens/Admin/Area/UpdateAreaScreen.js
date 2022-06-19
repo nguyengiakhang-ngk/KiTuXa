@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 import {
     ActivityIndicator, BackHandler,
-    Keyboard, ScrollView, TouchableWithoutFeedback, View
+    Keyboard, ScrollView, Text, TextInput, TouchableOpacity, TouchableWithoutFeedback, View
 } from 'react-native';
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
 import {
     background_color,
-    flex,
-    height,
+    flex, font, font_weight,
+    height, padding, shadow, text_size,
     width
 } from "../../../utils/styles/MainStyle";
 import AppError from "../../../components/AppError";
@@ -17,9 +17,12 @@ import AppInputInf from "../../../components/AppInputInf";
 import {doGetListArea, doUpdateArea} from "../../../redux/actions/area";
 import {connect} from "react-redux";
 import AppButtonActionInf from "../../../components/AppButtonActionInf";
-import {color_danger, color_primary} from "../../../utils/theme/Color";
+import {color_danger, color_dark, color_primary, color_success} from "../../../utils/theme/Color";
 import Toast from "react-native-toast-message";
 import DialogConfirm from "../../../components/DialogConfirm";
+import GetLocation from "react-native-get-location";
+import {createOpenLink} from "react-native-open-maps";
+import {Icon} from "@rneui/base";
 
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -35,8 +38,22 @@ class UpdateAreaScreen extends Component {
             area: this.props.route.params.area,
             ss: "",
             ref: React.createRef(),
-            isConfirm: false
+            isConfirm: false,
+            lat: '',
+            lng: ''
         }
+    }
+
+    getCurrentLocation = () => {
+        GetLocation.getCurrentPosition({
+            enableHighAccuracy: true,
+            timeout: 0,
+        }).then(location => {
+            this.setState({
+                lng: location.longitude,
+                lat: location.latitude
+            })
+        })
     }
 
     isFormValid = (isValid) => {
@@ -270,6 +287,136 @@ class UpdateAreaScreen extends Component {
                                             {errors.description && touched.description ? (
                                                 <AppError errors={ errors.description }/>
                                             ) : null}
+                                        </View>
+                                        <View
+                                            style={{flexDirection: "row"}}
+                                        >
+                                            <View
+                                                style={[
+                                                    {paddingLeft: 15, paddingRight: 15, marginTop: 10, flex: 1}
+                                                ]}
+                                            >
+                                                <Text style={[
+                                                    text_size.sm,
+                                                    font_weight.f_500,
+                                                    font.serif,
+                                                    { marginTop: 5, textAlignVertical: 'top', color: color_dark},
+                                                ]}>Vĩ độ</Text>
+                                                <TextInput
+                                                    style={[
+                                                        text_size.sm,
+                                                        font_weight.f_500,
+                                                        font.serif,
+                                                        padding.p_0,
+                                                        width.w_100,
+                                                        background_color.white,
+                                                        shadow.shadow,
+                                                        { borderRadius: 7, padding: 12, paddingLeft: 10, paddingRight: 10, marginTop: 5, textAlignVertical: 'top', },
+                                                    ]}
+                                                    value={String(this.state.lat)}
+                                                    onChangeText={(newText) => {
+                                                        this.setState({
+                                                            lat: newText
+                                                        })
+                                                    }}
+                                                />
+                                            </View>
+                                            <View
+                                                style={[
+                                                    {paddingLeft: 15, paddingRight: 15, marginTop: 10, flex: 1}
+                                                ]}
+                                            >
+                                                <Text style={[
+                                                    text_size.sm,
+                                                    font_weight.f_500,
+                                                    font.serif,
+                                                    { marginTop: 5, textAlignVertical: 'top', color: color_dark},
+                                                ]}>Kinh độ</Text>
+                                                <TextInput
+                                                    style={[
+                                                        text_size.sm,
+                                                        font_weight.f_500,
+                                                        font.serif,
+                                                        padding.p_0,
+                                                        width.w_100,
+                                                        background_color.white,
+                                                        shadow.shadow,
+                                                        { borderRadius: 7, padding: 12, paddingLeft: 10, paddingRight: 10, marginTop: 5, textAlignVertical: 'top', },
+                                                    ]}
+                                                    value={String(this.state.lng)}
+                                                    onChangeText={(newText) => {
+                                                        this.setState({
+                                                            lng: newText
+                                                        })
+                                                    }}
+                                                />
+                                            </View>
+                                        </View>
+                                        <View
+                                            style={[
+                                                width.w_100,
+                                                {paddingLeft: 15, paddingRight: 15, marginTop: 10}
+                                            ]}
+                                        >
+                                            <TouchableOpacity
+                                                style={[
+                                                    width.w_100,
+                                                    flex.flex_row,
+                                                    flex.align_items_center,
+                                                ]}
+                                                onPress={createOpenLink({query: values.address, zoom: 30})}
+                                            >
+                                                <Icon
+                                                    name='search-location'
+                                                    type='font-awesome-5'
+                                                    size={16}
+                                                    color={color_success}
+                                                />
+                                                <Text
+                                                    style={[
+                                                        text_size.xs,
+                                                        font.serif,
+                                                        {
+                                                            marginLeft: 5
+                                                        }
+                                                    ]}
+                                                >
+                                                    Lấy tọa độ từ google map
+                                                </Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                        <View
+                                            style={[
+                                                width.w_100,
+                                                {paddingLeft: 15, paddingRight: 15, marginTop: 10}
+                                            ]}
+                                        >
+                                            <TouchableOpacity
+                                                style={[
+                                                    width.w_100,
+                                                    flex.flex_row,
+                                                    flex.align_items_center,
+                                                ]}
+                                                onPress={() => {this.getCurrentLocation()}}
+                                            >
+                                                <Icon
+                                                    name='map-marker-alt'
+                                                    type='font-awesome-5'
+                                                    size={16}
+                                                    color={color_success}
+                                                />
+                                                <Text
+                                                    style={[
+                                                        text_size.xs,
+                                                        font.serif,
+                                                        {
+                                                            marginLeft: 9
+                                                        }
+                                                    ]}
+                                                >
+                                                    Lấy tọa độ từ vị trí hiện tại của bạn
+                                                </Text>
+                                            </TouchableOpacity>
                                         </View>
                                         <View
                                             style={[
