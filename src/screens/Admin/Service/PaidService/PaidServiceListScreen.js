@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {
+    ActivityIndicator,
     FlatList, Image, Keyboard, Modal, ScrollView,
     Text, TouchableOpacity, TouchableWithoutFeedback, View
 } from 'react-native';
@@ -16,7 +17,7 @@ import {
     text_size
 } from "../../../../utils/styles/MainStyle";
 import {color_danger, color_primary, color_success} from "../../../../utils/theme/Color";
-import {path, url} from "../../../../constant/define";
+import { url} from "../../../../constant/define";
 import { width } from "../../../../utils/styles/MainStyle";
 import {Icon} from "@rneui/base";
 import AppInputInf from "../../../../components/AppInputInf";
@@ -34,6 +35,8 @@ import {
 import {connect} from "react-redux";
 import {doAddPriceService} from "../../../../redux/actions/priceTypeOfRoom";
 import {cardExpiry} from "../../../../utils/proccess/proccessApp";
+import Toast from "react-native-toast-message";
+import DialogConfirm from "../../../../components/DialogConfirm";
 
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -50,7 +53,9 @@ class PaidServiceListScreen extends Component{
             paidServiceUpdate: null,
             iconAdd: "servicestack",
             isShowModalAdd: false,
-            imagePaidService: null
+            imagePaidService: null,
+            isConfirm: false,
+            paidService: null
         }
     }
 
@@ -73,19 +78,39 @@ class PaidServiceListScreen extends Component{
     getPaidServiceData(){
         this.props.doGetListPaidService({userId: this.props.user.user.id}).then(data =>{
             console.log(JSON.stringify(data));
+            setTimeout(() => {
+                this.setState({
+                    isLoading: false
+                })
+            }, 2000)
         });
     }
 
 
-    deletePaidService(paidService) {
-        this.props.doDeletePaidService({id: paidService.id, image: paidService.image}).then(data => {
+    deletePaidService() {
+        this.setState({
+            isLoading: true,
+            isConfirm: false
+        })
+        this.props.doDeletePaidService({id: this.state.paidService.id, image: this.state.paidService.image}).then(data => {
             if(data) {
                 this.getPaidServiceData();
+                Toast.show({
+                    type: 'success',
+                    text1: 'Dịch vụ có phí',
+                    text2: 'Xóa thành công.',
+                    visibilityTime: 2000,
+                    autoHide: true
+                });
             }
         })
     }
 
     addPaidService = (values) => {
+        this.setState({
+            isLoading: true,
+            isShowModalAdd: false
+        })
         const date = new Date();
         const minutes = date.getMinutes();
         let data = new FormData();
@@ -107,10 +132,16 @@ class PaidServiceListScreen extends Component{
                 this.props.doAddPriceService({price: price, paidServiceId: data}).then(check => {
                     if(check) {
                         this.setState({
-                            isShowModalAdd: false,
                             imagePaidService: null
                         });
                         this.getPaidServiceData();
+                        Toast.show({
+                            type: 'success',
+                            text1: 'Dịch vụ có phí',
+                            text2: 'Thêm thành công.',
+                            visibilityTime: 2000,
+                            autoHide: true
+                        });
                     }
                 })
             }
@@ -118,6 +149,9 @@ class PaidServiceListScreen extends Component{
     }
 
     updatePaidService = (values) => {
+        this.setState({
+            isLoading: true
+        })
         const date = new Date();
         const minutes = date.getMinutes();
         let data = new FormData();
@@ -136,17 +170,28 @@ class PaidServiceListScreen extends Component{
         data.append("paidService", JSON.stringify(paidService));
         this.props.doUpdatePaidService(data, {id: this.state.paidServiceUpdate.id}).then(data => {
             if(data) {
+                // alert(JSON.stringify(data))
                 let price = values.price.split(".").join("");
-                this.props.doAddPriceService({price: price, paidServiceId: this.state.paidServiceUpdate.id}).then(check => {
-                    if(check) {
-                        this.setState({
-                            isShowModalAdd: false,
-                            imagePaidService: null,
-                            paidServiceUpdate: null
-                        });
-                        this.getFreeServiceData();
-                    }
-                })
+                if(price !== this.state.paidServiceUpdate.priceofservices[this.state.paidServiceUpdate?.priceofservices.length-1].price){
+                    this.props.doAddPriceService({price: price, paidServiceId: this.state.paidServiceUpdate.id}).then(check => {
+                        if(check) {
+
+                        }
+                    })
+                }
+                this.setState({
+                    isShowModalAdd: false,
+                    imagePaidService: null,
+                    paidServiceUpdate: null
+                });
+                this.getPaidServiceData();
+                Toast.show({
+                    type: 'success',
+                    text1: 'Dịch vụ có phí',
+                    text2: 'Cập nhật thành công.',
+                    visibilityTime: 2000,
+                    autoHide: true
+                });
             }
         });
     }
@@ -179,7 +224,8 @@ class PaidServiceListScreen extends Component{
                     {flex: 1, padding: 2, paddingLeft: 5, paddingRight: 5, marginTop: 43},
                     height.h_100,
                     position.relative,
-                    background_color.white
+                    background_color.white,
+                    flex.justify_content_center
                 ]}
             >
                 <View
@@ -427,7 +473,28 @@ class PaidServiceListScreen extends Component{
                         </View>
                     </Modal>
                 </View>
-                <FlatList showsVerticalScrollIndicator={true} data={this.props.paidService.paidServiceList} renderItem={this._renderItemPaidService} keyExtractor={(item, index) => index.toString()}/>
+                <Toast ref={(ref) => {Toast.setRef(ref)}} />
+                {
+                    this.state.isLoading ?
+                        <ActivityIndicator size="large" color={color_primary}/>
+                        :
+                        <FlatList showsVerticalScrollIndicator={true} data={this.props.paidService.paidServiceList} renderItem={this._renderItemPaidService} keyExtractor={(item, index) => index.toString()}/>
+                }
+                {
+                    this.state.isConfirm ?
+                        <DialogConfirm
+                            content={"Bạn có chắc chắn muốn xóa?"}
+                            cancel={() => {
+                                this.setState({
+                                    isConfirm: false
+                                })
+                            }}
+                            confirm={() => {
+                                this.deletePaidService();
+                            }}
+                        />
+                        : null
+                }
             </SafeAreaView>
         );
     }
@@ -516,7 +583,12 @@ class PaidServiceListScreen extends Component{
                         style={[
                             {marginRight: 10}
                         ]}
-                        onPress={() => this.deletePaidService(item)}
+                        onPress={() => {
+                            this.setState({
+                                paidService: item,
+                                isConfirm: true
+                            })
+                        }}
                     >
                         <Icon
                             name= {"trash-alt"}

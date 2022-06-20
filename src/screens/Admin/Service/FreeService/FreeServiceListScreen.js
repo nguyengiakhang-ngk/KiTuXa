@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {
-    FlatList, Keyboard, Modal, Text, TouchableOpacity, TouchableWithoutFeedback, View, Image
+    FlatList, Keyboard, Modal, Text, TouchableOpacity, TouchableWithoutFeedback, View, Image, ActivityIndicator
 } from 'react-native';
 import AppFAB from "../../../../components/AppFAB";
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
@@ -26,6 +26,8 @@ import AppButtonActionInf from "../../../../components/AppButtonActionInf";
 import ImagePicker from "react-native-image-crop-picker";
 import {connect} from "react-redux";
 import {doGetListFreeService, doAddFreeService, doUpdateFreeService, doDeleteFreeService} from "../../../../redux/actions/freeService";
+import DialogConfirm from "../../../../components/DialogConfirm";
+import Toast from "react-native-toast-message";
 
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -37,11 +39,14 @@ class FreeServiceListScreen extends Component{
     constructor(props) {
         super(props);
         this.state = {
+            isLoading: true,
             dataFreeService: [],
             freeSerViceUpdate: null,
             iconAdd: "servicestack",
             isShowModalAdd: false,
-            imageFreeService: null
+            imageFreeService: null,
+            isConfirm: false,
+            freeService: null
         }
     }
 
@@ -56,6 +61,11 @@ class FreeServiceListScreen extends Component{
     getFreeServiceData(){
         this.props.doGetListFreeService({userId: this.props.user.user.id}).then(data =>{
             console.log(JSON.stringify(data));
+            setTimeout(() => {
+                this.setState({
+                    isLoading: false
+                })
+            }, 2000)
         });
     }
 
@@ -63,15 +73,30 @@ class FreeServiceListScreen extends Component{
         this.removeWillFocusListener();
     }
 
-    deleteFreeService(freeService) {
-        this.props.doDeleteFreeService({id: freeService.id, image: freeService.image}).then(data => {
+    deleteFreeService() {
+        this.setState({
+            isLoading: true,
+            isConfirm: false
+        })
+        this.props.doDeleteFreeService({id: this.state.freeService.id, image: this.state.freeService.image}).then(data => {
             if(data) {
                 this.getFreeServiceData();
+                Toast.show({
+                    type: 'success',
+                    text1: 'Dịch vụ miễn phí',
+                    text2: 'Xóa thành công.',
+                    visibilityTime: 2000,
+                    autoHide: true
+                });
             }
         })
     }
 
     addFreeService = (values) => {
+        this.setState({
+            isLoading: true,
+            isShowModalAdd: false
+        })
         const date = new Date();
         const minutes = date.getMinutes();
         let data = new FormData();
@@ -88,15 +113,25 @@ class FreeServiceListScreen extends Component{
         this.props.doAddFreeService(data).then(data => {
             if(data) {
                 this.setState({
-                    isShowModalAdd: false,
                     imageFreeService: null
                 });
                 this.getFreeServiceData();
+                Toast.show({
+                    type: 'success',
+                    text1: 'Dịch vụ miễn phí',
+                    text2: 'Thêm thành công.',
+                    visibilityTime: 2000,
+                    autoHide: true
+                });
             }
         })
     }
 
     updateFreeService = (values) => {
+        this.setState({
+            isLoading: true,
+            isShowModalAdd: false
+        })
         const date = new Date();
         const minutes = date.getMinutes();
         let data = new FormData();
@@ -120,6 +155,13 @@ class FreeServiceListScreen extends Component{
                     freeSerViceUpdate: null
                 });
                 this.getFreeServiceData();
+                Toast.show({
+                    type: 'success',
+                    text1: 'Dịch vụ miễn phí',
+                    text2: 'Cập nhật thành công.',
+                    visibilityTime: 2000,
+                    autoHide: true
+                });
             }
         });
     }
@@ -152,7 +194,8 @@ class FreeServiceListScreen extends Component{
                     {flex: 1, padding: 2, paddingLeft: 5, paddingRight: 5, marginTop: 43},
                     height.h_100,
                     position.relative,
-                    background_color.white
+                    background_color.white,
+                    flex.justify_content_center
                 ]}
             >
                 <View
@@ -355,7 +398,28 @@ class FreeServiceListScreen extends Component{
                         </View>
                     </Modal>
                 </View>
-                <FlatList showsVerticalScrollIndicator={false} data={this.props.freeService.freeServiceList} renderItem={this._renderItemFreeService} keyExtractor={(item, index) => index.toString()}/>
+                <Toast ref={(ref) => {Toast.setRef(ref)}} />
+                {
+                    this.state.isLoading ?
+                        <ActivityIndicator size="large" color={color_primary}/>
+                        :
+                        <FlatList showsVerticalScrollIndicator={false} data={this.props.freeService.freeServiceList} renderItem={this._renderItemFreeService} keyExtractor={(item, index) => index.toString()}/>
+                }
+                {
+                    this.state.isConfirm ?
+                        <DialogConfirm
+                            content={"Bạn có chắc chắn muốn xóa?"}
+                            cancel={() => {
+                                this.setState({
+                                    isConfirm: false
+                                })
+                            }}
+                            confirm={() => {
+                                this.deleteFreeService();
+                            }}
+                        />
+                        : null
+                }
             </SafeAreaView>
         );
     }
@@ -444,7 +508,12 @@ class FreeServiceListScreen extends Component{
                         style={[
                             {marginRight: 10}
                         ]}
-                        onPress={() => this.deleteFreeService(item)}
+                        onPress={() => {
+                            this.setState({
+                                freeService: item,
+                                isConfirm: true
+                            })
+                        }}
                     >
                         <Icon
                             name= {"trash-alt"}
