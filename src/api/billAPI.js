@@ -1,8 +1,13 @@
 import {doPost, doGet, doPut, doDelete} from './apiCommon'
-import {GET_BILL_BY_CONTRACT, ADD_BILL, GET_BILL_BY_ID, UPDATE_BILL, DELETE_BILL} from '../constant/apiUrl'
+import {GET_BILL_BY_CONTRACT, ADD_BILL, GET_BILL_BY_ID, UPDATE_BILL, DELETE_BILL,
+    GET_BILL_BY_AREA} from '../constant/apiUrl'
 
 export const getListBillByContract = (contractId) => {
     return doGet(GET_BILL_BY_CONTRACT, contractId);
+}
+
+export const getListBillByArea = (areaId) => {
+    return doGet(GET_BILL_BY_AREA, areaId);
 }
 
 export const getBillById = (id) => {

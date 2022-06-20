@@ -142,6 +142,10 @@ export const GET_BILL_BY_CONTRACT = 'get_bill_by_contract';
 export const GET_BILL_BY_CONTRACT_SUCCESS = 'get_bill_by_contract_success';
 export const GET_BILL_BY_CONTRACT_FAIL = 'get_bill_by_contract_error';
 
+export const GET_BILL_BY_AREA = 'get_bill_by_area';
+export const GET_BILL_BY_AREA_SUCCESS = 'get_bill_by_area_success';
+export const GET_BILL_BY_AREA_FAIL = 'get_bill_by_area_error';
+
 export const GET_BILL_BY_ID = 'get_bill_by_id';
 export const GET_BILL_BY_ID_SUCCESS = 'get_bill_by_id_success';
 export const GET_BILL_BY_ID_FAIL = 'get_bill_by_id_error';

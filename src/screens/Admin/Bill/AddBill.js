@@ -17,6 +17,7 @@ import AppDialogSelect from "../../../components/AppDialogSelect";
 import AppButton from "../../../components/AppButton";
 import axios from "axios";
 import { path } from "../../../constant/define";
+import Toast from "react-native-toast-message";
 import { AppDatePicker } from "../../../components/AppDatePicker";
 import moment from "moment";
 import { BillsSchema } from "../../../utils/validation/ValidationBill";
@@ -41,6 +42,7 @@ class AddBill extends Component {
         this.state = {
             isLoading: true,
             data: [],
+            ref: React.createRef(),
             dataTT: [{ 'key': '0', 'label': 'Chưa thanh toán' }, { 'key': '1', 'label': 'Đã thanh toán' }].map(item => ({ key: item.key, label: item.label })),
             dataArea: [],
             dataP: [],
@@ -57,7 +59,7 @@ class AddBill extends Component {
         this.getListArea();
     }
 
-    getListArea() {
+    getListArea = () => {
         this.props.doGetListArea({ userId: this.props.user.user.id }).then(data => {
             this.setState({
                 dataArea: data.map(item => ({
@@ -133,11 +135,33 @@ class AddBill extends Component {
     addBill = (values) => {
         this.props.doAddBill(values).then(data => {
             if (data) {
-                alert("Thêm hóa đơn thành công!");
-                this.props.navigation.goBack(null);
+                this.setState({isLoading: true})
+                Toast.show({
+                    type: 'success',
+                    text1: 'Hóa đơn',
+                    text2: 'Thêm thành công.',
+                    visibilityTime: 2000,
+                    autoHide: true
+                });
+                setTimeout(() => {
+                    this.props.navigation.goBack();
+                }, 2000)
             } else {
-                alert("Thêm hóa đơn thất bại! Vui lòng thử lại!")
+                this.setState({isLoading: true})
+                Toast.show({
+                    type: 'error',
+                    text1: 'Hóa đơn',
+                    text2: 'Đã xảy ra sự cố, vui lòng thử lại.',
+                    visibilityTime: 2000,
+                    autoHide: true
+                });
+                setTimeout(() => {
+                    this.setState({
+                        isLoading: false
+                    })
+                }, 1000)
             }
+            
         })
     }
 
@@ -182,6 +206,8 @@ class AddBill extends Component {
                                     ]}
                                     onPress={Keyboard.dismiss}
                                 >
+                                    
+                                    <Toast ref={(ref) => {Toast.setRef(ref)}} />
                                     <View
                                         style={[width.w_100, {
                                             paddingLeft: 15,
@@ -448,4 +474,3 @@ const mapDispatchToProps = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddBill)
-
