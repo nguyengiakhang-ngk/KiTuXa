@@ -29,6 +29,7 @@ import ModalSelector from "react-native-modal-selector";
 import {doGetListTypeOfRoom} from "../../../redux/actions/typeOfRoom";
 import Toast from "react-native-toast-message";
 import {doGetListArea} from "../../../redux/actions/area";
+import DialogConfirm from "../../../components/DialogConfirm";
 
 class RoomListScreen extends Component{
     constructor(props) {
@@ -40,7 +41,9 @@ class RoomListScreen extends Component{
             typeRoomBackup: [],
             roomDataShow: [],
             initValue: '',
-            initValueArea: ''
+            initValueArea: '',
+            isConfirm: false,
+            room: null
         }
     }
 
@@ -48,9 +51,20 @@ class RoomListScreen extends Component{
         this.props.navigation.navigate("AddRoom");
     }
 
-    deleteTypeRoom(id) {
-        this.props.doDeleteRoom({id: id}).then(data => {
+    deleteTypeRoom() {
+        this.setState({
+            isConfirm: false,
+            isLoading: true
+        })
+        this.props.doDeleteRoom({id: this.state.room.id}).then(data => {
             this.getRoom();
+            Toast.show({
+                type: 'success',
+                text1: 'Loại phòng',
+                text2: 'Xóa thành công.',
+                visibilityTime: 2000,
+                autoHide: true
+            });
         })
     }
 
@@ -62,10 +76,20 @@ class RoomListScreen extends Component{
                 this.getListArea();
             }
         );
+
+        this.removeWillBlurListener = this.props.navigation.addListener(
+            'blur', () => {
+                this.setState({
+                    roomDataShow: [],
+                    isLoading: true
+                })
+            }
+        );
     }
 
     componentWillUnmount() {
         this.removeWillFocusListener();
+        this.removeWillBlurListener();
     }
 
     getListArea() {
@@ -104,6 +128,7 @@ class RoomListScreen extends Component{
 
     getRoom(){
         this.props.doGetListRoom({userId: this.props.user.user.id}).then(data => {
+            // alert(JSON.stringify(data))
             this.setState({
                 roomDataShow: data,
                 initValue: 'Tất cả',
@@ -302,7 +327,12 @@ class RoomListScreen extends Component{
                         style={[
                             {marginRight: 10}
                         ]}
-                        onPress={() => this.deleteTypeRoom(item.id)}
+                        onPress={() => {
+                            this.setState({
+                                room: item,
+                                isConfirm: true
+                            })
+                        }}
                     >
                         <Icon
                             name= {"trash-alt"}
@@ -500,6 +530,22 @@ class RoomListScreen extends Component{
                             </View>
                     }
                 </View>
+                <Toast ref={(ref) => {Toast.setRef(ref)}} />
+                {
+                    this.state.isConfirm ?
+                        <DialogConfirm
+                            content={"Bạn có chắc chắn muốn xóa?"}
+                            cancel={() => {
+                                this.setState({
+                                    isConfirm: false
+                                })
+                            }}
+                            confirm={() => {
+                                this.deleteTypeRoom();
+                            }}
+                        />
+                        : null
+                }
             </SafeAreaView>
         );
     }

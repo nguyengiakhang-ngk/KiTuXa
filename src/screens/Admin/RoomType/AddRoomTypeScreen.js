@@ -46,7 +46,7 @@ class AddRoomTypeScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isLoading: false,
+            isLoading: true,
             data: [],
             imageList: [],
             dataFreeService: [],
@@ -117,6 +117,12 @@ class AddRoomTypeScreen extends Component {
             },() => {
                 this.setState({
                     initValue: this.state.areaData[0].label
+                }, () => {
+                    setTimeout(() => {
+                        this.setState({
+                            isLoading: false
+                        })
+                    }, 500)
                 })
             })
         })

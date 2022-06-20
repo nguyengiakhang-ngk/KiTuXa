@@ -54,6 +54,7 @@ class RoomTypeListScreen extends Component{
 
     deleteTypeRoom() {
         this.setState({
+            isConfirm: false,
             isLoading: true
         })
         this.props.doDeleteTypeOfRoom({id: this.state.typeOfRoom.id}).then(data => {
@@ -66,8 +67,7 @@ class RoomTypeListScreen extends Component{
                     })
                 })
                 this.setState({
-                    typeOfRoom: null,
-                    isConfirm: false
+                    typeOfRoom: null
                 })
                 this.getTypeRoom();
                 Toast.show({
