@@ -1,24 +1,13 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect, useState } from 'react';
-import { FlatList, ScrollView, Text, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { materialTypeAPI } from '../../../api/material-type.api';
-import ModalSelector from 'react-native-modal-selector';
 import { materialAPI } from '../../../api/material.api';
-import AppFAB from '../../../components/AppFAB';
-import {
-    background_color,
-    height,
-    position,
-} from "../../../utils/styles/MainStyle";
-import { color_primary } from "../../../utils/theme/Color";
 import ItemStatisticalMaterial from './ItemStatisticalMaterial';
 import FormSelect from '../../../components/FormSelect';
 import Header from '../../../components/Header';
-const initMaterialType = {
-    key: "",
-    name: "",
-}
+
 const StatisticalMaterial = ({ navigation }) => {
     const [materialTypes, setMaterialTypes] = useState([]);
     const [selected, setSelected] = useState("");
@@ -111,13 +100,13 @@ const StatisticalMaterial = ({ navigation }) => {
         >
             <Header>Thống kê vật chất</Header>
             <View style={{ padding: 10 }}>
-                <FormSelect label={"Loại vật chất"}  data={materialTypes} onChange={onChangeMaterialType} />
+                <FormSelect label={"Loại vật chất"} data={materialTypes} onChange={onChangeMaterialType} />
             </View>
             <View style={{
                 padding: 10
             }}>
-                {materials.length > 0 ? <FlatList data={materials} renderItem={({ item }) => <ItemStatisticalMaterial item={item} callback={() => fetchMaterials()} navigation={navigation} />} keyExtractor={(item, index) => index.toString()} />: 
-                selected !== "" ? <Text>Không có số lượng vật chất để thống kê</Text> : <Text>Chọn loại vật chất cần thống kê</Text>}
+                {materials.length > 0 ? <FlatList data={materials} renderItem={({ item }) => <ItemStatisticalMaterial item={item} callback={() => fetchMaterials()} navigation={navigation} />} keyExtractor={(item, index) => index.toString()} /> :
+                    selected !== "" ? <Text>Không có số lượng vật chất để thống kê</Text> : <Text>Chọn loại vật chất cần thống kê</Text>}
             </View>
         </SafeAreaView>
     )

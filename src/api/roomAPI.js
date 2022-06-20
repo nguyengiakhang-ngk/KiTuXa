@@ -1,13 +1,13 @@
-import {doPost, doGet} from './apiCommon'
+import {doPost, doGet, doDelete, doPut} from './apiCommon'
 import {
-    GET_ROOM_BY_AREA, 
-    GET_ROOM_BY_ID, 
-    GET_ROOM_BY_BOOKTICKET, 
-    ADD_NUMBER_ELECTRIC, 
+    GET_ROOM_BY_AREA,
+    GET_ROOM_BY_ID,
+    GET_ROOM_BY_BOOKTICKET,
+    ADD_NUMBER_ELECTRIC,
     ADD_NUMBER_WATER,
     ADD_ROOM, DELETE_ROOM, GET_LIST_ROOM, UPDATE_ROOM,
     GET_BOOKTICKET_BY_ROOM,
-    GET_LIST_ROOM_BY_TYPE
+    GET_LIST_ROOM_BY_TYPE, BILL_MATERIAL_ROOM
 } from '../constant/apiUrl'
 
 
@@ -55,4 +55,8 @@ export const deleteRoom = async (id) => {
 
 export const getBookTicketByRoom = async (roomId) => {
     return doGet(GET_BOOKTICKET_BY_ROOM, roomId);
+}
+
+export const getBillMaterialRoom = async (roomId) => {
+    return doGet(BILL_MATERIAL_ROOM, roomId);
 }
