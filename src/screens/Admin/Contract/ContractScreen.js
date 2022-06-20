@@ -9,8 +9,8 @@ import AppFAB from "../../../components/AppFAB";
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
 import moment from "moment";
 import { connect } from "react-redux";
-import { doLoadListContractByRoom, doDeleteContract } from "../../../redux/actions/contract";
-import AppDialogSelect from "../../../components/AppDialogSelect";
+import { doLoadListContractByRoom, doDeleteContract, doLoadListContractByArea } from "../../../redux/actions/contract";
+import AppSelectFilter from "../../../components/AppSelectFilter";
 import { doGetListArea } from "../../../redux/actions/area";
 import { doGetRoomByArea } from '../../../redux/actions/room';
 import Toast from "react-native-toast-message";
@@ -24,16 +24,18 @@ class ContractScreen extends Component {
             isLoading: true,
             data: [],
             dataArea: [],
+            dataType: [],
             dataRoom: [],
-            filterArea: [],
-            filterRoom: [],
+            filterArea: 'Tất cả',
+            filterType: 'Tất cả',
+            filterRoom: 'Tất cả',
             isConfirm: false,
             contractDelete: ''
         }
     }
 
     getListArea() {
-        this.props.doLoadListBillByArea({ userId: this.props.user.user.id }).then(data => {
+        this.props.doLoadListContractByArea({ userId: this.props.user.user.id }).then(data => {
             // console.log(data);
             const listRoom = [];
             const listType = [];
@@ -49,20 +51,35 @@ class ContractScreen extends Component {
                     })
                 })
             });
-            this.setState({
-                data: listContract,
-            })
-        })
 
-        this.props.doGetListArea({ userId: this.props.user.user.id }).then(data => {
-          this.setState({
-            dataArea: data.map(item => ({
-              key: item.id,
-              label: item.areaName,
-            })),
-          }, () => {
-            console.log('dataA: ', this.state.dataArea);
-          })
+            this.setState({
+                dataAll: data,
+                data: listContract,
+                dataArea: [
+                    {
+                        key: -1,
+                        label: 'Tất cả',
+                        typeofrooms: listType
+                    },
+                    ...data.map(item => ({ key: item.id, label: item.areaName, typeofrooms: item.typeofrooms }))
+                ],
+                dataType: [
+                    {
+                        key: -1,
+                        label: 'Tất cả',
+                        rooms: listRoom
+                    },
+                    ...listType.map(item => ({ key: item.id, label: item.name, rooms: item.rooms }))
+                ],
+                dataRoom: [
+                    {
+                        key: -1,
+                        label: 'Tất cả',
+                        contracts: listContract
+                    },
+                    ...listRoom.map(item => ({ key: item.id, label: item.roomName, contracts: item.contracts }))
+                ],
+            })
         })
         
         setTimeout(() => {
@@ -72,16 +89,78 @@ class ContractScreen extends Component {
         }, 2000)
     }
 
-    getPhongData(option) {
-        this.props.doGetRoomByArea({ areaId: option.key }).then(data => {
-          this.setState({
-            dataRoom: data.map(item => ({
-              key: item.id,
-              label: item.roomName,
-            })),
-          }, () => {
-            console.log('dataP: ', this.state.dataP);
-          })
+    filterType(option) {
+        if (option.key === -1) {
+            this.setState({
+                filterArea: "Tất cả"
+            })
+        } else {
+            this.setState({
+                filterArea: option.label
+            })
+        }
+        const listRoom = [];
+        const listType = [];
+        const listContract = [];
+        option.typeofrooms.map(itemType => {
+            listType.push(itemType);
+            itemType.rooms.map(itemRoom => {
+                listRoom.push(itemRoom);
+                itemRoom.contracts.map(itemTr => {
+                    listContract.push(itemTr);
+                })
+            })
+        })
+        this.setState({
+            data: listContract,
+            dataType: [
+                {
+                    key: -1,
+                    label: 'Tất cả'
+                },
+                ...listType.map(item => ({ key: item.id, label: item.name, rooms: item.rooms }))
+            ],
+            dataRoom: [
+                {
+                    key: -1,
+                    label: 'Tất cả'
+                },
+                ...listRoom.map(item => ({ key: item.id, label: item.roomName, contracts: item.contracts }))
+            ],
+            filterType: 'Tất cả',
+            filterRoom: 'Tất cả'
+        })
+    }
+
+    getRoomData(option) {
+        console.log(option)
+        if (option.key === -1) {
+            this.setState({
+                filterType: "Tất cả",
+            })
+        } else {
+            this.setState({
+                TypeSelect: option.key,
+                filterType: option.label,
+            })
+        }
+        const listRoom = [];
+        const listContract = [];
+        option.rooms.map(itemRoom => {
+            listRoom.push(itemRoom);
+            itemRoom.contracts.map(itemTr => {
+                listContract.push(itemTr);
+            })
+        })
+        this.setState({
+            data: listContract,
+            dataRoom: [
+                {
+                    key: -1,
+                    label: "Tất cả"
+                },
+                ...listRoom.map(item => ({ key: item.id, label: item.roomName, contracts: item.contracts }))
+            ],
         })
     }
 
@@ -109,13 +188,25 @@ class ContractScreen extends Component {
             });
     }
 
-    getContractData(option) {
-        this.props.doLoadListContractByRoom({ roomId: option.key }).then(data => {
+    getContractsData(option) {
+        
+        if (option.key === -1) {
             this.setState({
-                data: data
+                filterRoom: "Tất cả"
             })
+        } else {
+            this.setState({
+                filterRoom: option.label
+            })
+        }
+        const listContract = [];
+        option.contracts.map(itemB => {
+            listContract.push(itemB);
         })
-        console.log(this.state.data);
+        console.log(listContract)
+        this.setState({
+            data: listContract
+        })
     }
 
     updateContract = (id) => {
@@ -330,24 +421,6 @@ class ContractScreen extends Component {
                     position.relative
                 ]}
             >
-                <Text
-                    style={[
-                        text_size.xs,
-                        font.serif,
-                        font_weight.bold,
-                        text_color.white,
-                        width.w_100,
-                        background_color.blue,
-                        {
-                            textAlign: 'center',
-                            paddingVertical: 15,
-                            lineHeight: 20,
-                            letterSpacing: 0,
-                        }
-                    ]}
-                >
-                    Danh sách hợp đồng
-                </Text>
                 <View
                     style={[
                         position.absolute,
@@ -367,36 +440,42 @@ class ContractScreen extends Component {
                     />
                 </View>
                 <View style={[
-                    flex.flex_row, flex.justify_content_between
+                    flex.flex_row, flex.justify_content_between, flex.align_items_center, {marginHorizontal: 5}
                 ]}>
                     <View
                         style={{
-                            paddingLeft: 15,
-                            paddingRight: 15,
                             marginTop: 10,
-                            width: '50%'
+                            width: '30%'
                         }}>
-                        <AppDialogSelect
+                        <AppSelectFilter
                             lable={'Khu:'}
                             data={this.state.dataArea}
                             value={this.state.filterArea}
-                            placeholder={'Tất cả'}
-                            returnFilter={(key) => this.getPhongData(key)}
+                            returnFilter={(key) => this.filterType(key)}
                         />
                     </View>
                     <View
                         style={{
-                            paddingLeft: 15,
-                            paddingRight: 15,
                             marginTop: 10,
-                            width: '50%'
+                            width: '30%'
                         }}>
-                        <AppDialogSelect
+                        <AppSelectFilter
+                            lable={'Loại Phòng:'}
+                            data={this.state.dataType}
+                            value={this.state.filterType}
+                            returnFilter={(key) => this.getRoomData(key)}
+                        />
+                    </View>
+                    <View
+                        style={{
+                            marginTop: 10,
+                            width: '30%'
+                        }}>
+                        <AppSelectFilter
                             lable={'Phòng:'}
                             data={this.state.dataRoom}
                             value={this.state.filterRoom}
-                            placeholder={'Tất cả'}
-                            returnFilter={(key) => this.getContractData(key)}
+                            returnFilter={(key) => this.getContractsData(key)}
                         />
                     </View>
                 </View>
@@ -419,7 +498,9 @@ class ContractScreen extends Component {
                 {
                     this.state.isLoading
                     ?
-                    <ActivityIndicator size="large" color={color_primary} />
+                    <View style={{flex: 1, justifyContent: 'center'}}>
+                            <ActivityIndicator size="large" color={color_primary} />
+                        </View>
                     :
                     (
                         this.state.data.length > 0
@@ -439,7 +520,10 @@ const mapStateToProps = ({ listContractByRoom, user }) => {
 };
 
 const mapDispatchToProps = {
-    doLoadListContractByRoom, doDeleteContract, doGetListArea, doGetRoomByArea, doLoadListBillByArea
+    doLoadListContractByRoom, 
+    doDeleteContract, doGetListArea, 
+    doGetRoomByArea, doLoadListBillByArea,
+    doLoadListContractByArea
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ContractScreen)

@@ -9,7 +9,7 @@ import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAre
 import moment from "moment/moment";
 import { connect } from "react-redux";
 import { doLoadListBillByContract, doDeleteBill, doLoadListBillByArea } from "../../../redux/actions/bill";
-import AppDialogSelect from "../../../components/AppDialogSelect";
+import AppSelectFilter from "../../../components/AppSelectFilter";
 import { doGetListArea } from "../../../redux/actions/area";
 import { doGetRoomByArea } from '../../../redux/actions/room';
 import { doLoadListContractByRoom } from "../../../redux/actions/contract";
@@ -26,11 +26,12 @@ class BillsComponent extends Component {
             dataType: [],
             dataRoom: [],
             dataContract: [],
-            filterArea: [],
-            filterType: [],
-            filterRoom: [],
-            filterContract: [],
-            typeOfRoom: [],
+            filterArea: 'Tất cả',
+            filterType: 'Tất cả',
+            filterRoom: 'Tất cả',
+            filterContract: 'Tất cả',
+            // typeOfRoom: [],
+
             dataAll: [],
             isConfirm: false,
             AreaSelect: -1,
@@ -68,219 +69,161 @@ class BillsComponent extends Component {
         })
     }
 
-    getTypeRoom(option) {
-        this.props.doGetTypeOfRoomByArea({ areaId: option.key }).then(data => {
-            this.setState({
-                typeOfRoom: [
-                    {
-                        key: 0,
-                        label: "Tất cả"
-                    },
-                    ...data.map(item => ({ key: item.id, label: item.name }))
-                ]
-            })
-        });
-    }
-
     filterType(option) {
         if (option.key === -1) {
-            const listContract = [];
-            const listBill = [];
-            this.state.dataAll.map(item => {
-                item?.typeofrooms.map(itemType => {
-                    itemType.rooms.map(itemRoom => {
-                        itemRoom.contracts.map(itemTr => {
-                            itemTr.bills.map(itemB => {
-                                listBill.push(itemB);
-                            })
-                        })
-                    })
-                })
-            })
             this.setState({
-                data: listBill,
-                filterContract: [],
-                dataContract: [],
-                filterRoom: [],
-                dataRoom: [],
-                filterType: [],
-                dataType: [],
+                filterArea: "Tất cả"
             })
         } else {
-            const listType = [];
-            const listBill = [];
-            this.state.dataAll.filter(item => item.id === option.key).map(item => {
-                item?.typeofrooms.map(itemType => {
-                    listType.push(itemType);
-                    itemType.rooms.map(itemRoom => {
-                        itemRoom.contracts.map(itemTr => {
-                            itemTr.bills.map(itemB => {
-                                listBill.push(itemB);
-                            })
-                        })
+            this.setState({
+                filterArea: option.label
+            })
+        }
+        const listRoom = [];
+        const listType = [];
+        const listContract = [];
+        const listBill = [];
+        option.typeofrooms.map(itemType => {
+            listType.push(itemType);
+            itemType.rooms.map(itemRoom => {
+                listRoom.push(itemRoom);
+                itemRoom.contracts.map(itemTr => {
+                    listContract.push(itemTr)
+                    itemTr.bills.map(itemB => {
+                        listBill.push(itemB);
                     })
                 })
             })
-            this.setState({
-                data: listBill,
-                filterContract: [],
-                dataContract: [],
-                filterRoom: [],
-                dataRoom: [],
-                filterType: [],
-                AreaSelect: option.key,
-                dataType: [
-                    {
-                        key: -1,
-                        label: "Tất cả"
-                    },
-                    ...listType.map(item => ({ key: item.id, label: item.name }))
-                ],
-            })
-        }
+        })
+        this.setState({
+            data: listBill,
+            dataType: [
+                {
+                    key: -1,
+                    label: 'Tất cả',
+                },
+                ...listType.map(item => ({ key: item.id, label: item.name, rooms: item.rooms }))
+            ],
+            dataRoom: [
+                {
+                    key: -1,
+                    label: 'Tất cả'
+                },
+                ...listRoom.map(item => ({ key: item.id, label: item.roomName, contracts: item.contracts }))
+            ],
+            dataContract: [
+                {
+                    key: -1,
+                    label: 'Tất cả'
+                },
+                ...listContract.map(item => ({ key: item.id, label: "Mã HĐ: " + item.id, bills: item.bills }))
+            ],
+            filterContract: "Tất cả",
+            filterType: 'Tất cả',
+            filterRoom: 'Tất cả'
+        })
     }
 
     getRoomData(option) {
         console.log(option)
         if (option.key === -1) {
-            const listBill = [];
-            this.state.dataAll.filter(item => item.id === this.state.AreaSelect).map(item => {
-                item?.typeofrooms.map(itemType => {
-                    itemType.rooms.map(itemRoom => {
-                        itemRoom.contracts.map(itemTr => {
-                            listContract.push(itemTr);
-                            itemTr.bills.map(itemB => {
-                                listBill.push(itemB);
-                            })
-                        })
-                    })
-                })
-            })
             this.setState({
-                data: listBill,
-                filterContract: [],
-                dataContract: [],
-                filterRoom: [],
-                dataRoom: [],
+                // data: listBill,
+                // filterType: "Tất cả",
+                filterContract: "Tất cả",
+                filterRoom: "Tất cả",
             })
         } else {
-            const listRoom = [];
-            const listBill = [];
-            this.state.dataAll.filter(item => item.id === this.state.AreaSelect).map(item => {
-                item?.typeofrooms.filter(item => item.id === option.key).map(itemType => {
-                    itemType.rooms.map(itemRoom => {
-                        listRoom.push(itemRoom);
-                        itemRoom.contracts.map(itemTr => {
-                            itemTr.bills.map(itemB => {
-                                listBill.push(itemB);
-                            })
-                        })
-                    })
-                })
-            })
             this.setState({
-                data: listBill,
-                filterContract: [],
-                dataContract: [],
-                filterRoom: [],
                 TypeSelect: option.key,
-                dataRoom: [
-                    {
-                        key: -1,
-                        label: "Tất cả",
-                    },
-                    ...listRoom.map(item => ({ key: item.id, label: item.roomName }))
-                ],
+                filterType: option.label,
             })
         }
+        const listRoom = [];
+        const listContract = [];
+        const listBill = [];
+        option.rooms.map(itemRoom => {
+            listRoom.push(itemRoom);
+            itemRoom.contracts.map(itemTr => {
+                listContract.push(itemTr);
+                itemTr.bills.map(itemB => {
+                    listBill.push(itemB);
+                })
+            })
+        })
+        this.setState({
+            data: listBill,
+            TypeSelect: option.key,
+            filterType: option.label,
+            filterContract: "Tất cả",
+            filterRoom: "Tất cả",
+            dataRoom: [
+                {
+                    key: -1,
+                    label: "Tất cả"
+                },
+                ...listRoom.map(item => ({ key: item.id, label: item.roomName, contracts: item.contracts }))
+            ],
+            dataContract: [
+                {
+                    key: -1,
+                    label: "Tất cả"
+                },
+                ...listContract.map(item => ({ key: item.id, label: "Mã HĐ: " + item.id, bills: item.bills }))
+            ],
+        })
     }
 
     getContractData(option) {
         if (option.key === -1) {
-            const listBill = [];
-            this.state.dataAll.filter(item => item.id === this.state.AreaSelect).map(item => {
-                item?.typeofrooms.filter(item => item.id === this.state.TypeSelect).map(itemType => {
-                    itemType.rooms.map(itemRoom => {
-                        itemRoom.contracts.map(itemTr => {
-                            itemTr.bills.map(itemB => {
-                                listBill.push(itemB);
-                            })
-                        })
-                    })
-                })
-            })
             this.setState({
-                data: listBill,
-                filterContract: [],
-                dataContract: [],
-                filterRoom: [],
-                dataRoom: [],
+                filterRoom: "Tất cả",
+                filterContract: "Tất cả",
             })
         } else {
-            const listContract = [];
-            const listBill = [];
-            console.log('hi')
-            this.state.dataAll.filter(item => item.id === this.state.AreaSelect).map(item => {
-                item?.typeofrooms.filter(item => item.id === this.state.TypeSelect).map(itemType => {
-                    itemType.rooms.filter(item => item.id === option.key).map(itemRoom => {
-                        itemRoom.contracts.map(itemTr => {
-                            listContract.push(itemTr);
-                            itemTr.bills.map(itemB => {
-                                listBill.push(itemB);
-                            })
-                        })
-                    })
-                })
-            })
             this.setState({
-                data: listBill,
-                filterContract: [],
+                filterRoom: option.label,
+                filterContract: "Tất cả",
                 RoomSelect: option.key,
-                dataContract: [
-                    {
-                        key: -1,
-                        label: 'Tất cả'
-                    },
-                    ...listContract.map(item => ({ key: item.id, label: "Mã HĐ: "+item.id }))
-                ],
             })
         }
+        const listContract = [];
+        const listBill = [];
+        option.contracts.map(itemTr => {
+            listContract.push(itemTr);
+            itemTr.bills.map(itemB => {
+                listBill.push(itemB);
+            })
+        })
+        this.setState({
+            data: listBill,
+            dataContract: [
+                {
+                    key: -1,
+                    label: 'Tất cả'
+                },
+                ...listContract.map(item => ({ key: item.id, label: "Mã HĐ: " + item.id, bills: item.bills }))
+            ],
+        })
     }
 
     getBillsData(option) {
         if (option.key === -1) {
-            const listBill = [];
-            this.state.dataAll.filter(item => item.id === this.state.AreaSelect).map(item => {
-                item?.typeofrooms.filter(item => item.id === this.state.TypeSelect).map(itemType => {
-                    itemType.rooms.filter(item => item.id === this.state.RoomSelect).map(itemRoom => {
-                        itemRoom.contracts.map(itemTr => {
-                            itemTr.bills.map(itemB => {
-                                listBill.push(itemB);
-                            })
-                        })
-                    })
-                })
-            })
             this.setState({
-                data: listBill,
+                filterContract: "Tất cả"
             })
         } else {
-            const listBill = [];
-            this.state.dataAll.filter(item => item.id === this.state.AreaSelect).map(item => {
-                item?.typeofrooms.filter(item => item.id === this.state.TypeSelect).map(itemType => {
-                    itemType.rooms.filter(item => item.id === this.state.RoomSelect).map(itemRoom => {
-                        itemRoom.contracts.filter(item => item.id === option.key).map(itemTr => {
-                            itemTr.bills.map(itemB => {
-                                listBill.push(itemB);
-                            })
-                        })
-                    })
-                })
-            })
             this.setState({
-                data: listBill,
+                filterContract: option.label
             })
         }
+        const listBill = [];
+        option.bills.map(itemB => {
+            listBill.push(itemB);
+        })
+        this.setState({
+            data: listBill
+        })
     }
 
     getListAreaAll() {
@@ -304,19 +247,45 @@ class BillsComponent extends Component {
                     })
                 })
             });
+
             this.setState({
                 dataAll: data,
                 data: listBill,
                 dataArea: [
                     {
                         key: -1,
-                        label: 'Tất cả'
+                        label: 'Tất cả',
+                        typeofrooms: listType
                     },
-                    ...data.map(item => ({ key: item.id, label: item.areaName }))
+                    ...data.map(item => ({ key: item.id, label: item.areaName, typeofrooms: item.typeofrooms }))
+                ],
+                dataType: [
+                    {
+                        key: -1,
+                        label: 'Tất cả',
+                        rooms: listRoom
+                    },
+                    ...listType.map(item => ({ key: item.id, label: item.name, rooms: item.rooms }))
+                ],
+                dataRoom: [
+                    {
+                        key: -1,
+                        label: 'Tất cả',
+                        contracts: listContract
+                    },
+                    ...listRoom.map(item => ({ key: item.id, label: item.roomName, contracts: item.contracts }))
+                ],
+                dataContract: [
+                    {
+                        key: -1,
+                        label: 'Tất cả',
+                        bills: listBill
+                    },
+                    ...listContract.map(item => ({ key: item.id, label: "Mã HĐ: " + item.id, bills: item.bills }))
                 ],
             })
         })
-        
+
         setTimeout(() => {
             this.setState({
                 isLoading: false
@@ -468,7 +437,7 @@ class BillsComponent extends Component {
                         style={[
                             { marginRight: 10 }
                         ]}
-                        onPress={() => this.updateBill(item.contractId)}
+                        onPress={() => this.updateBill(item.id)}
                     >
                         <Icon
                             name={"pencil-alt"}
@@ -526,24 +495,6 @@ class BillsComponent extends Component {
                     position.relative
                 ]}
             >
-                <Text
-                    style={[
-                        text_size.xs,
-                        font.serif,
-                        font_weight.bold,
-                        text_color.white,
-                        width.w_100,
-                        background_color.blue,
-                        {
-                            textAlign: 'center',
-                            paddingVertical: 15,
-                            lineHeight: 20,
-                            letterSpacing: 0,
-                        }
-                    ]}
-                >
-                    Danh sách hóa đơn
-                </Text>
                 <View
                     style={[
                         position.absolute,
@@ -568,11 +519,10 @@ class BillsComponent extends Component {
                     <View
                         style={{
                             marginTop: 10,
-                            width: '30%'
+                            width: '49%'
                         }}>
-                        <AppDialogSelect
+                        <AppSelectFilter
                             lable={'Khu:'}
-                            placeholder={'Tất cả'}
                             data={this.state.dataArea}
                             value={this.state.filterArea}
                             returnFilter={(key) => this.filterType(key)}
@@ -581,44 +531,45 @@ class BillsComponent extends Component {
                     <View
                         style={{
                             marginTop: 10,
-                            width: '30%'
+                            width: '49%'
                         }}>
-                        <AppDialogSelect
+                        <AppSelectFilter
                             lable={'Loại Phòng:'}
-                            placeholder={'Tất cả'}
                             data={this.state.dataType}
                             value={this.state.filterType}
                             returnFilter={(key) => this.getRoomData(key)}
                         />
                     </View>
+                </View>
+                <View style={[
+                    flex.flex_row,
+                    flex.justify_content_between,
+                    { marginHorizontal: 5 }
+                ]}>
                     <View
                         style={{
                             marginTop: 10,
-                            width: '30%'
+                            width: '49%'
                         }}>
-                        <AppDialogSelect
+                        <AppSelectFilter
                             lable={'Phòng:'}
-                            placeholder={'Tất cả'}
                             data={this.state.dataRoom}
                             value={this.state.filterRoom}
                             returnFilter={(key) => this.getContractData(key)}
                         />
                     </View>
-                </View>
-                <View
-                    style={{
-                        paddingLeft: 15,
-                        paddingRight: 15,
-                        marginTop: 5,
-                        width: '100%'
-                    }}>
-                    <AppDialogSelect
-                        lable={'Hợp đồng:'}
-                        placeholder={'Tất cả'}
-                        data={this.state.dataContract}
-                        value={this.state.filterContract}
-                        returnFilter={(key) => this.getBillsData(key)}
-                    />
+                    <View
+                        style={{
+                            marginTop: 10,
+                            width: '49%'
+                        }}>
+                        <AppSelectFilter
+                            lable={'Hợp đồng:'}
+                            data={this.state.dataContract}
+                            value={this.state.filterContract}
+                            returnFilter={(key) => this.getBillsData(key)}
+                        />
+                    </View>
                 </View>
                 {
                     this.state.isConfirm ?
@@ -635,19 +586,21 @@ class BillsComponent extends Component {
                         />
                         : null
                 }
-                <Toast ref={(ref) => {Toast.setRef(ref)}} />
+                <Toast ref={(ref) => { Toast.setRef(ref) }} />
                 {
                     this.state.isLoading
-                    ?
-                    <ActivityIndicator size="large" color={color_primary} />
-                    :
-                    (
-                        this.state.data.length > 0
                         ?
-                        <FlatList data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()} contentContainerStyle={{ paddingHorizontal: 10, paddingVertical: 5 }} />
+                        <View style={{ flex: 1, justifyContent: 'center' }}>
+                            <ActivityIndicator size="large" color={color_primary} />
+                        </View>
                         :
-                        this._renderEmpty()
-                    )
+                        (
+                            this.state.data.length > 0
+                                ?
+                                <FlatList data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()} contentContainerStyle={{ paddingHorizontal: 10, paddingVertical: 5 }} />
+                                :
+                                this._renderEmpty()
+                        )
                 }
             </SafeAreaView>
         )

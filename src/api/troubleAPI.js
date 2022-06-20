@@ -1,6 +1,7 @@
 import {doGet, doPost, doPut, doDelete} from './apiCommon'
 import {
     GET_LIST_TROUBLE_BY_ROOM,
+    GET_LIST_TROUBLE_BY_AREA,
     GET_TROUBLE_BY_ID,
     ADD_TROUBLE,
     UPDATE_TROUBLE,
@@ -9,6 +10,10 @@ import {
 
 export const getListTroubleByRoom = async (roomId) => {
     return doGet(GET_LIST_TROUBLE_BY_ROOM, roomId);
+}
+
+export const getListTroubleByArea = async (userId) => {
+    return doGet(GET_LIST_TROUBLE_BY_AREA, userId);
 }
 
 export const getTroubleById = async (id) => {

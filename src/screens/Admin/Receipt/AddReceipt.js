@@ -1,7 +1,7 @@
 import React, { Component, useState } from 'react';
 import {
     Image, ImageBackground,
-    Keyboard, Pressable, ScrollView, TouchableWithoutFeedback, View, Text
+    Keyboard, Pressable, ScrollView, TouchableWithoutFeedback, View, Text, ActivityIndicator
 } from 'react-native';
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
 import {
@@ -78,8 +78,19 @@ class AddReceipt extends Component {
         data.append("receipt", JSON.stringify(values));
         this.props.doAddReceipt(data).then(data => {
             if (data) {
-                alert("Thêm biên nhận thành công!");
-                this.props.navigation.goBack(null);
+                this.setState({ isLoading: true })
+                Toast.show({
+                    type: 'success',
+                    text1: 'Biên nhận',
+                    text2: 'Thêm thành công.',
+                    visibilityTime: 2000,
+                    autoHide: true
+                });
+                setTimeout(() => {
+                    this.props.navigation.goBack();
+                }, 2000)
+                // alert("Thêm biên nhận thành công!");
+                // this.props.navigation.goBack(null);
             }
             else {
                 alert("Thêm biên nhận không thành công! Vui lòng thử lại!");
@@ -110,233 +121,219 @@ class AddReceipt extends Component {
     render() {
 
         return (
-            <View style={{ flex: 1 }}>
-                <Text
-                    style={[
-                        text_size.xs,
-                        font.serif,
-                        font_weight.bold,
-                        text_color.white,
-                        width.w_100,
-                        background_color.blue,
-                        {
-                            textAlign: 'center',
-                            paddingVertical: 15,
-                            lineHeight: 20,
-                            letterSpacing: 0,
-                        }
-                    ]}
-                >
-                    Thêm biên nhận
-                </Text>
-                <ScrollView
-                    style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}
-                >
-                    <Formik
-                        initialValues={{
-                            amountOfMoney: "",
-                            dateOfPayment: new Date(),
-                            paymentMethod: '0',
-                            image: "",
-                            note: "",
-                            status: '0',
-                            billId: this.props.route.params.billId
-                        }}
-                        validationSchema={ReceiptSchema}
-                        onSubmit={values => {
-                            this.addReceipt(values);
-                            //alert(this.state.date);
-                        }}
-                    >
-                        {({
-                            handleChange,
-                            handleBlur,
-                            handleSubmit, values,
-                            errors,
-                            touched,
-                            isValid
-                        }) => {
-                            return (
-                                <HideKeyboard>
-                                    <SafeAreaView
-                                        style={[
-                                            { flex: 1, paddingBottom: 15 },
-                                            background_color.white,
-                                            height.h_100
-                                        ]}
-                                        onPress={Keyboard.dismiss}
-                                    >
-                                        <View
+            <ScrollView
+                style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+            >
+                {
+                    this.state.isLoading
+                        ?
+                        <ActivityIndicator size="large" color={color_primary} />
+                        :
+                        <Formik
+                            initialValues={{
+                                amountOfMoney: "",
+                                dateOfPayment: new Date(),
+                                paymentMethod: '0',
+                                image: "",
+                                note: "",
+                                status: '0',
+                                billId: this.props.route.params.billId
+                            }}
+                            validationSchema={ReceiptSchema}
+                            onSubmit={values => {
+                                this.addReceipt(values);
+                                //alert(this.state.date);
+                            }}
+                        >
+                            {({
+                                handleChange,
+                                handleBlur,
+                                handleSubmit, values,
+                                errors,
+                                touched,
+                                isValid
+                            }) => {
+                                return (
+                                    <HideKeyboard>
+                                        <SafeAreaView
                                             style={[
-                                                { paddingLeft: 15, paddingRight: 10, marginTop: 10 }
+                                                { flex: 1, paddingBottom: 15 },
+                                                background_color.white,
+                                                height.h_100
                                             ]}
-                                        >
-                                            <AppInputInf
-                                                lable={"Số Tiền:"}
-                                                secureTextEntry={false}
-                                                field={"amountOfMoney"}
-                                                keyboardType={'numeric'}
-                                                handleChange={handleChange}
-                                                handleBlur={handleBlur}
-                                                values={values}
-                                            />
-                                            {errors.amountOfMoney && touched.amountOfMoney ? (
-                                                <AppError errors={errors.amountOfMoney} />
-                                            ) : null}
-                                        </View>
-                                        <View
-                                            style={[
-                                                width.w_100,
-                                                { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
-                                            ]}
-                                        >
-                                            <AppDatePicker
-                                                label={"Thời Gian Thu Tiền:"}
-                                                value={values}
-                                                field={"dateOfPayment"}
-                                                alreadydate={new Date()}
-                                            />
-                                        </View>
-
-                                        <View
-                                            style={[
-                                                width.w_100,
-                                                { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
-                                            ]}
-                                        >
-                                            <AppDialogSelect
-                                                lable={"Phương thức thanh toán:"}
-                                                data={this.state.dataTToan}
-                                                placeholder={"Chọn phương thức thanh toán..."}
-                                                value={values}
-                                                field={"paymentMethod"}
-                                            />
-                                            {errors.paymentMethod && touched.paymentMethod ? (
-                                                <AppError errors={errors.paymentMethod} />
-                                            ) : null}
-                                        </View>
-                                        <View
-                                            style={[
-                                                width.w_100,
-                                                { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
-                                            ]}
-                                        >
-                                            {/*<AppItemHome*/}
-                                            {/*    bg = {'orange'}*/}
-                                            {/*    name = 'file-invoice-dollar'*/}
-                                            {/*    size = {200}*/}
-                                            {/*    color = {'white'}*/}
-                                            {/*    colorText = {'black'}*/}
-                                            {/*    // label = {'Biên nhận'}*/}
-                                            {/*    onPress = {() => this.ChoosePhotoFromLibrary()}*/}
-                                            {/*/>*/}
-                                            <Pressable onPress={() => this.ChoosePhotoFromLibrary()}>
-                                                {this.state.image.length == 0 ?
-                                                    <Icon
-                                                        name={'image'}
-                                                        type='font-awesome-5'
-                                                        size={200}
-                                                        color={'#CCC'}
-                                                    />
-                                                    :
-                                                    <Image
-                                                        source={{
-                                                            uri: this.state.image.path
-                                                        }}
-                                                        style={[
-                                                            width.w_100,
-                                                            {
-                                                                height: 200,
-                                                                borderRadius: 10,
-                                                                borderWidth: 2,
-                                                                borderColor: '#E0E0E0'
-                                                            }
-                                                        ]} />
-                                                }
-                                            </Pressable>
-                                        </View>
-
-                                        <View
-                                            style={[
-                                                width.w_100,
-                                                { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
-                                            ]}
-                                        >
-                                            <AppDialogSelect
-                                                lable={"Tình Trạng:"}
-                                                data={this.state.dataTT}
-                                                placeholder={"Vui lòng chọn tình trạng..."}
-                                                value={values}
-                                                field={"status"}
-                                            />
-                                            {errors.status && touched.status ? (
-                                                <AppError errors={errors.status} />
-                                            ) : null}
-                                        </View>
-                                        <View
-                                            style={[
-                                                width.w_100,
-                                                { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
-                                            ]}
-                                        >
-                                            <AppInputInf
-                                                lable={"Ghi Chú:"}
-                                                secureTextEntry={false}
-                                                field={"note"}
-                                                handleChange={handleChange}
-                                                handleBlur={handleBlur}
-                                                values={values}
-                                                multiline={true}
-                                                number={4}
-                                            />
-                                            {errors.note && touched.note ? (
-                                                <AppError errors={errors.note} />
-                                            ) : null}
-                                        </View>
-                                        <View
-                                            style={[
-                                                width.w_100,
-                                                flex.flex_row,
-                                                { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
-                                            ]}
+                                            onPress={Keyboard.dismiss}
                                         >
                                             <View
                                                 style={[
-                                                    {
-                                                        flex: 1,
-                                                        marginRight: 15
-                                                    }
+                                                    { paddingLeft: 15, paddingRight: 10, marginTop: 10 }
                                                 ]}
                                             >
-                                                <AppButtonActionInf
-                                                    size={13}
-                                                    textSize={18}
-                                                    bg={color_danger}
-                                                    onPress={() => { this.props.navigation.goBack() }}
-                                                    title="Hủy"
+                                                <AppInputInf
+                                                    lable={"Số Tiền:"}
+                                                    secureTextEntry={false}
+                                                    field={"amountOfMoney"}
+                                                    keyboardType={'numeric'}
+                                                    handleChange={handleChange}
+                                                    handleBlur={handleBlur}
+                                                    values={values}
                                                 />
+                                                {errors.amountOfMoney && touched.amountOfMoney ? (
+                                                    <AppError errors={errors.amountOfMoney} />
+                                                ) : null}
                                             </View>
                                             <View
-                                                style={{ flex: 1 }}
+                                                style={[
+                                                    width.w_100,
+                                                    { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
+                                                ]}
                                             >
-                                                <AppButtonActionInf
-                                                    size={13}
-                                                    textSize={18}
-                                                    bg={color_primary}
-                                                    disabled={!this.isFormValid(isValid, values.amountOfMoney)}
-                                                    onPress={handleSubmit}
-                                                    //onPress={() => alert(values.Ten_HD)}
-                                                    title="Thêm"
+                                                <AppDatePicker
+                                                    label={"Thời Gian Thu Tiền:"}
+                                                    value={values}
+                                                    field={"dateOfPayment"}
+                                                    alreadydate={new Date()}
                                                 />
                                             </View>
-                                        </View>
-                                    </SafeAreaView>
-                                </HideKeyboard>
-                            );
-                        }}
-                    </Formik>
-                </ScrollView>
-            </View>
+
+                                            <View
+                                                style={[
+                                                    width.w_100,
+                                                    { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
+                                                ]}
+                                            >
+                                                <AppDialogSelect
+                                                    lable={"Phương thức thanh toán:"}
+                                                    data={this.state.dataTToan}
+                                                    placeholder={"Chọn phương thức thanh toán..."}
+                                                    value={values}
+                                                    field={"paymentMethod"}
+                                                />
+                                                {errors.paymentMethod && touched.paymentMethod ? (
+                                                    <AppError errors={errors.paymentMethod} />
+                                                ) : null}
+                                            </View>
+                                            <View
+                                                style={[
+                                                    width.w_100,
+                                                    { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
+                                                ]}
+                                            >
+                                                {/*<AppItemHome*/}
+                                                {/*    bg = {'orange'}*/}
+                                                {/*    name = 'file-invoice-dollar'*/}
+                                                {/*    size = {200}*/}
+                                                {/*    color = {'white'}*/}
+                                                {/*    colorText = {'black'}*/}
+                                                {/*    // label = {'Biên nhận'}*/}
+                                                {/*    onPress = {() => this.ChoosePhotoFromLibrary()}*/}
+                                                {/*/>*/}
+                                                <Pressable onPress={() => this.ChoosePhotoFromLibrary()}>
+                                                    {this.state.image.length == 0 ?
+                                                        <Icon
+                                                            name={'image'}
+                                                            type='font-awesome-5'
+                                                            size={200}
+                                                            color={'#CCC'}
+                                                        />
+                                                        :
+                                                        <Image
+                                                            source={{
+                                                                uri: this.state.image.path
+                                                            }}
+                                                            style={[
+                                                                width.w_100,
+                                                                {
+                                                                    height: 200,
+                                                                    borderRadius: 10,
+                                                                    borderWidth: 2,
+                                                                    borderColor: '#E0E0E0'
+                                                                }
+                                                            ]} />
+                                                    }
+                                                </Pressable>
+                                            </View>
+
+                                            <View
+                                                style={[
+                                                    width.w_100,
+                                                    { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
+                                                ]}
+                                            >
+                                                <AppDialogSelect
+                                                    lable={"Tình Trạng:"}
+                                                    data={this.state.dataTT}
+                                                    placeholder={"Vui lòng chọn tình trạng..."}
+                                                    value={values}
+                                                    field={"status"}
+                                                />
+                                                {errors.status && touched.status ? (
+                                                    <AppError errors={errors.status} />
+                                                ) : null}
+                                            </View>
+                                            <View
+                                                style={[
+                                                    width.w_100,
+                                                    { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
+                                                ]}
+                                            >
+                                                <AppInputInf
+                                                    lable={"Ghi Chú:"}
+                                                    secureTextEntry={false}
+                                                    field={"note"}
+                                                    handleChange={handleChange}
+                                                    handleBlur={handleBlur}
+                                                    values={values}
+                                                    multiline={true}
+                                                    number={4}
+                                                />
+                                                {errors.note && touched.note ? (
+                                                    <AppError errors={errors.note} />
+                                                ) : null}
+                                            </View>
+                                            <View
+                                                style={[
+                                                    width.w_100,
+                                                    flex.flex_row,
+                                                    { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
+                                                ]}
+                                            >
+                                                <View
+                                                    style={[
+                                                        {
+                                                            flex: 1,
+                                                            marginRight: 15
+                                                        }
+                                                    ]}
+                                                >
+                                                    <AppButtonActionInf
+                                                        size={13}
+                                                        textSize={18}
+                                                        bg={color_danger}
+                                                        onPress={() => { this.props.navigation.goBack() }}
+                                                        title="Hủy"
+                                                    />
+                                                </View>
+                                                <View
+                                                    style={{ flex: 1 }}
+                                                >
+                                                    <AppButtonActionInf
+                                                        size={13}
+                                                        textSize={18}
+                                                        bg={color_primary}
+                                                        disabled={!this.isFormValid(isValid, values.amountOfMoney)}
+                                                        onPress={handleSubmit}
+                                                        //onPress={() => alert(values.Ten_HD)}
+                                                        title="Thêm"
+                                                    />
+                                                </View>
+                                            </View>
+                                        </SafeAreaView>
+                                    </HideKeyboard>
+                                );
+                            }}
+                        </Formik>
+                }
+            </ScrollView>
 
         );
     }

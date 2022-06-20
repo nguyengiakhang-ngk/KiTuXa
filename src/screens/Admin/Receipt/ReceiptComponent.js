@@ -258,24 +258,6 @@ class ReceiptComponent extends Component{
                     position.relative
                 ]}
             >
-                <Text
-                    style={[
-                        text_size.xs,
-                        font.serif,
-                        font_weight.bold,
-                        text_color.white,
-                        width.w_100,
-                        background_color.blue,
-                        {
-                            textAlign: 'center',
-                            paddingVertical: 15,
-                            lineHeight: 20,
-                            letterSpacing: 0,
-                        }
-                    ]}
-                >
-                    Danh sách biên nhận
-                </Text>
                 {
                     this.state.isConfirm ?
                         <DialogConfirm
@@ -313,7 +295,9 @@ class ReceiptComponent extends Component{
                 {
                     this.state.isLoading
                     ?
-                    <ActivityIndicator size="large" color={color_primary} />
+                    <View style={{flex: 1, justifyContent: 'center'}}>
+                            <ActivityIndicator size="large" color={color_primary} />
+                        </View>
                     :
                     (
                         this.state.data.length > 0

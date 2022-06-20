@@ -1,7 +1,8 @@
 import React, { Component, useState } from 'react';
 import {
     Image, ImageBackground,
-    Keyboard, Pressable, ScrollView, TouchableWithoutFeedback, View, Text
+    Keyboard, Pressable, ScrollView, TouchableWithoutFeedback, View, Text,
+    ActivityIndicator
 } from 'react-native';
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
 import {
@@ -12,7 +13,7 @@ import {
     font,
     flex,
     text_color,
-    font_weight
+    font_weight,
 } from "../../../utils/styles/MainStyle";
 import AppError from "../../../components/AppError";
 import { Formik } from "formik";
@@ -33,7 +34,9 @@ import { TroubleSchema } from '../../../utils/validation/ValidationTrouble';
 import { color_danger, color_primary } from '../../../utils/theme/Color';
 import AppButtonActionInf from "../../../components/AppButtonActionInf";
 import { doGetListArea } from "../../../redux/actions/area";
-import { doGetRoomByArea } from '../../../redux/actions/room';
+import { doGetRoomByType } from '../../../redux/actions/room';
+
+import { doGetTypeOfRoomByArea } from '../../../redux/actions/typeOfRoom';
 
 const HideKeyboard = ({ children }) => (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -45,7 +48,7 @@ class AddTrouble extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isLoading: true,
+            isLoading: false,
             data: [],
             image: '',
             dataMD: [
@@ -63,7 +66,9 @@ class AddTrouble extends Component {
                 }
             ],
             dataArea: [],
-            dataP: []
+            dataP: [],
+            typeOfRoom: [],
+            typeOfRoomSelect: { 'type': '' }
         }
 
     }
@@ -97,8 +102,19 @@ class AddTrouble extends Component {
         })
     }
 
+    getTypeRoom(option) {
+        this.props.doGetTypeOfRoomByArea({ areaId: option.key }).then(data => {
+            this.setState({
+                typeOfRoom: data.map(item => ({
+                    key: item.id,
+                    label: item.name,
+                }))
+            })
+        });
+    }
+
     getPhongData(option) {
-        this.props.doGetRoomByArea({ areaId: option.key }).then(data => {
+        this.props.doGetRoomByType({ typeOfRoomId: option.key }).then(data => {
             this.setState({
                 dataP: data.map(item => ({
                     key: item.id,
@@ -122,8 +138,19 @@ class AddTrouble extends Component {
         data.append("trouble", JSON.stringify(values));
         this.props.doAddTrouble(data).then(data => {
             if (data) {
-                alert("Báo cáo sự cố thành công!");
-                this.props.navigation.goBack(null);
+                this.setState({ isLoading: true })
+                Toast.show({
+                    type: 'success',
+                    text1: 'Sự cố',
+                    text2: 'Thêm thành công.',
+                    visibilityTime: 2000,
+                    autoHide: true
+                });
+                setTimeout(() => {
+                    this.props.navigation.goBack();
+                }, 2000)
+                // alert("Báo cáo sự cố thành công!");
+                // this.props.navigation.goBack(null);
             }
             else {
                 alert("Báo cáo sự cố không thành công! Vui lòng thử lại!");
@@ -154,241 +181,241 @@ class AddTrouble extends Component {
     render() {
 
         return (
-            <View style={{ flex: 1 }}>
-                <Text
-                    style={[
-                        text_size.xs,
-                        font.serif,
-                        font_weight.bold,
-                        text_color.white,
-                        width.w_100,
-                        background_color.blue,
-                        {
-                            textAlign: 'center',
-                            paddingVertical: 15,
-                            lineHeight: 20,
-                            letterSpacing: 0,
-                        }
-                    ]}
-                >
-                    Báo cáo sự cố
-                </Text>
-                <ScrollView
-                    style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}
-                >
-                    <Formik
-                        initialValues={{
-                            dateOfTrouble: new Date(),
-                            dateOfSolve: new Date(),
-                            name: new Date(),
-                            describe: '',
-                            image: "",
-                            level: "",
-                            status: '0',
-                            roomId: ''
-                        }}
-                        validationSchema={TroubleSchema}
-                        onSubmit={values => {
-                            this.addTrouble(values);
-                            //alert(this.state.date);
-                        }}
-                    >
-                        {({
-                            handleChange,
-                            handleBlur,
-                            handleSubmit, values,
-                            errors,
-                            touched,
-                            isValid
-                        }) => {
-                            return (
-                                <HideKeyboard>
-                                    <SafeAreaView
-                                        style={[
-                                            { flex: 1, paddingBottom: 15 },
-                                            background_color.white,
-                                            height.h_100
-                                        ]}
-                                        onPress={Keyboard.dismiss}
-                                    >
-                                        <View
-                                            style={[width.w_100, {
-                                                paddingLeft: 15,
-                                                paddingRight: 15,
-                                                marginTop: 10
-                                            }]}>
-                                            <AppDialogSelect
-                                                lable={'Khu:'}
-                                                data={this.state.dataArea}
-                                                placeholder={'Vui lòng chọn khu...'}
-                                                value={values}
-                                                returnFilter={(key) => this.getPhongData(key)}
-                                            />
-                                        </View>
-
-                                        <View
-                                            style={[width.w_100, {
-                                                paddingLeft: 15,
-                                                paddingRight: 15,
-                                                marginTop: 10
-                                            }]}>
-                                            <AppDialogSelect
-                                                lable={'Phòng:'}
-                                                data={this.state.dataP}
-                                                placeholder={'Vui lòng chọn phòng...'}
-                                                value={values}
-                                                field={'roomId'}
-                                            />
-                                        </View>
-                                        <View
+            <ScrollView
+                style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+            >
+                {
+                    this.state.isLoading
+                        ?
+                        <ActivityIndicator size="large" color={color_primary} />
+                        :
+                        <Formik
+                            initialValues={{
+                                dateOfTrouble: new Date(),
+                                dateOfSolve: new Date(),
+                                name: new Date(),
+                                describe: '',
+                                image: "",
+                                level: "",
+                                status: '0',
+                                roomId: ''
+                            }}
+                            validationSchema={TroubleSchema}
+                            onSubmit={values => {
+                                this.addTrouble(values);
+                                //alert(this.state.date);
+                            }}
+                        >
+                            {({
+                                handleChange,
+                                handleBlur,
+                                handleSubmit, values,
+                                errors,
+                                touched,
+                                isValid
+                            }) => {
+                                return (
+                                    <HideKeyboard>
+                                        <SafeAreaView
                                             style={[
-                                                { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
+                                                { flex: 1, paddingBottom: 15 },
+                                                background_color.white,
+                                                height.h_100
                                             ]}
+                                            onPress={Keyboard.dismiss}
                                         >
-                                            <AppInputInf
-                                                lable={"Tên sự cố:"}
-                                                secureTextEntry={false}
-                                                field={"name"}
-                                                handleChange={handleChange}
-                                                handleBlur={handleBlur}
-                                                values={values}
-                                            />
-                                            {errors.name && touched.name ? (
-                                                <AppError errors={errors.name} />
-                                            ) : null}
-                                        </View>
-                                        <View
-                                            style={[
-                                                width.w_100,
-                                                { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
-                                            ]}
-                                        >
-                                            <AppDatePicker
-                                                label={"Thời gian xảy ra sự cố:"}
-                                                value={values}
-                                                field={"dateOfTrouble"}
-                                                alreadydate={new Date()}
-                                            />
-                                        </View>
-
-                                        <View
-                                            style={[
-                                                width.w_100,
-                                                { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
-                                            ]}
-                                        >
-                                            <AppDialogSelect
-                                                lable={"Mức độ:"}
-                                                data={this.state.dataMD}
-                                                placeholder={"Chọn mức độ sự cố..."}
-                                                value={values}
-                                                field={"level"}
-                                            />
-                                            {errors.level && touched.level ? (
-                                                <AppError errors={errors.level} />
-                                            ) : null}
-                                        </View>
-                                        <View
-                                            style={[
-                                                width.w_100,
-                                                { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
-                                            ]}
-                                        >
-                                            <Pressable onPress={() => this.ChoosePhotoFromLibrary()}>
-                                                <Text
-                                                    style={[
-                                                        text_size.sm,
-                                                        font.serif
-                                                    ]}
-                                                >
-                                                    Chọn ảnh
-                                                </Text>
-                                                {this.state.image.length == 0 ?
-                                                    <Icon
-                                                        name={'image'}
-                                                        type='font-awesome-5'
-                                                        size={200}
-                                                        color={'#CCC'}
-                                                    />
-                                                    :
-                                                    <Image
-                                                        source={{
-                                                            uri: this.state.image.path
-                                                        }}
-                                                        style={[
-                                                            width.w_100,
-                                                            {
-                                                                height: 200,
-                                                                borderRadius: 10,
-                                                                borderWidth: 2,
-                                                                borderColor: '#E0E0E0'
-                                                            }
-                                                        ]} />
-                                                }
-                                            </Pressable>
-                                        </View>
-
-                                        <View
-                                            style={[
-                                                { paddingLeft: 15, paddingRight: 10, marginTop: 10 }
-                                            ]}
-                                        >
-                                            <AppInputInf
-                                                lable={"Tình trạng sự cố:"}
-                                                secureTextEntry={false}
-                                                field={"describe"}
-                                                handleChange={handleChange}
-                                                handleBlur={handleBlur}
-                                                values={values}
-                                            />
-                                            {errors.describe && touched.describe ? (
-                                                <AppError errors={errors.describe} />
-                                            ) : null}
-                                        </View>
-                                        <View
-                                            style={[
-                                                width.w_100,
-                                                flex.flex_row,
-                                                { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
-                                            ]}
-                                        >
+                                            <View
+                                                style={[width.w_100, {
+                                                    paddingLeft: 15,
+                                                    paddingRight: 15,
+                                                    marginTop: 10
+                                                }]}>
+                                                <AppDialogSelect
+                                                    lable={'Khu:'}
+                                                    data={this.state.dataArea}
+                                                    placeholder={'Vui lòng chọn khu...'}
+                                                    value={values}
+                                                    returnFilter={(key) => this.getTypeRoom(key)}
+                                                />
+                                            </View>
+                                            <View
+                                                style={[width.w_100, {
+                                                    paddingLeft: 15,
+                                                    paddingRight: 15,
+                                                    marginTop: 10
+                                                }]}>
+                                                <AppDialogSelect
+                                                    lable={'Loại Phòng:'}
+                                                    data={this.state.typeOfRoom}
+                                                    placeholder={'Vui lòng chọn loại phòng...'}
+                                                    value={this.state.typeOfRoomSelect}
+                                                    field={'type'}
+                                                    returnFilter={(option) => this.getPhongData(option)}
+                                                />
+                                            </View>
+                                            <View
+                                                style={[width.w_100, {
+                                                    paddingLeft: 15,
+                                                    paddingRight: 15,
+                                                    marginTop: 10
+                                                }]}>
+                                                <AppDialogSelect
+                                                    lable={'Phòng:'}
+                                                    data={this.state.dataP}
+                                                    placeholder={'Vui lòng chọn phòng...'}
+                                                    value={values}
+                                                    field={'roomId'}
+                                                />
+                                            </View>
                                             <View
                                                 style={[
-                                                    {
-                                                        flex: 1,
-                                                        marginRight: 15
-                                                    }
+                                                    { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
                                                 ]}
                                             >
-                                                <AppButtonActionInf
-                                                    size={13}
-                                                    textSize={18}
-                                                    bg={color_danger}
-                                                    onPress={() => { this.props.navigation.goBack() }}
-                                                    title="Hủy"
+                                                <AppInputInf
+                                                    lable={"Tên sự cố:"}
+                                                    secureTextEntry={false}
+                                                    field={"name"}
+                                                    handleChange={handleChange}
+                                                    handleBlur={handleBlur}
+                                                    values={values}
                                                 />
+                                                {errors.name && touched.name ? (
+                                                    <AppError errors={errors.name} />
+                                                ) : null}
                                             </View>
                                             <View
-                                                style={{ flex: 1 }}
+                                                style={[
+                                                    width.w_100,
+                                                    { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
+                                                ]}
                                             >
-                                                <AppButtonActionInf
-                                                    size={13}
-                                                    textSize={18}
-                                                    bg={color_primary}
-                                                    disabled={!this.isFormValid(values.name, values.level, this.state.image)}
-                                                    onPress={handleSubmit}
-                                                    //onPress={() => alert(values.Ten_HD)}
-                                                    title="Thêm"
+                                                <AppDatePicker
+                                                    label={"Thời gian xảy ra sự cố:"}
+                                                    value={values}
+                                                    field={"dateOfTrouble"}
+                                                    alreadydate={new Date()}
                                                 />
                                             </View>
-                                        </View>
-                                    </SafeAreaView>
-                                </HideKeyboard>
-                            );
-                        }}
-                    </Formik>
-                </ScrollView>
-            </View>
+
+                                            <View
+                                                style={[
+                                                    width.w_100,
+                                                    { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
+                                                ]}
+                                            >
+                                                <AppDialogSelect
+                                                    lable={"Mức độ:"}
+                                                    data={this.state.dataMD}
+                                                    placeholder={"Chọn mức độ sự cố..."}
+                                                    value={values}
+                                                    field={"level"}
+                                                />
+                                                {errors.level && touched.level ? (
+                                                    <AppError errors={errors.level} />
+                                                ) : null}
+                                            </View>
+                                            <View
+                                                style={[
+                                                    width.w_100,
+                                                    { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
+                                                ]}
+                                            >
+                                                <Pressable onPress={() => this.ChoosePhotoFromLibrary()}>
+                                                    <Text
+                                                        style={[
+                                                            text_size.sm,
+                                                            font.serif
+                                                        ]}
+                                                    >
+                                                        Chọn ảnh
+                                                    </Text>
+                                                    {this.state.image.length == 0 ?
+                                                        <Icon
+                                                            name={'image'}
+                                                            type='font-awesome-5'
+                                                            size={200}
+                                                            color={'#CCC'}
+                                                        />
+                                                        :
+                                                        <Image
+                                                            source={{
+                                                                uri: this.state.image.path
+                                                            }}
+                                                            style={[
+                                                                width.w_100,
+                                                                {
+                                                                    height: 200,
+                                                                    borderRadius: 10,
+                                                                    borderWidth: 2,
+                                                                    borderColor: '#E0E0E0'
+                                                                }
+                                                            ]} />
+                                                    }
+                                                </Pressable>
+                                            </View>
+
+                                            <View
+                                                style={[
+                                                    { paddingLeft: 15, paddingRight: 10, marginTop: 10 }
+                                                ]}
+                                            >
+                                                <AppInputInf
+                                                    lable={"Tình trạng sự cố:"}
+                                                    secureTextEntry={false}
+                                                    field={"describe"}
+                                                    handleChange={handleChange}
+                                                    handleBlur={handleBlur}
+                                                    values={values}
+                                                />
+                                                {errors.describe && touched.describe ? (
+                                                    <AppError errors={errors.describe} />
+                                                ) : null}
+                                            </View>
+                                            <View
+                                                style={[
+                                                    width.w_100,
+                                                    flex.flex_row,
+                                                    { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
+                                                ]}
+                                            >
+                                                <View
+                                                    style={[
+                                                        {
+                                                            flex: 1,
+                                                            marginRight: 15
+                                                        }
+                                                    ]}
+                                                >
+                                                    <AppButtonActionInf
+                                                        size={13}
+                                                        textSize={18}
+                                                        bg={color_danger}
+                                                        onPress={() => { this.props.navigation.goBack() }}
+                                                        title="Hủy"
+                                                    />
+                                                </View>
+                                                <View
+                                                    style={{ flex: 1 }}
+                                                >
+                                                    <AppButtonActionInf
+                                                        size={13}
+                                                        textSize={18}
+                                                        bg={color_primary}
+                                                        disabled={!this.isFormValid(values.name, values.level, this.state.image)}
+                                                        onPress={handleSubmit}
+                                                        //onPress={() => alert(values.Ten_HD)}
+                                                        title="Thêm"
+                                                    />
+                                                </View>
+                                            </View>
+                                        </SafeAreaView>
+                                    </HideKeyboard>
+                                );
+                            }}
+                        </Formik>
+                }
+            </ScrollView>
 
         );
     }
@@ -399,7 +426,7 @@ const mapStateToProps = ({ user }) => {
 };
 
 const mapDispatchToProps = {
-    doAddTrouble, doGetListArea, doGetRoomByArea
+    doAddTrouble, doGetListArea, doGetRoomByType, doGetTypeOfRoomByArea
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddTrouble)
