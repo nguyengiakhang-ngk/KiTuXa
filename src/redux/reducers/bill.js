@@ -13,7 +13,10 @@ import {
     UPDATE_BILL_FAIL,
     DELETE_BILL,
     DELETE_BILL_SUCCESS,
-    DELETE_BILL_FAIL
+    DELETE_BILL_FAIL,
+    GET_BILL_BY_AREA,
+    GET_BILL_BY_AREA_SUCCESS,
+    GET_BILL_BY_AREA_FAIL
 
 } from "../actions/types";
 
@@ -35,6 +38,20 @@ export default (preState = INITIAL_STATE, action) => {
                 listBillByContract: action.listBillByContract,
             }
         case GET_BILL_BY_CONTRACT_FAIL:
+            return {
+                ...preState,
+                error: action.error
+            }
+        case GET_BILL_BY_AREA:
+            return {
+                ...preState,
+                ...INITIAL_STATE
+            }
+        case GET_BILL_BY_AREA_SUCCESS:
+            return {
+                ...preState,
+            }
+        case GET_BILL_BY_AREA_FAIL:
             return {
                 ...preState,
                 error: action.error

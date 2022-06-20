@@ -1,15 +1,17 @@
 import React, {Component} from 'react';
-import {FlatList, Text, TouchableOpacity, View} from "react-native";
+import {FlatList, Text, TouchableOpacity, View, ActivityIndicator} from "react-native";
 import axios from "axios";
 import {path} from "../../../constant/define";
 import {flex, font, font_weight, height, position, text_color, text_size, width, background_color} from "../../../utils/styles/MainStyle";
-import {color_danger, color_primary, color_success} from "../../../utils/theme/Color";
+import {color_danger, color_primary, color_success, color_secondary} from "../../../utils/theme/Color";
 import {Icon} from "@rneui/base";
 import AppFAB from "../../../components/AppFAB";
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
 import moment from "moment/moment";
 import { connect } from 'react-redux';
 import { doGetReceiptByBill, doDeleteReceipt } from '../../../redux/actions/receipt'
+import DialogConfirm from '../../../components/DialogConfirm';
+import Toast from "react-native-toast-message";
 
 class ReceiptComponent extends Component{
     constructor(props) {
@@ -17,6 +19,8 @@ class ReceiptComponent extends Component{
         this.state = {
             isLoading: true,
             data: [],
+            isConfirm: false,
+            receiptDelete: '',
         }
     }
     viewReceiptDetails(id){
@@ -34,7 +38,20 @@ class ReceiptComponent extends Component{
     }
     deleteReceipt(receipt) {
         this.props.doDeleteReceipt({id: receipt.id, image: receipt.image}).then(data => {
+            
+            this.setState({
+                billDelete: '',
+                isConfirm: false,
+                receiptDelete: ''
+            })
             this.refresh()
+            Toast.show({
+                type: 'success',
+                text1: 'Biên nhận',
+                text2: 'Xóa thành công.',
+                visibilityTime: 2000,
+                autoHide: true
+            });
         })
     }
 
@@ -51,6 +68,12 @@ class ReceiptComponent extends Component{
                 data: data
             }, () => {console.log(data)})
         })
+        setTimeout(() => {
+            this.setState({
+                isLoading: false
+            })
+        }, 1000)
+        
     }
 
     componentDidMount() {
@@ -138,10 +161,10 @@ class ReceiptComponent extends Component{
                             ]}
                         >
                             <Icon
-                                name= {item.status == 0 ? "circle-notch" : "check-circle"}
+                                name= {item.status === '0' ? "circle-notch" : "check-circle"}
                                 type='font-awesome-5'
                                 size={16}
-                                color={item.status == 0 ? color_danger : color_success}
+                                color={item.status === '0' ? color_danger : color_success}
                             />
                             <Text
                                 style={[
@@ -150,7 +173,7 @@ class ReceiptComponent extends Component{
                                     {marginLeft: 5}
                                 ]}
                             >
-                                {item.status == 0 ? "Chưa thanh toán" : "Đã thanh toán"}
+                                {item.status === '0' ? "Chưa thanh toán" : "Đã thanh toán"}
                             </Text>
                         </View>
                     </View>
@@ -164,13 +187,13 @@ class ReceiptComponent extends Component{
                         style={[
                             {marginRight: 10}
                         ]}
-                        onPress={() => item.status == 0 ? this.deleteReceipt(item) : ""}
+                        onPress={() => item.status === '0' ? this.setState({ isConfirm: true, receiptDelete: item }) : ""}
                     >
                         <Icon
                             name= {"trash-alt"}
                             type='font-awesome-5'
-                            size={item.status == 0 ? 22 : 0}
-                            color={item.status == 0 ? color_danger : "transparent"}
+                            size={item.status === '0' ? 22 : 0}
+                            color={item.status === '0' ? color_danger : "transparent"}
                         />
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -182,8 +205,8 @@ class ReceiptComponent extends Component{
                         <Icon
                             name= {"pencil-alt"}
                             type='font-awesome-5'
-                            size={item.status == 0 ? 22 : 0}
-                            color={item.status == 0 ? color_success : "transparent"}
+                            size={item.status === '0' ? 22 : 0}
+                            color={item.status === '0' ? color_success : "transparent"}
                         />
                     </TouchableOpacity>
                     <TouchableOpacity
@@ -197,6 +220,30 @@ class ReceiptComponent extends Component{
                         />
                     </TouchableOpacity>
                 </View>
+            </View>
+        )
+    }
+
+    _renderEmpty = () => {
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    alignItems: 'center'
+                }}
+            >
+                <Text
+                    style={[
+                        text_size.lg,
+                        font.serif,
+                        {
+                            color: color_secondary
+                        }
+                    ]}
+                >
+                    Không có dữ liệu
+                </Text>
             </View>
         )
     }
@@ -229,6 +276,21 @@ class ReceiptComponent extends Component{
                 >
                     Danh sách biên nhận
                 </Text>
+                {
+                    this.state.isConfirm ?
+                        <DialogConfirm
+                            content={"Bạn có chắc chắn muốn xóa?"}
+                            cancel={() => {
+                                this.setState({
+                                    isConfirm: false
+                                })
+                            }}
+                            confirm={() => {
+                                this.deleteReceipt(this.state.receiptDelete);
+                            }}
+                        />
+                        : null
+                }
                 <View
                     style={[
                         position.absolute,
@@ -247,7 +309,20 @@ class ReceiptComponent extends Component{
                         onPress = { () => this.viewAddReceipt(1) }
                     />
                 </View>
-                <FlatList contentContainerStyle={{paddingHorizontal: 10}} data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()}/>
+                <Toast ref={(ref) => {Toast.setRef(ref)}} />
+                {
+                    this.state.isLoading
+                    ?
+                    <ActivityIndicator size="large" color={color_primary} />
+                    :
+                    (
+                        this.state.data.length > 0
+                        ?
+                        <FlatList contentContainerStyle={{paddingHorizontal: 10}} data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()}/>
+                        :
+                        this._renderEmpty()
+                    )
+                }
             </SafeAreaView>
         )
     }
