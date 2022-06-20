@@ -50,6 +50,7 @@ import MaterialTypeView from '../screens/Admin/MaterialType/MaterialTypeView';
 import Material from '../screens/Admin/Material/Material';
 import MaterialAdd from '../screens/Admin/Material/MaterialAdd';
 import MaterialView from '../screens/Admin/Material/MaterialView';
+import StatisticalMaterial from "../screens/Admin/statisttical/statisticalMaterial"
 import InputMaterial from '../screens/Admin/InputMaterial/InputMaterial';
 import BillMaterial from '../screens/Admin/BillMaterial/BIllMaterial';
 import BillMaterialView from '../screens/Admin/BillMaterial/BillMaterialView';
