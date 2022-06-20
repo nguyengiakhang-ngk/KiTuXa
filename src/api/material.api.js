@@ -36,6 +36,8 @@ const addDetailMaterial = async (detailMaterial) => await axios.post(path + "det
 
 const update = async (material) => await axios.patch(path, material);
 
+const updateDetailMaterial = async (detailMaterial) => await axios.patch(path + "detail-material", detailMaterial);
+
 const _delete = async (id) => await axios.delete(path + id)
 
 export const materialAPI = {
@@ -52,5 +54,6 @@ export const materialAPI = {
     add,
     addDetailMaterial,
     update,
+    updateDetailMaterial,
     delete: _delete
 }

@@ -73,14 +73,16 @@ export default function ViewMaterialInRoom({ navigation }) {
     const fetchData = () => {
         fetchRooms();
         fetchMaterials();
+        setRoom("")
     }
 
     useEffect(() => {
         fetchData()
     }, [])
 
-    const handleOpenMoveMaterial = () => {
+    const handleOpenMoveMaterial = (item) => {
         setOpenMoveMaterial(true);
+        setSelected(item)
     }
 
     navigation.addListener('focus', () => {
@@ -96,7 +98,7 @@ export default function ViewMaterialInRoom({ navigation }) {
             <View style={{ padding: 10 }}>
                 <FormSelect data={materials} label="Vật chất" onChange={(option) => setMaterial(option.key)}></FormSelect>
             </View>
-            <ModalMoveMaterial open={openMoveMaterial} close={() => setOpenMoveMaterial(false)} />
+            <ModalMoveMaterial open={openMoveMaterial} close={() => setOpenMoveMaterial(false)} material={selected} callback={fetchDetailMaterials}/>
             <View style={{
                 padding: 10
             }}>

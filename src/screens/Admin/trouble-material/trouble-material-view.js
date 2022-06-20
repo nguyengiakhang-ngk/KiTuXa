@@ -10,6 +10,7 @@ import { Icon } from "@rneui/base";
 import AppButtonActionInf from "../../../components/AppButtonActionInf";
 import { PATH } from "../../../constant/define";
 import ImagePicker from 'react-native-image-crop-picker';
+import { uploadAPI } from "../../../api/uploadAPI"
 const initTrouble = {
     createdAt: "",
     descriptionTroubleMaterial: "",
@@ -47,7 +48,8 @@ export default function TroubleMaterialView({ navigation, route }) {
         try {
             const { data } = await troubleMaterialAPI.getOne(id)
             setTrouble(data)
-            setSrc(PATH.MATERIAL + data.media)
+            console.log(data);
+            setSrc(PATH.MATERIAL + data.mediaTroubleMaterial)
         } catch (error) {
 
         }
@@ -58,29 +60,34 @@ export default function TroubleMaterialView({ navigation, route }) {
         }
     }, [report])
     const uploadFile = async () => {
-        const { data } = await uploadFileService.uploadImage(file, "material");
+        const { data } = await uploadAPI.uploadImage(file, "material");
         return data
     }
     const submit = async () => {
         try {
-            let tmp = {
-                ...trouble,
-                idMaterial: material?.id
-            }
-            if (file) {
-                const upload = await uploadFile();
-                if (upload?.name) {
-                    tmp = {
-                        ...tmp,
-                        mediaTroubleMaterial: upload?.name
+            if (material) {
+                let tmp = {
+                    ...trouble,
+                    idMaterial: material
+                }
+                if (file) {
+                    const upload = await uploadFile();
+                    if (upload?.name) {
+                        tmp = {
+                            ...tmp,
+                            mediaTroubleMaterial: upload?.name
+                        }
                     }
                 }
+                const { data } = await troubleMaterialAPI.create(tmp);
+                if (data[1] > 0) {
+                    alert("Report success !");
+                    navigation.navigate("troublemateial")
+                }
+            } else {
+                alert("Không lấy được vật chất")
             }
-            const { data } = await troubleMaterialAPI.create(tmp);
-            if (data[1] > 0) {
-                alert("Report success !");
-                close();
-            }
+
         } catch (error) {
             alert(error.message);
         }
@@ -108,8 +115,7 @@ export default function TroubleMaterialView({ navigation, route }) {
                 name: res.filename || "tmp.png",
             }
             setFile(file)
-            setIsChangeFile(true)
-        }).catch(error => alert('Error: ', error.message));
+        }).catch(error => console.log(error));
     }
 
     return (
@@ -125,7 +131,7 @@ export default function TroubleMaterialView({ navigation, route }) {
                         { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
                     ]}
                 >
-                    <TouchableOpacity
+                    {!report && <TouchableOpacity
                         style={[
                             width.w_100,
                             flex.flex_row,
@@ -150,7 +156,7 @@ export default function TroubleMaterialView({ navigation, route }) {
                         >
                             Chọn ảnh:
                         </Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity>}
                     {src.length > 0 && <View
                         style={[
                             width.w_100,
@@ -174,7 +180,7 @@ export default function TroubleMaterialView({ navigation, route }) {
                         />
                     </View>}
                 </View>
-                <View style={{
+                {!report && <View style={{
                     marginTop: 10
                 }}>
                     <AppButtonActionInf
@@ -184,7 +190,7 @@ export default function TroubleMaterialView({ navigation, route }) {
                         onPress={submit}
                         title="Gửi"
                     />
-                </View>
+                </View>}
             </ScrollView>
 
         </SafeAreaView>

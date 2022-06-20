@@ -147,15 +147,19 @@ const InputMaterialToRoom = ({ navigation }) => {
     }
 
     const updateDetailMaterial = async (id, status, quantity, room) => {
-        const { data } = await materialService.getDetailMaterialByStatus(id, status);
-        await data.slice(0, quantity).forEach(item => {
-            const detailMaterial = {
-                ...item,
-                owner: room,
-                idStatusMaterial: 3
-            }
-            materialService.updateDetailMaterial(detailMaterial)
-        })
+        try {
+            const { data } = await materialAPI.getDetailMaterialByStatus(id, status);
+            await data.slice(0, quantity).forEach(item => {
+                const detailMaterial = {
+                    ...item,
+                    owner: room,
+                    idStatusMaterial: 3
+                }
+                materialAPI.updateDetailMaterial(detailMaterial)
+            })
+        } catch (error) {
+            alert(error)
+        }
     }
 
     const createDetailBill = async (idBill) => {
@@ -172,13 +176,8 @@ const InputMaterialToRoom = ({ navigation }) => {
                 await billMaterialAPI.createDetailBill(detailBill)
                 await updateDetailMaterial(detailBill.idMaterial, detailBill.idStatusMaterial, detailBill.quantity, detailBill.idRoom);
             })
-            TOAST.SUCCESS("Thêm thành công!");
-            history.push({
-                pathname: "/Admin/Bill-Material",
-                state: {
-                    selected: 3.2
-                }
-            });
+            alert("Thêm thành công!");
+            navigation.navigate("billmaterial");
         } catch (error) {
             alert(error.message);
         }
@@ -230,14 +229,12 @@ const InputMaterialToRoom = ({ navigation }) => {
         fetchStatus();
     }, [])
     const getVatchatByIdVatchat = (id) => {
-        return materials.filter(item => item.id === id)[0].name
+        return materials.filter(item => item.key === id)[0]?.label
     }
     const getTypeByValueType = (status) => {
-        return statuses.filter(item => item.id === status)[0].name
+        return statuses.filter(item => item.key === status)[0]?.label
     }
-    const getRoomByValueRoom = (room) => {
-        return rooms.filter(item => item.id === room)[0].roomName
-    }
+
 
     navigation.addListener("focus", () => {
         fetchStatus();

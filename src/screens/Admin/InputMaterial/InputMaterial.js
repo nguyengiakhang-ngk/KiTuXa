@@ -158,12 +158,13 @@ const InputMaterial = ({ navigation }) => {
             arrTmp.forEach(async (_) => {
               i++;
               let detailMaterial = {
-                id: `${Date.now()}-${item.material}-${item.status}-${item.quantity
-                  }-${item.price}-${i}`,
+                id: `${Date.now()}-${item.material}-${item.status}-${item.quantity}-${item.price}-${i}`,
                 idMaterial: item.material,
                 idDetailBill: rs.data.id,
-                qr: "",
-              };
+                idStatusMaterial: item.status,
+                owner: "",
+                qr: ""
+              }
               await RNQRGenerator.generate({
                 value: detailMaterial.id,
                 height: 300,
@@ -197,15 +198,15 @@ const InputMaterial = ({ navigation }) => {
   const submit = async () => {
     try {
       if (checkInfo()) {
-        const { data } = await billMaterialAPI.create({ total });
+        const { data } = await billMaterialAPI.create({ total, address, name, phone, kind: "import" })
         if (data.id) {
-          await createDetailBill(data.id);
+          await createDetailBill(data.id)
         } else {
           alert("Tạo hóa đơn thất bại !");
         }
       }
     } catch (error) {
-      alert(error.message);
+      alert(error.message)
     }
   };
 
@@ -268,8 +269,9 @@ const InputMaterial = ({ navigation }) => {
         </View>
 
         <View style={{ maxWidth: "100%" }}>
-          {data.map((item) => (
+          {data.map((item, i) => (
             <ItemInputMaterial
+              key={i}
               onDelete={removeData}
               statuses={statuses}
               materials={materials}

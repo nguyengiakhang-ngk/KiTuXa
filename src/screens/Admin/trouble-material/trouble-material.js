@@ -22,7 +22,7 @@ export default function TroubleMaterial({ navigation }) {
     const [troubles, setTroubles] = useState([]);
     const fetchTroubles = async () => {
         try {
-            const { data } = await troubleMaterialAPI.get();
+            const { data } = await troubleMaterialAPI.get();    
             setTroubles(data);
         } catch (error) {
             alert(error.message)

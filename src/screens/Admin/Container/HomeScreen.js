@@ -528,6 +528,26 @@ class HomeScreen extends Component {
                             ]}
                         >
                             <AppItemHome
+                                bg={'gray'}
+                                name='bug'
+                                size={30}
+                                color={'white'}
+                                colorText={'black'}
+                                label={'Hoạt động'}
+                                onPress={() => this.routeScreen("activity")}
+                            />
+                        </View>
+                        <View
+                            style={[
+                                {
+                                    width: '33.3%',
+                                    paddingRight: 0.5,
+                                    paddingLeft: 0.5,
+                                    paddingBottom: 5
+                                }
+                            ]}
+                        >
+                            <AppItemHome
                                 bg={'orangered'}
                                 name='bug'
                                 size={30}
@@ -537,6 +557,7 @@ class HomeScreen extends Component {
                                 onPress={() => this.routeScreen("viewmaterialinroom")}
                             />
                         </View>
+                     
                     </ScrollView>
                 </View>
             </View>

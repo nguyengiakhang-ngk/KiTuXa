@@ -5,21 +5,64 @@ import { Modal, Pressable, StyleSheet, Text, TouchableOpacity, View } from "reac
 import { materialAPI } from "../../../api/material.api";
 import FormSelect from "../../../components/FormSelect";
 import FormInput from "../../../components/FormInput";
+import { eventMaterialAPI } from "../../../api/event-material.api";
 import { color_light, color_primary, color_secondary } from "../../../utils/theme/Color";
-export default function ModalMoveMaterial({ open, close }) {
-    const [room, setRoom] = useState("");
-    const [rooms, setRooms] = useState([]);
+export default function ModalMoveMaterial({ open, close, material, callback }) {
+    const initValue = {
+        room: "",
+        comment: ""
+    }
+    const [value, setValue] = React.useState(initValue)
+    const [rooms, setRooms] = React.useState([]);
     const fetchRooms = async () => {
         try {
             const { data } = await materialAPI.getRoomAdmin();
             let tmp = [{ key: "", label: "--- Chọn phòng ---" }];
-            data.forEach((item) => {
-                tmp.push({
-                    key: item?.id,
-                    label: item.roomName,
+            if(material){
+                data.filter(item => +item.id !== +material.owner).forEach((item) => {
+                    tmp.push({
+                        key: item?.id,
+                        label: item.roomName,
+                    });
                 });
-            });
+            }else{
+                data.forEach((item) => {
+                    tmp.push({
+                        key: item?.id,
+                        label: item.roomName,
+                    });
+                });
+            }
+
             setRooms(tmp);
+        } catch (error) {
+            alert(error.message);
+        }
+    }
+
+    const submit = async () => {
+        try {
+            if (value.room.length === 0) {
+                alert("Vui lòng chọn phòng cần chuyển")
+            } else {
+                const { data } = await materialAPI.updateDetailMaterial({ ...material, owner: value.room })
+                if (data[0] > 0) {
+                    alert("Chuyển thành công !");
+                    close();
+                    eventMaterialAPI.create({
+                        idMaterial: material.id,
+                        nameEventMaterial: "moveMaterial",
+                        desciptionEvent: value.comment,
+                        from: material.owner,
+                        to: value.room
+                    })
+                    if (callback) {
+                        callback();
+                    }
+                } else {
+                    alert("Chuyển phòng thất bại")
+                }
+            }
         } catch (error) {
             alert(error.message);
         }
@@ -42,18 +85,18 @@ export default function ModalMoveMaterial({ open, close }) {
             <View style={styles.centeredView}>
                 <View style={styles.modalView}>
                     <View style={{ padding: 10 }}>
-                        <FormSelect data={rooms} label="Phòng" onChange={(option) => setRoom(option.key)}></FormSelect>
+                        <FormSelect data={rooms} label="Phòng" onChange={(option) => setValue({ ...value, room: option.key })}></FormSelect>
                     </View>
                     <View style={{ padding: 10 }}>
-                        <FormInput lable={"Ghi chú"} numberOfLines={4} value="" />
+                        <FormInput lable={"Ghi chú"} value={value.comment} numberOfLines={4} onChangeText={e => setValue({ ...value, comment: e })} />
                     </View>
                     <View style={{
                         display: "flex",
                         flexDirection: "row",
-                        justifyContent:"flex-end",
+                        justifyContent: "flex-end",
                         padding: 10
                     }}>
-                        <TouchableOpacity onPress={close} style={{
+                        <TouchableOpacity onPress={submit} style={{
                             backgroundColor: color_primary,
                             paddingHorizontal: 20,
                             paddingVertical: 10,

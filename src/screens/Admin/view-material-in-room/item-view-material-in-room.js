@@ -43,7 +43,7 @@ export default function ItemViewMaterialInRoom({ item, material, navigation, ope
                     style={[
                         { marginRight: 10 }
                     ]}
-                    onPress={() => navigation.navigate("troublemateialview", { material: material })}
+                    onPress={() => navigation.navigate("troublemateialview", { material: item.id })}
                 >
                     <Icon
                         name={"bug"}
