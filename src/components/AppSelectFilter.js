@@ -13,20 +13,19 @@ import {
 import { Text, TextInput, View } from "react-native";
 import { Icon } from "@rneui/base";
 import { color_secondary } from "../utils/theme/Color";
-class AppDialogSelect extends Component {
+class AppSelectFilter extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            textInputValue: this.props.value[this.props.field]
+            // textInputValue: this.props.value[this.props.field]
         }
     }
 
     setText(option) {
-        this.setState({ textInputValue: option.label }, () => console.log(option.label))
-        this.props.value[this.props.field] = option.key;
         this.props.returnFilter ? this.props.returnFilter(option) : null;
     }
+
     render() {
         return (
             <View style={[
@@ -81,7 +80,7 @@ class AppDialogSelect extends Component {
                         autoCorrect={false}
                         style={[text_size.sm, font.serif, font_weight.f_500, { color: 'black', width: '95%' }]}
                         placeholder={this.props.placeholder}
-                        value={this.state.textInputValue ? this.state.textInputValue : this.props.initValue}
+                        value={this.props.value}
                     />
                     <Icon
                         name='caret-down'
@@ -93,4 +92,4 @@ class AppDialogSelect extends Component {
         )
     }
 }
-export default AppDialogSelect;
+export default AppSelectFilter;

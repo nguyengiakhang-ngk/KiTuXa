@@ -9,12 +9,13 @@ import AppFAB from "../../../components/AppFAB";
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
 import moment from "moment/moment";
 import { connect } from 'react-redux';
-import { doGetListTroubleByRoom, doDeleteTrouble } from '../../../redux/actions/trouble'
+import { doGetListTroubleByRoom, doDeleteTrouble, doGetTroubleByArea } from '../../../redux/actions/trouble'
 import AppDialogSelect from "../../../components/AppDialogSelect";
 import { doGetListArea } from "../../../redux/actions/area";
 import { doGetRoomByArea } from '../../../redux/actions/room';
 import DialogConfirm from "../../../components/DialogConfirm";
 import Toast from "react-native-toast-message";
+import AppSelectFilter from "../../../components/AppSelectFilter";
 
 
 class TroubleScreen extends Component {
@@ -24,9 +25,11 @@ class TroubleScreen extends Component {
             isLoading: true,
             data: [],
             dataArea: [],
+            dataType: [],
             dataRoom: [],
-            filterArea: [],
-            filterRoom: [],
+            filterArea: 'Tất cả',
+            filterType: 'Tất cả',
+            filterRoom: 'Tất cả',
             isVisible: false,
             isConfirm: false,
             troubleDelete: ''
@@ -36,14 +39,50 @@ class TroubleScreen extends Component {
 
 
     getListArea() {
-        this.props.doGetListArea({ userId: this.props.user.user.id }).then(data => {
+        this.props.doGetTroubleByArea({ userId: this.props.user.user.id }).then(data => {
+            // console.log(data);
+            const listRoom = [];
+            const listType = [];
+            const listTrouble = [];
+            data.map(item => {
+                item?.typeofrooms.map(itemType => {
+                    listType.push(itemType);
+                    itemType.rooms.map(itemRoom => {
+                        listRoom.push(itemRoom);
+                        itemRoom.troubles.map(itemTr => {
+                            listTrouble.push(itemTr)
+                        })
+                    })
+                })
+            });
+
             this.setState({
-                dataArea: data.map(item => ({
-                    key: item.id,
-                    label: item.areaName,
-                })),
-            }, () => {
-                console.log('dataA: ', this.state.dataArea);
+                dataAll: data,
+                data: listTrouble,
+                dataArea: [
+                    {
+                        key: -1,
+                        label: 'Tất cả',
+                        typeofrooms: listType
+                    },
+                    ...data.map(item => ({ key: item.id, label: item.areaName, typeofrooms: item.typeofrooms }))
+                ],
+                dataType: [
+                    {
+                        key: -1,
+                        label: 'Tất cả',
+                        rooms: listRoom
+                    },
+                    ...listType.map(item => ({ key: item.id, label: item.name, rooms: item.rooms }))
+                ],
+                dataRoom: [
+                    {
+                        key: -1,
+                        label: 'Tất cả',
+                        contracts: listTrouble
+                    },
+                    ...listRoom.map(item => ({ key: item.id, label: item.roomName, troubles: item.troubles }))
+                ],
             })
         })
 
@@ -54,23 +93,85 @@ class TroubleScreen extends Component {
         }, 2000)
     }
 
-    getPhongData(option) {
-        console.log(this.state.filterArea, 'hello');
-        this.props.doGetRoomByArea({ areaId: option.key }).then(data => {
+    filterType(option) {
+        if (option.key === -1) {
             this.setState({
-                dataRoom: data.map(item => ({
-                    key: item.id,
-                    label: item.roomName,
-                })),
-            }, () => {
-                console.log('dataP: ', this.state.dataP);
+                filterArea: "Tất cả"
             })
+        } else {
+            this.setState({
+                filterArea: option.label
+            })
+        }
+        const listRoom = [];
+        const listType = [];
+        const listTrouble = [];
+        option.typeofrooms.map(itemType => {
+            listType.push(itemType);
+            itemType.rooms.map(itemRoom => {
+                listRoom.push(itemRoom);
+                itemRoom.troubles.map(itemTr => {
+                    listTrouble.push(itemTr);
+                })
+            })
+        })
+        this.setState({
+            data: listTrouble,
+            dataType: [
+                {
+                    key: -1,
+                    label: 'Tất cả'
+                },
+                ...listType.map(item => ({ key: item.id, label: item.name, rooms: item.rooms }))
+            ],
+            dataRoom: [
+                {
+                    key: -1,
+                    label: 'Tất cả'
+                },
+                ...listRoom.map(item => ({ key: item.id, label: item.roomName, contracts: item.contracts }))
+            ],
+            filterType: 'Tất cả',
+            filterRoom: 'Tất cả'
+        })
+    }
+
+    getRoomData(option) {
+        console.log(option)
+        if (option.key === -1) {
+            this.setState({
+                filterType: "Tất cả",
+                filterRoom: "Tất cả",
+            })
+        } else {
+            this.setState({
+                TypeSelect: option.key,
+                filterType: option.label,
+            })
+        }
+        const listRoom = [];
+        const listTrouble = [];
+        option.rooms.map(itemRoom => {
+            listRoom.push(itemRoom);
+            itemRoom.troubles.map(itemTr => {
+                listTrouble.push(itemTr);
+            })
+        })
+        this.setState({
+            data: listContract,
+            dataRoom: [
+                {
+                    key: -1,
+                    label: "Tất cả"
+                },
+                ...listRoom.map(item => ({ key: item.id, label: item.roomName, troubles: item.troubles }))
+            ],
         })
     }
 
 
     viewTroubleDetails(item) {
-        this.setState({isVisible: true})
+        this.setState({ isVisible: true })
     }
 
     viewAddTrouble(roomId) {
@@ -117,7 +218,7 @@ class TroubleScreen extends Component {
     }
 
     refresh() {
-        this.getPhongData(this.state.filterArea.filterArea);
+        this.getListArea();
     }
 
     _renderEmpty = () => {
@@ -282,24 +383,6 @@ class TroubleScreen extends Component {
                     position.relative
                 ]}
             >
-                <Text
-                    style={[
-                        text_size.xs,
-                        font.serif,
-                        font_weight.bold,
-                        text_color.white,
-                        width.w_100,
-                        background_color.blue,
-                        {
-                            textAlign: 'center',
-                            paddingVertical: 15,
-                            lineHeight: 20,
-                            letterSpacing: 0,
-                        }
-                    ]}
-                >
-                    Danh sách sự cố
-                </Text>
                 <View
                     style={[
                         position.absolute,
@@ -319,38 +402,42 @@ class TroubleScreen extends Component {
                     />
                 </View>
                 <View style={[
-                    flex.flex_row, flex.justify_content_between
+                    flex.flex_row, flex.justify_content_between, flex.align_items_center, {marginHorizontal: 5}
                 ]}>
                     <View
                         style={{
-                            paddingLeft: 15,
-                            paddingRight: 15,
                             marginTop: 10,
-                            width: '50%'
+                            width: '30%'
                         }}>
-                        <AppDialogSelect
+                        <AppSelectFilter
                             lable={'Khu:'}
                             data={this.state.dataArea}
                             value={this.state.filterArea}
-                            placeholder={'Tất cả'}
-                            field={'filterArea'}
-                            returnFilter={(key) => this.getPhongData(key)}
+                            returnFilter={(key) => this.filterType(key)}
                         />
                     </View>
                     <View
                         style={{
-                            paddingLeft: 15,
-                            paddingRight: 15,
                             marginTop: 10,
-                            width: '50%'
+                            width: '30%'
                         }}>
-                        <AppDialogSelect
+                        <AppSelectFilter
+                            lable={'Loại Phòng:'}
+                            data={this.state.dataType}
+                            value={this.state.filterType}
+                            returnFilter={(key) => this.getRoomData(key)}
+                        />
+                    </View>
+                    <View
+                        style={{
+                            marginTop: 10,
+                            width: '30%'
+                        }}>
+                        <AppSelectFilter
                             lable={'Phòng:'}
                             data={this.state.dataRoom}
-                            placeholder={'Tất cả'}
                             value={this.state.filterRoom}
-                            field={'filterRoom'}
-                            returnFilter={(key) => this.getTroubleData(key)}
+                            returnFilter={(key) => this.get(key)}
                         />
                     </View>
                 </View>
@@ -369,21 +456,23 @@ class TroubleScreen extends Component {
                         />
                         : null
                 }
-                <Toast ref={(ref) => {Toast.setRef(ref)}} />
+                <Toast ref={(ref) => { Toast.setRef(ref) }} />
                 {
                     this.state.isLoading
-                    ?
-                    <ActivityIndicator size="large" color={color_primary} />
-                    :
-                    (
-                        this.state.data.length > 0
                         ?
-                        <FlatList contentContainerStyle={{ paddingHorizontal: 10 }} data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()} />
+                        <View style={{ flex: 1, justifyContent: 'center' }}>
+                            <ActivityIndicator size="large" color={color_primary} />
+                        </View>
                         :
-                        this._renderEmpty()
-                    )
+                        (
+                            this.state.data.length > 0
+                                ?
+                                <FlatList contentContainerStyle={{ paddingHorizontal: 10 }} data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()} />
+                                :
+                                this._renderEmpty()
+                        )
                 }
-                
+
             </SafeAreaView>
         )
     }
@@ -394,7 +483,8 @@ const mapStateToProps = ({ listReceiptByContract, user }) => {
 };
 
 const mapDispatchToProps = {
-    doGetListTroubleByRoom, doDeleteTrouble, doGetListArea, doGetRoomByArea
+    doGetListTroubleByRoom, doDeleteTrouble, doGetListArea, doGetRoomByArea,
+    doGetTroubleByArea
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(TroubleScreen)

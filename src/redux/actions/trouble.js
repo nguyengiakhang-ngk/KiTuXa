@@ -10,9 +10,13 @@ import {
     UPDATE_TROUBLE_FAIL,
     DELETE_TROUBLE,
     DELETE_TROUBLE_SUCCESS,
-    DELETE_TROUBLE_FAIL
+    DELETE_TROUBLE_FAIL,
+    GET_LIST_TROUBLE_BY_AREA,
+    GET_LIST_TROUBLE_BY_AREA_SUCCESS,
+    GET_LIST_TROUBLE_BY_AREA_FAIL
 } from "./types";
-import { getListTroubleByRoom, addTrouble, updateTrouble, deleteTrouble, getTroubleById } from "../../api/troubleAPI";
+import { getListTroubleByRoom, addTrouble, updateTrouble, deleteTrouble, 
+    getTroubleById, getListTroubleByArea } from "../../api/troubleAPI";
 import { GET_TROUBLE_BY_ID } from "../../constant/apiUrl";
 
 export const doGetListTroubleByRoom = (roomId) => dispatch => {
@@ -38,6 +42,20 @@ export const doGetTroubleById = (id) => dispatch => {
             })
             .catch(error => {
                 getTroubleByIdError(dispatch, error);
+                reject(error);
+            });
+    })
+};
+
+export const doGetTroubleByArea = (userId) => dispatch => {
+    return new Promise((resolve, reject) => {
+        getListTroubleByArea(userId)
+            .then(data => {
+                getListTroubleByAreaSuccess(dispatch, data);
+                resolve(data);
+            })
+            .catch(error => {
+                getListTroubleByAreaError(dispatch, error);
                 reject(error);
             });
     })
@@ -148,6 +166,19 @@ const getTroubleByIdSuccess = () => dispatch  => {
 const getTroubleByIdError = () => dispatch  => {
     dispatch({
         type:  GET_TROUBLE_BY_ID_FAIL,
+        error: error
+    });
+}
+
+const getListTroubleByAreaSuccess = () => dispatch  => {
+    dispatch({
+        type: GET_LIST_TROUBLE_BY_AREA_SUCCESS,
+    });
+}
+
+const getListTroubleByAreaError = () => dispatch  => {
+    dispatch({
+        type:  GET_LIST_TROUBLE_BY_AREA_FAIL,
         error: error
     });
 }

@@ -18,12 +18,16 @@ import {
     DELETE_CONTRACT_FAIL,
     APPROVE_CONTRACT,
     APPROVE_CONTRACT_SUCCESS,
-    APPROVE_CONTRACT_FAIL
+    APPROVE_CONTRACT_FAIL,
+    GET_LIST_CONTRACT_BY_AREA,
+    GET_LIST_CONTRACT_BY_AREA_SUCCESS,
+    GET_LIST_CONTRACT_BY_AREA_FAIL
  } from "./types";
 import { 
     getListContractByRoom, 
     getListContractByUser, 
     getListContractById, 
+    getListContractByArea,
     addContract, 
     updateContract,
     deleteContract,
@@ -40,6 +44,20 @@ export const doLoadListContractByRoom = (roomId) => dispatch => {
             })
             .catch(error => {
                 getListContractByRoomError(dispatch, error);
+                reject(error);
+            });
+    })
+};
+
+export const doLoadListContractByArea = (userId) => dispatch => {
+    return new Promise((resolve, reject) => {
+        getListContractByArea(userId)
+            .then(data => {
+                getListContractByAreaSuccess(dispatch, data);
+                resolve(data);
+            })
+            .catch(error => {
+                getListContractByAreaError(dispatch, error);
                 reject(error);
             });
     })
@@ -123,6 +141,20 @@ const approveContractSuccess = (dispatch) => {
 const approveContractError = (dispatch, error) => {
     dispatch({
         type: APPROVE_CONTRACT_FAIL,
+        error: error
+    });
+}
+
+const getListContractByAreaSuccess = (dispatch, error) => {
+    dispatch({
+        type: GET_LIST_CONTRACT_BY_AREA_SUCCESS,
+        error: error
+    });
+}
+
+const getListContractByAreaError = (dispatch, error) => {
+    dispatch({
+        type: GET_LIST_CONTRACT_BY_AREA_FAIL,
         error: error
     });
 }

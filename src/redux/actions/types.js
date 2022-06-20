@@ -114,6 +114,10 @@ export const GET_LIST_CONTRACT_BY_USER = 'get_list_contract_by_user';
 export const GET_LIST_CONTRACT_BY_USER_SUCCESS = 'get_list_contract_by_user_success';
 export const GET_LIST_CONTRACT_BY_USER_FAIL = 'get_list_contract_by_user_error';
 
+export const GET_LIST_CONTRACT_BY_AREA = 'get_list_contract_by_area';
+export const GET_LIST_CONTRACT_BY_AREA_SUCCESS = 'get_list_contract_by_area_success';
+export const GET_LIST_CONTRACT_BY_AREA_FAIL = 'get_list_contract_by_area_error';
+
 export const GET_LIST_CONTRACT_BY_ROOM = 'get_list_contract_by_room';
 export const GET_LIST_CONTRACT_BY_ROOM_SUCCESS = 'get_list_contract_by_room_success';
 export const GET_LIST_CONTRACT_BY_ROOM_FAIL = 'get_list_contract_by_room_error';
@@ -198,6 +202,10 @@ export const DELETE_RECEIPT_FAIL = 'delete_receipt_error';
 export const GET_LIST_TROUBLE_BY_ROOM = 'get_list_trouble_by_room';
 export const GET_LIST_TROUBLE_BY_ROOM_SUCCESS = 'get_list_trouble_by_room_success';
 export const GET_LIST_TROUBLE_BY_ROOM_FAIL = 'get_list_trouble_by_room_error';
+
+export const GET_LIST_TROUBLE_BY_AREA = 'get_list_trouble_by_area';
+export const GET_LIST_TROUBLE_BY_AREA_SUCCESS = 'get_list_trouble_by_area_success';
+export const GET_LIST_TROUBLE_BY_AREA_FAIL = 'get_list_trouble_by_area_error';
 
 export const GET_TROUBLE_BY_ID = 'get_trouble_by_id';
 export const GET_TROUBLE_BY_ID_SUCCESS = 'get_trouble_by_id_success';

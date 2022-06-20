@@ -8,7 +8,8 @@ import {
   TouchableWithoutFeedback,
   View,
   StyleSheet,
-  TextInput
+  TextInput,
+  ActivityIndicator
 } from 'react-native';
 import SafeAreaView from 'react-native/Libraries/Components/SafeAreaView/SafeAreaView';
 import { background_color, flex, font, font_weight, padding, shadow, text_size, width, height, text_color } from "../../../utils/styles/MainStyle";
@@ -26,13 +27,13 @@ import AppSelectSearch from "../../../components/AppSelectSearch";
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { doGetUserByBookTicket } from '../../../redux/actions/user';
-import { doGetRoomByArea } from '../../../redux/actions/room';
+import { doGetRoomByArea, doGetRoomByType } from '../../../redux/actions/room';
 import { doAddContract } from '../../../redux/actions/contract';
 import { color_danger, color_primary } from '../../../utils/theme/Color';
 import AppButtonActionInf from "../../../components/AppButtonActionInf";
 import { doGetListArea } from "../../../redux/actions/area";
 import { doGetBookTicketByRoom } from '../../../redux/actions/room';
-
+import { doGetTypeOfRoomByArea } from '../../../redux/actions/typeOfRoom';
 const HideKeyboard = ({ children }) => (
   <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
     {children}
@@ -43,7 +44,7 @@ class AddContract extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoading: true,
+      isLoading: false,
       data: [],
       termList: 0,
       termData: [],
@@ -52,7 +53,9 @@ class AddContract extends Component {
       dataBookTicket: [],
       dataArea: [],
       dayIn: new Date(),
-      duration: new Date()
+      duration: new Date(),
+      typeOfRoom: [],
+      typeOfRoomSelect: { 'type': '' }
     };
   }
 
@@ -73,8 +76,19 @@ class AddContract extends Component {
     })
   }
 
+  getTypeRoom(option) {
+    this.props.doGetTypeOfRoomByArea({ areaId: option.key }).then(data => {
+      this.setState({
+        typeOfRoom: data.map(item => ({
+          key: item.id,
+          label: item.name,
+        }))
+      })
+    });
+  }
+
   getPhongData(option) {
-    this.props.doGetRoomByArea({ areaId: option.key }).then(data => {
+    this.props.doGetRoomByType({ typeOfRoomId: option.key }).then(data => {
       this.setState({
         dataP: data.map(item => ({
           key: item.id,
@@ -90,7 +104,7 @@ class AddContract extends Component {
       this.setState({
         dataBookTicket: data.filter(item => item.status === 1).map(item => ({
           key: item.userId,
-          label: "Mã: "+item.id+" - Tên: "+item.user.name,
+          label: "Mã: " + item.id + " - Tên: " + item.user.name,
           roomId: item.roomId,
           startBook: item.startBook,
           endBook: item.endBook
@@ -118,17 +132,17 @@ class AddContract extends Component {
   addContract = (values) => {
     this.props.doAddContract(values).then(data => {
       if (data) {
-        this.setState({isLoading: true})
+        this.setState({ isLoading: true })
         Toast.show({
           type: 'success',
           text1: 'Hợp đồng',
           text2: 'Thêm thành công.',
           visibilityTime: 2000,
           autoHide: true
-      });
-      setTimeout(() => {
+        });
+        setTimeout(() => {
           this.props.navigation.goBack();
-      }, 2000)
+        }, 2000)
       } else {
         alert("Thêm hợp đồng không thành công! Vui lòng thử lại!");
       }
@@ -139,229 +153,230 @@ class AddContract extends Component {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
-        <Text
-          style={[
-            text_size.xs,
-            font.serif,
-            font_weight.bold,
-            text_color.white,
-            width.w_100,
-            background_color.blue,
-            {
-              textAlign: 'center',
-              paddingVertical: 15,
-              lineHeight: 20,
-              letterSpacing: 0,
-            }
-          ]}
-        >
-          Thêm hợp đồng
-        </Text>
-        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
-          <Formik
-            initialValues={{
-              userId: "",
-              roomId: "",
-              duration: this.state.duration,
-              dateOfPayment: new Date(),
-              numberOfElectric: '',
-              numberOfWater: '',
-              dayIn: this.state.dayIn,
-              status: 0,
-              term: ''
-            }}
-            validationSchema={ContractSchema}
-            onSubmit={values => {
-              if(values.dayIn > values.duration){
-                alert("Ngày vào không thể sau thời hạn! Xin vui lòng thử lại!")
-              }else{
-                this.addContract(values);
-              }
-              
-            }}>
-            {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid }) => {
-              return (
-                <HideKeyboard>
-                  <SafeAreaView
-                    style={[styles.container, background_color.white, height.h_100]}
-                    onPress={Keyboard.dismiss}>
-                      <Toast ref={(ref) => {Toast.setRef(ref)}} />
-                    <View
-                      style={[width.w_100, styles.splitView]}>
-                      <AppDialogSelect
-                        lable={'Khu:'}
-                        data={this.state.dataArea}
-                        placeholder={'Vui lòng chọn khu...'}
-                        value={values}
-                        returnFilter={(key) => this.getPhongData(key)}
-                      />
-                    </View>
+      <ScrollView
+        style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
+      >
+        {
+          this.state.isLoading ?
+            <ActivityIndicator size="large" color={color_primary} />
+            :
+            <Formik
+              initialValues={{
+                userId: "",
+                roomId: "",
+                duration: this.state.duration,
+                dateOfPayment: new Date(),
+                numberOfElectric: '',
+                numberOfWater: '',
+                dayIn: this.state.dayIn,
+                status: 0,
+                term: ''
+              }}
+              validationSchema={ContractSchema}
+              onSubmit={values => {
+                if (values.dayIn > values.duration) {
+                  alert("Ngày vào không thể sau thời hạn! Xin vui lòng thử lại!")
+                } else {
+                  this.addContract(values);
+                }
 
-                    <View
-                      style={[width.w_100, styles.splitView]}>
-                      <AppDialogSelect
-                        lable={'Phòng:'}
-                        data={this.state.dataP}
-                        placeholder={'Vui lòng chọn phòng...'}
-                        value={values}
-                        field={'roomId'}
-                        returnFilter={(key) => this.getUserData(key)}
-                      />
-                      {errors.roomId && touched.roomId ? (
-                        <AppError errors={errors.roomId} />
-                      ) : null}
-                    </View>
-
-                    <View
-                      style={[width.w_100, styles.splitView]}>
-                      <AppDialogSelect
-                        lable={'Phiếu đặt:'}
-                        data={this.state.dataBookTicket}
-                        placeholder={'Vui lòng chọn phiếu đặt phòng'}
-                        value={values}
-                        field={'userId'}
-                        returnFilter={(option) => this.setStartAndEnd(option)}
-                      />
-                      {errors.userId && touched.userId ? (
-                        <AppError errors={errors.userId} />
-                      ) : null}
-                    </View>
-
-                    <View
-                      style={[width.w_100, styles.splitView]}>
-                      <AppDatePicker
-                        label={'Ngày Vào:'}
-                        value={values}
-                        field={'dayIn'}
-                        alreadydate={this.state.dayIn}
-                        isDisabled={true}
-                      />
-                      {errors.dayIn ? (
-                        <AppError errors={errors.dayIn} />
-                      ) : null}
-                    </View>
-
-                    <View
-                      style={[width.w_100, styles.splitView]}>
-                      <AppDatePicker
-                        label={'Thời Hạn:'}
-                        value={values}
-                        field={'duration'}
-                        alreadydate={this.state.duration}
-                        minimumDate={values.dayIn}
-                        isDisabled={true}
-                      />
-                      {errors.duration ? (
-                        <AppError errors={errors.duration} />
-                      ) : null}
-                    </View>
-                    <View
-                      style={[width.w_100, styles.splitView]}>
-                      <AppDatePicker
-                        label={'Ngày Thanh Toán:'}
-                        value={values}
-                        field={'dateOfPayment'}
-                        alreadydate={new Date()}
-                      />
-                      {errors.dateOfPayment ? (
-                        <AppError errors={errors.dateOfPayment} />
-                      ) : null}
-                    </View>
-                    <View style={[flex.flex_row, width.w_100]}>
+              }}>
+              {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isValid }) => {
+                return (
+                  <HideKeyboard>
+                    <SafeAreaView
+                      style={[styles.container, background_color.white, height.h_100]}
+                      onPress={Keyboard.dismiss}>
+                      <Toast ref={(ref) => { Toast.setRef(ref) }} />
                       <View
-                        style={[{ flex: 1 }, styles.splitView]}>
-                        <AppInputInf
-                          lable={'Chỉ Số Nước:'}
-                          keyboardType={'numeric'}
-                          secureTextEntry={false}
-                          field={'numberOfWater'}
-                          handleChange={handleChange}
-                          handleBlur={handleBlur}
-                          values={values}
+                        style={[width.w_100, styles.splitView]}>
+                        <AppDialogSelect
+                          lable={'Khu:'}
+                          data={this.state.dataArea}
+                          placeholder={'Vui lòng chọn khu...'}
+                          value={values}
+                          returnFilter={(key) => this.getTypeRoom(key)}
                         />
-                        {errors.numberOfWater && touched.numberOfWater ? (
-                          <AppError errors={errors.numberOfWater} />
+                      </View>
+                      <View
+                        style={[width.w_100, {
+                          paddingLeft: 15,
+                          paddingRight: 15,
+                          marginTop: 10
+                        }]}>
+                        <AppDialogSelect
+                          lable={'Loại Phòng:'}
+                          data={this.state.typeOfRoom}
+                          placeholder={'Vui lòng chọn loại phòng...'}
+                          value={this.state.typeOfRoomSelect}
+                          field={'type'}
+                          returnFilter={(option) => this.getPhongData(option)}
+                        />
+                      </View>
+                      <View
+                        style={[width.w_100, styles.splitView]}>
+                        <AppDialogSelect
+                          lable={'Phòng:'}
+                          data={this.state.dataP}
+                          placeholder={'Vui lòng chọn phòng...'}
+                          value={values}
+                          field={'roomId'}
+                          returnFilter={(key) => this.getUserData(key)}
+                        />
+                        {errors.roomId && touched.roomId ? (
+                          <AppError errors={errors.roomId} />
                         ) : null}
+                      </View>
+
+                      <View
+                        style={[width.w_100, styles.splitView]}>
+                        <AppDialogSelect
+                          lable={'Phiếu đặt:'}
+                          data={this.state.dataBookTicket}
+                          placeholder={'Vui lòng chọn phiếu đặt phòng'}
+                          value={values}
+                          field={'userId'}
+                          returnFilter={(option) => this.setStartAndEnd(option)}
+                        />
+                        {errors.userId && touched.userId ? (
+                          <AppError errors={errors.userId} />
+                        ) : null}
+                      </View>
+
+                      <View
+                        style={[width.w_100, styles.splitView]}>
+                        <AppDatePicker
+                          label={'Ngày Vào:'}
+                          value={values}
+                          field={'dayIn'}
+                          alreadydate={this.state.dayIn}
+                          isDisabled={true}
+                        />
+                        {errors.dayIn ? (
+                          <AppError errors={errors.dayIn} />
+                        ) : null}
+                      </View>
+
+                      <View
+                        style={[width.w_100, styles.splitView]}>
+                        <AppDatePicker
+                          label={'Thời Hạn:'}
+                          value={values}
+                          field={'duration'}
+                          alreadydate={this.state.duration}
+                          minimumDate={values.dayIn}
+                          isDisabled={true}
+                        />
+                        {errors.duration ? (
+                          <AppError errors={errors.duration} />
+                        ) : null}
+                      </View>
+                      <View
+                        style={[width.w_100, styles.splitView]}>
+                        <AppDatePicker
+                          label={'Ngày Thanh Toán:'}
+                          value={values}
+                          field={'dateOfPayment'}
+                          alreadydate={new Date()}
+                        />
+                        {errors.dateOfPayment ? (
+                          <AppError errors={errors.dateOfPayment} />
+                        ) : null}
+                      </View>
+                      <View style={[flex.flex_row, width.w_100]}>
+                        <View
+                          style={[{ flex: 1 }, styles.splitView]}>
+                          <AppInputInf
+                            lable={'Chỉ Số Nước:'}
+                            keyboardType={'numeric'}
+                            secureTextEntry={false}
+                            field={'numberOfWater'}
+                            handleChange={handleChange}
+                            handleBlur={handleBlur}
+                            values={values}
+                          />
+                          {errors.numberOfWater && touched.numberOfWater ? (
+                            <AppError errors={errors.numberOfWater} />
+                          ) : null}
+                        </View>
+                        <View
+                          style={[{ flex: 1 }, styles.splitView]}>
+                          <AppInputInf
+                            lable={'Chỉ Số Điện:'}
+                            keyboardType={'numeric'}
+                            secureTextEntry={false}
+                            field={'numberOfElectric'}
+                            handleChange={handleChange}
+                            handleBlur={handleBlur}
+                            values={values}
+                          />
+                          {errors.numberOfElectric && touched.numberOfElectric ? (
+                            <AppError errors={errors.numberOfElectric} />
+                          ) : null}
+                        </View>
                       </View>
                       <View
                         style={[{ flex: 1 }, styles.splitView]}>
                         <AppInputInf
-                          lable={'Chỉ Số Điện:'}
-                          keyboardType={'numeric'}
+                          lable={'Điều khoản:'}
                           secureTextEntry={false}
-                          field={'numberOfElectric'}
+                          field={'term'}
                           handleChange={handleChange}
                           handleBlur={handleBlur}
                           values={values}
+                          number={5}
+                          multiline={true}
+                          keyboardType="name-phone-pad"
+                          returnKeyType='none'
                         />
-                        {errors.numberOfElectric && touched.numberOfElectric ? (
-                          <AppError errors={errors.numberOfElectric} />
+                        {errors.term && touched.term ? (
+                          <AppError errors={errors.term} />
                         ) : null}
                       </View>
-                    </View>
-                    <View
-                      style={[{ flex: 1 }, styles.splitView]}>
-                      <AppInputInf
-                        lable={'Điều khoản:'}
-                        secureTextEntry={false}
-                        field={'term'}
-                        handleChange={handleChange}
-                        handleBlur={handleBlur}
-                        values={values}
-                        number={5}
-                        multiline={true}
-                        keyboardType="name-phone-pad"
-                        returnKeyType='none'
-                      />
-                      {errors.term && touched.term ? (
-                        <AppError errors={errors.term} />
-                      ) : null}
-                    </View>
-                    <View
-                      style={[
-                        width.w_100,
-                        flex.flex_row,
-                        { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
-                      ]}
-                    >
                       <View
                         style={[
-                          {
-                            flex: 1,
-                            marginRight: 15
-                          }
+                          width.w_100,
+                          flex.flex_row,
+                          { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
                         ]}
                       >
-                        <AppButtonActionInf
-                          size={13}
-                          textSize={18}
-                          bg={color_danger}
-                          onPress={() => { this.props.navigation.goBack() }}
-                          title="Hủy"
-                        />
+                        <View
+                          style={[
+                            {
+                              flex: 1,
+                              marginRight: 15
+                            }
+                          ]}
+                        >
+                          <AppButtonActionInf
+                            size={13}
+                            textSize={18}
+                            bg={color_danger}
+                            onPress={() => { this.props.navigation.goBack() }}
+                            title="Hủy"
+                          />
+                        </View>
+                        <View
+                          style={{ flex: 1 }}
+                        >
+                          <AppButtonActionInf
+                            size={13}
+                            textSize={18}
+                            bg={color_primary}
+                            disabled={!this.isFormValid(isValid, touched)}
+                            onPress={handleSubmit}
+                            //onPress={() => alert(values.Ten_HD)}
+                            title="Thêm"
+                          />
+                        </View>
                       </View>
-                      <View
-                        style={{ flex: 1 }}
-                      >
-                        <AppButtonActionInf
-                          size={13}
-                          textSize={18}
-                          bg={color_primary}
-                          disabled={!this.isFormValid(isValid, touched)}
-                          onPress={handleSubmit}
-                          //onPress={() => alert(values.Ten_HD)}
-                          title="Thêm"
-                        />
-                      </View>
-                    </View>
-                  </SafeAreaView>
-                </HideKeyboard>
-              );
-            }}
-          </Formik>
-        </ScrollView>
-      </View>
+                    </SafeAreaView>
+                  </HideKeyboard>
+                );
+              }}
+            </Formik>
+        }
+      </ScrollView>
     );
   }
 }
@@ -383,7 +398,10 @@ const mapStateToProps = ({ userAddContract, user }) => {
 };
 
 const mapDispatchToProps = {
-  doGetUserByBookTicket, doGetRoomByArea, doAddContract, doGetListArea, doGetBookTicketByRoom
+  doGetUserByBookTicket,
+  doGetRoomByArea, doAddContract, doGetListArea,
+  doGetBookTicketByRoom,
+  doGetRoomByType, doGetTypeOfRoomByArea
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddContract)

@@ -43,6 +43,7 @@ export const DELETE_ROOM = `/deleteRoom`;
 export const UPDATE_ROOM = `/updateRoom`;
 
 export const GET_LIST_CONTRACT_BY_USER = `/getContractByUser`;
+export const GET_LIST_CONTRACT_BY_AREA = `/getContractByArea`;
 export const GET_LIST_CONTRACT_BY_ROOM = `/getContractByRoom`;
 export const GET_LIST_CONTRACT_BY_ID = `/getContractById`;
 export const ADD_CONTRACT = `/addContract`;
@@ -69,6 +70,7 @@ export const UPDATE_RECEIPT = `/updateReceipt`;
 export const DELETE_RECEIPT = `/deleteReceipt`;
 
 export const GET_LIST_TROUBLE_BY_ROOM = `/getTrouble`;
+export const GET_LIST_TROUBLE_BY_AREA = `/getTroubleByUser`;
 export const GET_TROUBLE_BY_ID = `/getTroubleById`;
 export const ADD_TROUBLE = `/addTrouble`;
 export const UPDATE_TROUBLE = `/updateTrouble`;
