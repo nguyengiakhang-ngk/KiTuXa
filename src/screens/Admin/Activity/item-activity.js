@@ -25,7 +25,7 @@ export default function ItemActivity({ item }) {
                     font.serif,
                     { marginLeft: 4, marginBottom: -1 }
                 ]}
-                >Loại: {item.nameEvent}</Text>
+                >Tên hoạt động: {item.nameEvent}</Text>
             </View>
             <View>
                 <Text style={[
@@ -50,7 +50,7 @@ export default function ItemActivity({ item }) {
                     font.serif,
                     { marginLeft: 4, marginBottom: -1 }
                 ]}
-                >To: {item.roomTo}</Text>
+                >Đến: {item.roomTo}</Text>
             </View>
             <View>
                 <TableDateCustom date={item.createdAt} />

@@ -100,7 +100,7 @@ export default function ViewMaterialInRoom({ navigation }) {
             <View style={{
                 padding: 10
             }}>
-                <FlatList data={detailMaterial} renderItem={({ item }) => <ItemViewMaterialInRoom item={item} navigation={navigation} openModalMoveMaterial={(item) => handleOpenMoveMaterial(item)} />} keyExtractor={(item, index) => index.toString()} />
+                <FlatList data={detailMaterial} renderItem={({ item }) => <ItemViewMaterialInRoom item={item} navigation={navigation} material={material} openModalMoveMaterial={(item) => handleOpenMoveMaterial(item)} />} keyExtractor={(item, index) => index.toString()} />
             </View>
         </SafeAreaView>
     )

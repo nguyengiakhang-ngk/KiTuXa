@@ -3,7 +3,7 @@ import React from "react";
 import TableDateCustom from "../../../components/TableDate";
 import { Icon } from "@rneui/base";
 import { color_danger, color_primary, color_secondary, color_success } from "../../../utils/theme/Color";
-export default function ItemViewMaterialInRoom({ item, navigation, openModalMoveMaterial }) {
+export default function ItemViewMaterialInRoom({ item, material, navigation, openModalMoveMaterial }) {
     return (
         <View
             style={{
@@ -43,7 +43,7 @@ export default function ItemViewMaterialInRoom({ item, navigation, openModalMove
                     style={[
                         { marginRight: 10 }
                     ]}
-                    onPress={() => navigation.navigate("troublemateialview", { report: item })}
+                    onPress={() => navigation.navigate("troublemateialview", { material: material })}
                 >
                     <Icon
                         name={"bug"}
