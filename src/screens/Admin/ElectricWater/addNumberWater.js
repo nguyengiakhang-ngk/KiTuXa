@@ -109,12 +109,12 @@ class AddNumberWater extends Component {
                         font_weight.bold,
                         text_color.white,
                         width.w_100,
-                        background_color.blue,
                         {
                             textAlign: 'center',
                             paddingVertical: 15,
                             lineHeight: 20,
                             letterSpacing: 0,
+                            backgroundColor: color_primary
                         }
                     ]}
                 >

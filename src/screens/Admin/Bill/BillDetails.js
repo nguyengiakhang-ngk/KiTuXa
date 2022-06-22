@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View, ActivityIndicator } from "react-native";
 import axios from "axios";
 import { path } from "../../../constant/define";
 import {
@@ -12,6 +12,7 @@ import {
     text_size,
     width
 } from "../../../utils/styles/MainStyle";
+import { color_primary } from '../../../utils/theme/Color';
 import moment from "moment/moment";
 import { connect } from 'react-redux';
 import { doLoadBillById } from '../../../redux/actions/bill';
@@ -26,10 +27,14 @@ class BillDetails extends Component {
     }
 
     getBillData() {
-        this.props.doLoadBillById({ id: this.props.route.params.id }).then(data => {
-            this.setState({
+        this.props.doLoadBillById({ id: this.props.route.params.id }).then( async data => {
+            await this.setState({
                 data: data
-            }, () => { 'bill: ', console.log(data) })
+            },() => {
+                this.setState({
+                    isLoading: false
+                })
+            })
         })
     }
     componentDidMount() {
@@ -57,7 +62,13 @@ class BillDetails extends Component {
                 >
                     Chi tiết hóa đơn
                 </Text>
-                <ScrollView
+                {
+                    this.state.isLoading ?
+                    <View style={{ flex: 1, justifyContent: 'center' }}>
+                            <ActivityIndicator size="large" color={color_primary} />
+                        </View>
+                    :
+                    <ScrollView
                     style={[background_color.white, width.w_100, { flex: 1 }]}
                     showsVerticalScrollIndicator={false}
                 >
@@ -155,13 +166,13 @@ class BillDetails extends Component {
                         </View>
                         <View style={[width.w_90, {paddingTop: 20}]}>
                            <AppButton
-                                onPress={() => {this.props.navigation.navigate('ReceiptComponent', {billId: this.state.data.id})}}
-                                disabled={this.state.data.status == 0 ? false : true }
-                                title={"Thêm biên nhận"}
+                                onPress={() => {this.props.navigation.navigate('ReceiptComponent', {billId: this.state.data.id, status: this.state.data.status})}}
+                                title={this.state.data.status == 0 ? "Thêm biên nhận" : "Xem biên nhận"}
                             />
                         </View>
                     </View>
                 </ScrollView>
+                }
             </View>
         )
     }

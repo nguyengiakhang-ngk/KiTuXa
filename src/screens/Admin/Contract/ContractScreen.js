@@ -16,6 +16,7 @@ import { doGetRoomByArea } from '../../../redux/actions/room';
 import Toast from "react-native-toast-message";
 import DialogConfirm from "../../../components/DialogConfirm";
 import { doLoadListBillByArea } from '../../../redux/actions/bill';
+import { orderBy } from 'lodash';
 
 class ContractScreen extends Component {
     constructor(props) {
@@ -172,6 +173,7 @@ class ContractScreen extends Component {
     }
 
     refresh() {
+        this.setState({isLoading: true})
         this.getListArea();
     }
 
@@ -505,7 +507,7 @@ class ContractScreen extends Component {
                     (
                         this.state.data.length > 0
                         ?
-                        <FlatList data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()} contentContainerStyle={{ marginHorizontal: 10, paddingVertical: 10 }} />
+                        <FlatList data={orderBy(this.state.data, ['id'],['desc'])} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()} contentContainerStyle={{ marginHorizontal: 10, paddingVertical: 10 }} />
                         :
                         this._renderEmpty()
                     )

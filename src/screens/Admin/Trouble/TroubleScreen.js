@@ -172,6 +172,7 @@ class TroubleScreen extends Component {
 
     viewTroubleDetails(item) {
         this.setState({ isVisible: true })
+        this.props.navigation.navigate("TroubleDetails", {id: item.id})
     }
 
     viewAddTrouble(roomId) {
