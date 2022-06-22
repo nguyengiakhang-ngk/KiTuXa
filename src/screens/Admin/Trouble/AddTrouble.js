@@ -19,6 +19,7 @@ import AppError from "../../../components/AppError";
 import { Formik } from "formik";
 import AppInputInf from "../../../components/AppInputInf";
 import AppDialogSelect from "../../../components/AppDialogSelect";
+import Toast from "react-native-toast-message";
 import AppButton from "../../../components/AppButton";
 import axios from "axios";
 import { path } from "../../../constant/define";
@@ -81,9 +82,6 @@ class AddTrouble extends Component {
     isFormValid = (name, level, image) => {
         return String(name).length !== 0 && String(level).length !== 0 && image;
     }
-    // componentDidMount() {
-    //     alert(this.props.route.params.ID_HD);
-    // }
 
     componentWillUnmount() {
         this.props.route.params?.refresh();
@@ -96,8 +94,6 @@ class AddTrouble extends Component {
                     key: item.id,
                     label: item.areaName,
                 })),
-            }, () => {
-                console.log('dataP: ', this.state.dataP);
             })
         })
     }

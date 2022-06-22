@@ -44,7 +44,7 @@ class AddReceipt extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isLoading: true,
+            isLoading: false,
             data: [],
             image: '',
             dataTT: [{ 'key': '0', 'label': 'Chưa thanh toán' }, { 'key': '1', 'label': 'Đã thanh toán' }].map(item => ({ key: item.key, label: item.label })),
@@ -87,6 +87,7 @@ class AddReceipt extends Component {
                     autoHide: true
                 });
                 setTimeout(() => {
+                    this.setState({ isLoading: false })
                     this.props.navigation.goBack();
                 }, 2000)
                 // alert("Thêm biên nhận thành công!");
@@ -127,7 +128,9 @@ class AddReceipt extends Component {
                 {
                     this.state.isLoading
                         ?
-                        <ActivityIndicator size="large" color={color_primary} />
+                        <View style={{flex: 1, justifyContent: 'center'}}>
+                            <ActivityIndicator size="large" color={color_primary} />
+                        </View>
                         :
                         <Formik
                             initialValues={{

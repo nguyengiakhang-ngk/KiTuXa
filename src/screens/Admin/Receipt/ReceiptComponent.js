@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {FlatList, Text, TouchableOpacity, View, ActivityIndicator} from "react-native";
+import {FlatList, Text, TouchableOpacity, View, ActivityIndicator, Alert} from "react-native";
 import axios from "axios";
 import {path} from "../../../constant/define";
 import {flex, font, font_weight, height, position, text_color, text_size, width, background_color} from "../../../utils/styles/MainStyle";
@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import { doGetReceiptByBill, doDeleteReceipt } from '../../../redux/actions/receipt'
 import DialogConfirm from '../../../components/DialogConfirm';
 import Toast from "react-native-toast-message";
+import { orderBy } from 'lodash';
 
 class ReceiptComponent extends Component{
     constructor(props) {
@@ -29,12 +30,16 @@ class ReceiptComponent extends Component{
         });
     }
 
-    viewAddReceipt(contractId){
-        this.props.navigation.navigate("AddReceipt",
+    viewAddReceipt(){
+        if(this.props.route.params.status === 0){
+            this.props.navigation.navigate("AddReceipt",
             {
                 billId: this.props.route.params.billId,
                 refresh: () => {this.refresh()}
             });
+        }else{
+            Alert.alert("Thông báo", "Hóa đơn này đã được thanh toán!")
+        }
     }
     deleteReceipt(receipt) {
         this.props.doDeleteReceipt({id: receipt.id, image: receipt.image}).then(data => {
@@ -81,6 +86,7 @@ class ReceiptComponent extends Component{
     }
 
     refresh(){
+        this.setState({isLoading: true})
         this.getReceiptsData();
     }
 
@@ -288,7 +294,7 @@ class ReceiptComponent extends Component{
                         name = 'plus'
                         size = {20}
                         color = {'white'}
-                        onPress = { () => this.viewAddReceipt(1) }
+                        onPress = { () => this.viewAddReceipt() }
                     />
                 </View>
                 <Toast ref={(ref) => {Toast.setRef(ref)}} />
@@ -302,7 +308,7 @@ class ReceiptComponent extends Component{
                     (
                         this.state.data.length > 0
                         ?
-                        <FlatList contentContainerStyle={{paddingHorizontal: 10}} data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()}/>
+                        <FlatList contentContainerStyle={{paddingHorizontal: 10}} data={orderBy(this.state.data, ['id'],['desc'])} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()}/>
                         :
                         this._renderEmpty()
                     )

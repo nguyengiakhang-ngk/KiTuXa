@@ -18,7 +18,7 @@ class AppDialogSelect extends Component {
         super(props);
 
         this.state = {
-            textInputValue: this.props.value[this.props.field]
+            textInputValue: ''
         }
     }
 

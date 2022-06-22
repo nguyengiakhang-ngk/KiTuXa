@@ -15,6 +15,7 @@ import { doGetRoomByArea } from '../../../redux/actions/room';
 import { doLoadListContractByRoom } from "../../../redux/actions/contract";
 import DialogConfirm from "../../../components/DialogConfirm";
 import Toast from "react-native-toast-message";
+import { orderBy } from 'lodash';
 
 class BillsComponent extends Component {
     constructor(props) {
@@ -283,14 +284,18 @@ class BillsComponent extends Component {
                     },
                     ...listContract.map(item => ({ key: item.id, label: "Mã HĐ: " + item.id, bills: item.bills }))
                 ],
+            }, () => {
+                this.setState({
+                    isLoading: false
+                })
             })
         })
 
-        setTimeout(() => {
-            this.setState({
-                isLoading: false
-            })
-        }, 2000)
+        // setTimeout(() => {
+        //     this.setState({
+        //         isLoading: false
+        //     })
+        // }, 1000)
     }
 
 
@@ -319,7 +324,8 @@ class BillsComponent extends Component {
     }
 
     refresh() {
-        this.getListAreaAll()
+        this.setState({isLoading: true})
+        this.getListAreaAll();
     }
 
 
@@ -597,7 +603,7 @@ class BillsComponent extends Component {
                         (
                             this.state.data.length > 0
                                 ?
-                                <FlatList data={this.state.data} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()} contentContainerStyle={{ paddingHorizontal: 10, paddingVertical: 5 }} />
+                                <FlatList data={orderBy(this.state.data, ['id'],['desc'])} renderItem={this._renderItem} keyExtractor={(item, index) => index.toString()} contentContainerStyle={{ paddingHorizontal: 10, paddingVertical: 5 }} />
                                 :
                                 this._renderEmpty()
                         )

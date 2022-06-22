@@ -87,24 +87,18 @@ class UpdateTrouble extends Component {
     }
 
     updateTrouble = (values) => {
-        console.log("Values>>>>",JSON.stringify(values));
         const date = new Date();
         const minutes = date.getMinutes();
         let data = new FormData();
         data.append("image", {
-            uri: this.state.image.path,
+            uri: this.state.image?.path,
             type: "image/jpeg",
-            name: this.state.image.filename || `temp_image_${minutes}.jpg`
+            name: this.state.image?.filename || `temp_image_${minutes}.jpg`
         });
         data.append("trouble", JSON.stringify(values));
         this.props.doUpdateTrouble(data, { id: this.props.route.params.id }).then(data => {
-            console.log("returnData>>>",data);
-            if (data) {
-                alert("Cập nhật sự cố thành công!");
-                this.props.navigation.goBack(null);
-            } else {
-                alert("Cập nhật sự cố không thành công! Vui lòng thử lại!");
-            }
+            alert("Cập nhật sự cố thành công!");
+            this.props.navigation.goBack(null);
         })
     }
     ChoosePhotoFromLibrary() {
@@ -150,6 +144,9 @@ class UpdateTrouble extends Component {
                     }
                     validationSchema={TroubleSchema}
                     onSubmit={values => {
+                        if(values.status === 1){
+                            values.dateOfSolve = new Date();
+                        }
                         this.updateTrouble(values);
                     }}
                 >
