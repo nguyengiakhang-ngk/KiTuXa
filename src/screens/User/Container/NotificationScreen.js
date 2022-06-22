@@ -4,7 +4,7 @@ import {
     Text,
     View,
     Image,
-    TouchableOpacity, Modal
+    TouchableOpacity, Modal, ActivityIndicator
 } from 'react-native';
 import {
     flex,
@@ -67,6 +67,12 @@ class NotificationScreen extends Component {
                 notifications: data
             })
         })
+
+        setTimeout(() => {
+            this.setState({
+                isLoading: false
+            })
+        }, 1000)
     }
 
     updateNotification() {
@@ -225,15 +231,54 @@ class NotificationScreen extends Component {
                     padding: 5,
                     backgroundColor: 'white'
                 }}>
-                    <FlatList
-                        data={this.state.notifications}
-                        renderItem={this._renderItem}
-                        keyExtractor={item => item.id}
-                        showsVerticalScrollIndicator={false}
-                        contentContainerStyle={{
-                            backgroundColor: 'white'
-                        }}
-                    />
+                    {
+                        this.state.isLoading ?
+                            <View
+                                style={{
+                                    flex: 1,
+                                    justifyContent: "center"
+                                }}
+                            >
+                                <ActivityIndicator size="large" color={color_primary}/>
+                            </View>
+                            :
+                            <View
+                                style={{flex: 1}}
+                            >
+                                {
+                                    this.state.roomDataShow?.length ?
+                                        <FlatList
+                                            data={this.state.notifications}
+                                            renderItem={this._renderItem}
+                                            keyExtractor={item => item.id}
+                                            showsVerticalScrollIndicator={false}
+                                            contentContainerStyle={{
+                                                backgroundColor: 'white'
+                                            }}
+                                        />
+                                        :
+                                        <View
+                                            style={{
+                                                flex: 1,
+                                                justifyContent: "center",
+                                                alignItems: "center"
+                                            }}
+                                        >
+                                            <Text
+                                                style={[
+                                                    text_size.lg,
+                                                    font.serif,
+                                                    {
+                                                        color: color_secondary
+                                                    }
+                                                ]}
+                                            >
+                                                Không có dữ liệu
+                                            </Text>
+                                        </View>
+                                }
+                            </View>
+                    }
                 </View>
                 {
                     this.state.isCheckedBooked ?

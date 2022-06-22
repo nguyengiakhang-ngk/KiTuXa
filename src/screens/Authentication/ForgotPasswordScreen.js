@@ -109,7 +109,8 @@ class ForgotPasswordScreen extends Component{
                 setTimeout(() => {
                     this.setState({
                         isOTP: false,
-                        isChangePass: true
+                        isChangePass: true,
+                        isLoading: false
                     })
                 }, 1000)
             } else {

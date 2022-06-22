@@ -175,11 +175,15 @@ render() {
                     <View style={styles.detailContainer}>
                         <View style={styles.detailContainer}>
                             <Text style={styles.textName} numberOfLines={1}>{this.state.dataUser ? this.state.dataUser.name : 'Chưa đăng nhập'}</Text>
-                            <View>
-                                <Text style={styles.textDetail}>{this.state.dataUser ? this.state.dataUser.gender === '0' ? "Nam" : "Nữ" : ''}</Text>
-                                <Text style={styles.textDetail}>{this.state.dataUser ? 'SĐT: '+this.state.dataUser.numberPhone : ''}</Text>
-                                <Text style={styles.textDetail}>{this.state.dataUser ? 'Địa chỉ: '+this.state.dataUser.address : ''}</Text>
-                            </View>
+                            {
+                                this.state.dataUser ?
+                                    <View>
+                                        <Text style={styles.textDetail}>{this.state.dataUser ? this.state.dataUser.gender === '0' ? "Nam" : "Nữ" : ''}</Text>
+                                        <Text style={styles.textDetail}>{this.state.dataUser ? 'SĐT: '+this.state.dataUser.numberPhone : ''}</Text>
+                                        <Text style={styles.textDetail}>{this.state.dataUser ? 'Địa chỉ: '+this.state.dataUser.address : ''}</Text>
+                                    </View>
+                                    : null
+                            }
                         </View>
                     </View>
                 </View>
@@ -253,13 +257,11 @@ const styles = StyleSheet.create({
         textAlignVertical: 'center',
         lineHeight: 30,
         letterSpacing: 0,
-        width: 200,
         overflow: 'hidden'
     },
     detailContainer: {
-        width: 250,
-        marginLeft: 16,
-        justifyContent: 'space-around',
+        marginLeft: 10,
+        justifyContent: "center",
         height: 100,
     },
     textDetail: {

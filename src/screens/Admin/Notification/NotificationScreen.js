@@ -101,7 +101,7 @@ class NotificationScreen extends Component {
                         status: 0,
                         statusView: 0,
                         RoomId: this.state.ticket.room?.id,
-                        UserId: this.state.ticket.user?.id,
+                        UserId: this.state.ticket.bookticket.user?.id,
                         notificationTypeId: 1,
                         bookticketId: this.state.ticket.bookticket?.id
                     })
@@ -125,7 +125,7 @@ class NotificationScreen extends Component {
                     status: 0,
                     statusView: 0,
                     RoomId: this.state.ticket.room?.id,
-                    UserId: this.state.ticket.user?.id,
+                    UserId: this.state.ticket.bookticket.user?.id,
                     notificationTypeId: 1,
                     bookticketId: this.state.ticket.bookticket?.id
                 })
@@ -167,11 +167,11 @@ class NotificationScreen extends Component {
                             ]}
                         >
                             {
-                                item.user?.image ?
+                                item.bookticket.user?.image ?
                                     <Image
                                         source={
                                             {
-                                                uri: `${url}/${item.user?.image}`
+                                                uri: `${url}/${item.bookticket.user?.image}`
                                             }
                                         }
                                         style={{
@@ -216,7 +216,7 @@ class NotificationScreen extends Component {
                                         font_weight.bold,
                                         text_color.primary
                                     ]}>
-                                        {`${item.user?.name} `}
+                                        {`${item.bookticket.user?.name} `}
                                         <Text style={[
                                             text_size.xs,
                                             font.serif,
@@ -331,7 +331,7 @@ class NotificationScreen extends Component {
                                                     font.serif
                                                 ]}
                                             >
-                                                <Text style={[text_color.primary]}>Tên người đặt:</Text> {this.state.ticket.user?.name}
+                                                <Text style={[text_color.primary]}>Tên người đặt:</Text> {this.state.ticket.bookticket.user?.name}
                                             </Text>
                                             <Text
                                                 style={[
@@ -339,7 +339,7 @@ class NotificationScreen extends Component {
                                                     font.serif
                                                 ]}
                                             >
-                                                <Text style={[text_color.primary]}>SĐT:</Text> {this.state.ticket.user?.numberPhone}
+                                                <Text style={[text_color.primary]}>SĐT:</Text> {this.state.ticket.bookticket.user?.numberPhone}
                                             </Text>
                                             <Text
                                                 style={[
@@ -347,7 +347,7 @@ class NotificationScreen extends Component {
                                                     font.serif
                                                 ]}
                                             >
-                                                <Text style={[text_color.primary]}>Địa chỉ:</Text> {this.state.ticket.user?.address}
+                                                <Text style={[text_color.primary]}>Địa chỉ:</Text> {this.state.ticket.bookticket.user?.address}
                                             </Text>
                                             <Text
                                                 style={[

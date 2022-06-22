@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
     Keyboard,
     Modal,
-    ScrollView, Text, TouchableOpacity, View, TextInput
+    ScrollView, Text, TouchableOpacity, View, TextInput, ActivityIndicator
 } from 'react-native';
 import { connect } from "react-redux";
 import { SliderBox } from "react-native-image-slider-box";
@@ -43,6 +43,7 @@ class DetailRoomScreen extends Component {
         super(props);
 
         this.state = {
+            isLoading: true,
             room: this.props.route.params.room,
             area: {},
             images: [
@@ -101,7 +102,11 @@ class DetailRoomScreen extends Component {
             images: this.state.room?.imageofrooms.map(item => `${url}/${item?.image}`)
         })
 
-
+        setTimeout(() => {
+            this.setState({
+                isLoading: false
+            })
+        }, 1000)
     }
 
     async addBookTicket() {
@@ -329,401 +334,407 @@ class DetailRoomScreen extends Component {
             <View
                 style={[
                     {
-                        flex: 1
+                        flex: 1,
+                        justifyContent: "center"
                     }
                 ]}
             >
-                <ScrollView showsVerticalScrollIndicator={false}>
-                    <View>
-                        <SliderBox
-                            onCurrentImagePressed={(index) => {
-                                this.setState({
-                                    isViewImage: true,
-                                    viewImageIndex: index
-                                })
-                            }}
-                            images={this.state.images}
-                        />
-                        <View
-                            contentContainerStyle={{ flex: 1 }}
-                        >
-                            <View style={{ flex: 1, height: '100%' }}>
+                {
+                    this.state.isLoading ?
+                        <ActivityIndicator size="large" color={color_primary}/>
+                        :
+                        <ScrollView showsVerticalScrollIndicator={false}>
+                            <View>
+                                <SliderBox
+                                    onCurrentImagePressed={(index) => {
+                                        this.setState({
+                                            isViewImage: true,
+                                            viewImageIndex: index
+                                        })
+                                    }}
+                                    images={this.state.images}
+                                />
                                 <View
-                                    style={[
-                                        flex.flex_row,
-                                        flex.align_items_center,
-                                        {
-                                            paddingHorizontal: 10,
-                                            marginTop: 5
-                                        }
-                                    ]}
+                                    contentContainerStyle={{ flex: 1 }}
                                 >
-                                    <Icon
-                                        name='signature'
-                                        type='font-awesome-5'
-                                        color={color_danger}
-                                        size={30}
-                                    />
-                                    <Text
-                                        style={[
-                                            text_size.xl,
-                                            text_color.primary,
-                                            font.serif,
-                                            font_weight.bold,
-                                            {
-                                                marginLeft: 10
-                                            }
-                                        ]}
-                                    >
-                                        {this.state.room?.name}
-                                    </Text>
-                                </View>
-                                <View
-                                    style={[
-                                        flex.flex_row,
-                                        {
-                                            paddingHorizontal: 10
-                                        }
-                                    ]}
-                                >
-                                    <View
-                                        style={[
-                                            {
-                                                width: '50%'
-                                            }
-                                        ]}
-                                    >
+                                    <View style={{ flex: 1, height: '100%' }}>
                                         <View
                                             style={[
                                                 flex.flex_row,
                                                 flex.align_items_center,
                                                 {
+                                                    paddingHorizontal: 10,
                                                     marginTop: 5
                                                 }
                                             ]}
                                         >
                                             <Icon
-                                                name='chart-area'
+                                                name='signature'
                                                 type='font-awesome-5'
-                                                color={color_primary}
-                                                size={18}
+                                                color={color_danger}
+                                                size={30}
                                             />
                                             <Text
                                                 style={[
-                                                    text_size.sm,
+                                                    text_size.xl,
+                                                    text_color.primary,
                                                     font.serif,
+                                                    font_weight.bold,
                                                     {
-                                                        marginLeft: 10,
-                                                        color: color_dark
+                                                        marginLeft: 10
                                                     }
                                                 ]}
                                             >
-                                                {this.state.room?.stretch} (m2)
+                                                {this.state.room?.name}
                                             </Text>
                                         </View>
                                         <View
                                             style={[
                                                 flex.flex_row,
-                                                flex.align_items_center,
                                                 {
-                                                    marginTop: 5
+                                                    paddingHorizontal: 10
                                                 }
                                             ]}
                                         >
-                                            <Icon
-                                                name='users'
-                                                type='font-awesome-5'
-                                                color={color_primary}
-                                                size={18}
-                                            />
-                                            <Text
+                                            <View
                                                 style={[
-                                                    text_size.sm,
-                                                    font.serif,
                                                     {
-                                                        marginLeft: 10,
-                                                        color: color_dark
+                                                        width: '50%'
                                                     }
                                                 ]}
                                             >
-                                                {this.state.room?.numberOfCustomer} khách/phòng
-                                            </Text>
-                                        </View>
-                                        <View
-                                            style={[
-                                                flex.flex_row,
-                                                flex.align_items_center,
-                                                {
-                                                    marginTop: 5
-                                                }
-                                            ]}
-                                        >
-                                            <Icon
-                                                name='user-alt'
-                                                type='font-awesome-5'
-                                                color={color_primary}
-                                                size={18}
-                                            />
-                                            <Text
-                                                style={[
-                                                    text_size.sm,
-                                                    font.serif,
-                                                    {
-                                                        marginLeft: 10,
-                                                        color: color_dark
-                                                    }
-                                                ]}
-                                            >
-                                                Đối tượng: {this.state.room?.typeOfCustomer}
-                                            </Text>
-                                        </View>
-                                    </View>
-                                    <View
-                                        style={[
-                                            {
-                                                width: '50%',
-                                                flexDirection: "row",
-                                                justifyContent: "flex-end",
-                                                alignItems: "center"
-                                            }
-                                        ]}
-                                    >
-                                        <View
-                                            style={{ width: '60%' }}
-                                        >
-                                            <AppButtonActionInf
-                                                size={10}
-                                                textSize={16}
-                                                bg={color_primary}
-                                                title="Đặt"
-                                                onPress={() => {
-                                                    if(this.state.user.id) {
-                                                        if(this.state.user.id !== this.state.area.userId) {
-                                                            this.setState({isVisible: true})
-                                                        } else{
-                                                            Toast.show({
-                                                                type: 'error',
-                                                                text1: 'Đặt phòng',
-                                                                text2: 'Vui lòng không đặt phòng thuộc khu của mình .',
-                                                                visibilityTime: 3000,
-                                                                autoHide: true
-                                                            });
+                                                <View
+                                                    style={[
+                                                        flex.flex_row,
+                                                        flex.align_items_center,
+                                                        {
+                                                            marginTop: 5
                                                         }
-                                                    } else{
-                                                        Toast.show({
-                                                            type: 'error',
-                                                            text1: 'Đặt phòng',
-                                                            text2: 'Vui lòng đăng nhập để đặt phòng.',
-                                                            visibilityTime: 3000,
-                                                            autoHide: true
-                                                        });
-                                                    }
-                                                }}
-                                            />
-                                        </View>
-                                        <TouchableOpacity
-                                            onPress={() => {
-                                                this.saveTicket()
-                                            }}
-                                            style={{
-                                                marginLeft: 15
-                                            }}
-                                        >
-                                            <Icon
-                                                name={this.state.ticket ? 'bookmark' : 'bookmark-border'}
-                                                type='material'
-                                                color={color_primary}
-                                                size={40}
-                                            />
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                                <View
-                                    style={[
-                                        {
-                                            paddingHorizontal: 10,
-                                            marginTop: 5
-                                        }
-                                    ]}
-                                >
-                                    <View
-                                        style={[
-                                            flex.flex_row,
-                                            {
-                                                marginTop: 5
-                                            }
-                                        ]}
-                                    >
-                                        <Icon
-                                            style={{ marginTop: 2 }}
-                                            name='note'
-                                            type='material'
-                                            color={color_primary}
-                                            size={20}
-                                        />
-                                        <Text
-                                            style={[
-                                                text_size.sm,
-                                                font.serif,
-                                                {
-                                                    marginLeft: 8,
-                                                    color: color_dark
-                                                }
-                                            ]}
-                                        >
-                                            {this.state.room?.note}
-                                        </Text>
-                                    </View>
-                                    <View
-                                        style={[
-                                            flex.flex_row,
-                                            {
-                                                marginTop: 5
-                                            },
-                                            flex.align_items_center
-                                        ]}
-                                    >
-                                        <Icon
-                                            name='chart-area'
-                                            type='font-awesome-5'
-                                            color={color_primary}
-                                            size={18}
-                                        />
-                                        <Text
-                                            style={[
-                                                text_size.sm,
-                                                font.serif,
-                                                {
-                                                    marginLeft: 8,
-                                                    color: color_dark
-                                                }
-                                            ]}
-                                        >
-                                            Khu: {this.state.area?.areaName}
-                                        </Text>
-                                    </View>
-                                    <TouchableOpacity
-                                        style={[
-                                            flex.flex_row,
-                                            {
-                                                marginTop: 5
-                                            },
-                                            flex.align_items_center
-                                        ]}
-                                        onPress={
-                                            this.state.area?.lat && this.state.area?.lng ?
-                                                () => {
-                                                    this.setState({
-                                                        isMap: true
-                                                    })
-                                                }
-                                                :
-                                                createOpenLink({query: this.state.area?.address, zoom: 30})
-                                        }
-                                    >
-                                        <Icon
-                                            name='my-location'
-                                            type='material'
-                                            color={color_primary}
-                                            size={18}
-                                        />
-                                        <Text
-                                            style={[
-                                                text_size.sm,
-                                                font.serif,
-                                                {
-                                                    marginLeft: 8,
-                                                    color: color_dark
-                                                }
-                                            ]}
-                                        >
-                                            {this.state.area?.address}
-                                        </Text>
-                                        <TouchableOpacity
-                                            style={{marginLeft: 4}}
-                                            onPress={createOpenLink({query: this.state.area?.address, zoom: 30})}
-                                        >
-                                            <Text
+                                                    ]}
+                                                >
+                                                    <Icon
+                                                        name='chart-area'
+                                                        type='font-awesome-5'
+                                                        color={color_primary}
+                                                        size={18}
+                                                    />
+                                                    <Text
+                                                        style={[
+                                                            text_size.sm,
+                                                            font.serif,
+                                                            {
+                                                                marginLeft: 10,
+                                                                color: color_dark
+                                                            }
+                                                        ]}
+                                                    >
+                                                        {this.state.room?.stretch} (m2)
+                                                    </Text>
+                                                </View>
+                                                <View
+                                                    style={[
+                                                        flex.flex_row,
+                                                        flex.align_items_center,
+                                                        {
+                                                            marginTop: 5
+                                                        }
+                                                    ]}
+                                                >
+                                                    <Icon
+                                                        name='users'
+                                                        type='font-awesome-5'
+                                                        color={color_primary}
+                                                        size={18}
+                                                    />
+                                                    <Text
+                                                        style={[
+                                                            text_size.sm,
+                                                            font.serif,
+                                                            {
+                                                                marginLeft: 10,
+                                                                color: color_dark
+                                                            }
+                                                        ]}
+                                                    >
+                                                        {this.state.room?.numberOfCustomer} khách/phòng
+                                                    </Text>
+                                                </View>
+                                                <View
+                                                    style={[
+                                                        flex.flex_row,
+                                                        flex.align_items_center,
+                                                        {
+                                                            marginTop: 5
+                                                        }
+                                                    ]}
+                                                >
+                                                    <Icon
+                                                        name='user-alt'
+                                                        type='font-awesome-5'
+                                                        color={color_primary}
+                                                        size={18}
+                                                    />
+                                                    <Text
+                                                        style={[
+                                                            text_size.sm,
+                                                            font.serif,
+                                                            {
+                                                                marginLeft: 10,
+                                                                color: color_dark
+                                                            }
+                                                        ]}
+                                                    >
+                                                        Đối tượng: {this.state.room?.typeOfCustomer}
+                                                    </Text>
+                                                </View>
+                                            </View>
+                                            <View
                                                 style={[
-                                                    text_size.sm,
-                                                    font.serif,
                                                     {
-                                                        color: color_primary
+                                                        width: '50%',
+                                                        flexDirection: "row",
+                                                        justifyContent: "flex-end",
+                                                        alignItems: "center"
                                                     }
                                                 ]}
                                             >
-                                                Xem trên Google Map
-                                            </Text>
-                                        </TouchableOpacity>
-                                    </TouchableOpacity>
-                                    <View
-                                        style={[
-                                            flex.flex_row,
-                                            {
-                                                marginTop: 5
-                                            }
-                                        ]}
-                                    >
-                                        <Icon
-                                            style={{ marginTop: 2 }}
-                                            name='description'
-                                            type='material'
-                                            color={color_primary}
-                                            size={20}
-                                        />
-                                        <Text
+                                                <View
+                                                    style={{ width: '60%' }}
+                                                >
+                                                    <AppButtonActionInf
+                                                        size={10}
+                                                        textSize={16}
+                                                        bg={color_primary}
+                                                        title="Đặt"
+                                                        onPress={() => {
+                                                            if(this.state.user.id) {
+                                                                if(this.state.user.id !== this.state.area.userId) {
+                                                                    this.setState({isVisible: true})
+                                                                } else{
+                                                                    Toast.show({
+                                                                        type: 'error',
+                                                                        text1: 'Đặt phòng',
+                                                                        text2: 'Vui lòng không đặt phòng thuộc khu của mình .',
+                                                                        visibilityTime: 3000,
+                                                                        autoHide: true
+                                                                    });
+                                                                }
+                                                            } else{
+                                                                Toast.show({
+                                                                    type: 'error',
+                                                                    text1: 'Đặt phòng',
+                                                                    text2: 'Vui lòng đăng nhập để đặt phòng.',
+                                                                    visibilityTime: 3000,
+                                                                    autoHide: true
+                                                                });
+                                                            }
+                                                        }}
+                                                    />
+                                                </View>
+                                                <TouchableOpacity
+                                                    onPress={() => {
+                                                        this.saveTicket()
+                                                    }}
+                                                    style={{
+                                                        marginLeft: 15
+                                                    }}
+                                                >
+                                                    <Icon
+                                                        name={this.state.ticket ? 'bookmark' : 'bookmark-border'}
+                                                        type='material'
+                                                        color={color_primary}
+                                                        size={40}
+                                                    />
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
+                                        <View
                                             style={[
-                                                text_size.sm,
-                                                font.serif,
                                                 {
-                                                    marginLeft: 8,
-                                                    color: color_dark
+                                                    paddingHorizontal: 10,
+                                                    marginTop: 5
                                                 }
                                             ]}
                                         >
-                                            Mô tả khu: {this.state.area?.description}
-                                        </Text>
-                                    </View>
-                                    <View
-                                        style={[
-                                            flex.flex_row,
-                                            {
-                                                marginTop: 5
-                                            }
-                                        ]}
-                                    >
-                                        <Icon
-                                            style={{ marginTop: 2 }}
-                                            name='servicestack'
-                                            type='font-awesome-5'
-                                            color={color_primary}
-                                            size={20}
-                                        />
-                                        <View
-                                            style={{ flex: 1, marginLeft: 10, flexDirection: "row", flexWrap: "wrap" }}
-                                        >
-                                            {
-                                                this.state.room.freetickets?.map((item, index) => {
-                                                    return (
-                                                        this.renderSelected(item, index)
-                                                    )
-                                                })
-                                            }
+                                            <View
+                                                style={[
+                                                    flex.flex_row,
+                                                    {
+                                                        marginTop: 5
+                                                    }
+                                                ]}
+                                            >
+                                                <Icon
+                                                    style={{ marginTop: 2 }}
+                                                    name='note'
+                                                    type='material'
+                                                    color={color_primary}
+                                                    size={20}
+                                                />
+                                                <Text
+                                                    style={[
+                                                        text_size.sm,
+                                                        font.serif,
+                                                        {
+                                                            marginLeft: 8,
+                                                            color: color_dark
+                                                        }
+                                                    ]}
+                                                >
+                                                    {this.state.room?.note}
+                                                </Text>
+                                            </View>
+                                            <View
+                                                style={[
+                                                    flex.flex_row,
+                                                    {
+                                                        marginTop: 5
+                                                    },
+                                                    flex.align_items_center
+                                                ]}
+                                            >
+                                                <Icon
+                                                    name='chart-area'
+                                                    type='font-awesome-5'
+                                                    color={color_primary}
+                                                    size={18}
+                                                />
+                                                <Text
+                                                    style={[
+                                                        text_size.sm,
+                                                        font.serif,
+                                                        {
+                                                            marginLeft: 8,
+                                                            color: color_dark
+                                                        }
+                                                    ]}
+                                                >
+                                                    Khu: {this.state.area?.areaName}
+                                                </Text>
+                                            </View>
+                                            <TouchableOpacity
+                                                style={[
+                                                    flex.flex_row,
+                                                    {
+                                                        marginTop: 5
+                                                    },
+                                                    flex.align_items_center
+                                                ]}
+                                                onPress={
+                                                    this.state.area?.lat && this.state.area?.lng ?
+                                                        () => {
+                                                            this.setState({
+                                                                isMap: true
+                                                            })
+                                                        }
+                                                        :
+                                                        createOpenLink({query: this.state.area?.address, zoom: 30})
+                                                }
+                                            >
+                                                <Icon
+                                                    name='my-location'
+                                                    type='material'
+                                                    color={color_primary}
+                                                    size={18}
+                                                />
+                                                <Text
+                                                    style={[
+                                                        text_size.sm,
+                                                        font.serif,
+                                                        {
+                                                            marginLeft: 8,
+                                                            color: color_dark
+                                                        }
+                                                    ]}
+                                                >
+                                                    {this.state.area?.address}
+                                                </Text>
+                                                <TouchableOpacity
+                                                    style={{marginLeft: 4}}
+                                                    onPress={createOpenLink({query: this.state.area?.address, zoom: 30})}
+                                                >
+                                                    <Text
+                                                        style={[
+                                                            text_size.sm,
+                                                            font.serif,
+                                                            {
+                                                                color: color_primary
+                                                            }
+                                                        ]}
+                                                    >
+                                                        Xem trên Google Map
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            </TouchableOpacity>
+                                            <View
+                                                style={[
+                                                    flex.flex_row,
+                                                    {
+                                                        marginTop: 5
+                                                    }
+                                                ]}
+                                            >
+                                                <Icon
+                                                    style={{ marginTop: 2 }}
+                                                    name='description'
+                                                    type='material'
+                                                    color={color_primary}
+                                                    size={20}
+                                                />
+                                                <Text
+                                                    style={[
+                                                        text_size.sm,
+                                                        font.serif,
+                                                        {
+                                                            marginLeft: 8,
+                                                            color: color_dark
+                                                        }
+                                                    ]}
+                                                >
+                                                    Mô tả khu: {this.state.area?.description}
+                                                </Text>
+                                            </View>
+                                            <View
+                                                style={[
+                                                    flex.flex_row,
+                                                    {
+                                                        marginTop: 5
+                                                    }
+                                                ]}
+                                            >
+                                                <Icon
+                                                    style={{ marginTop: 2 }}
+                                                    name='servicestack'
+                                                    type='font-awesome-5'
+                                                    color={color_primary}
+                                                    size={20}
+                                                />
+                                                <View
+                                                    style={{ flex: 1, marginLeft: 10, flexDirection: "row", flexWrap: "wrap" }}
+                                                >
+                                                    {
+                                                        this.state.room.freetickets?.map((item, index) => {
+                                                            return (
+                                                                this.renderSelected(item, index)
+                                                            )
+                                                        })
+                                                    }
 
-                                            {
-                                                this.state.room.paidtickets?.map((item, index) => {
-                                                    return (
-                                                        this.renderSelectedPaid(item, index)
-                                                    )
-                                                })
-                                            }
+                                                    {
+                                                        this.state.room.paidtickets?.map((item, index) => {
+                                                            return (
+                                                                this.renderSelectedPaid(item, index)
+                                                            )
+                                                        })
+                                                    }
+                                                </View>
+                                            </View>
                                         </View>
                                     </View>
                                 </View>
                             </View>
-                        </View>
-                    </View>
-                </ScrollView>
+                        </ScrollView>
+                }
                 {
                     this.state.isViewImage ?
                         <Modal animationType={'fade'} isVisible={true} transparent={true}>
