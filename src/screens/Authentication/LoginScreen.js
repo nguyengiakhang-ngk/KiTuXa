@@ -128,7 +128,7 @@ class LoginScreen extends Component {
                                         text_size.title
                                     ]}
                                 >
-                                    Quản lý vật chất
+                                    Ký túc xá
                                 </Text>
                             </View>
                             <View

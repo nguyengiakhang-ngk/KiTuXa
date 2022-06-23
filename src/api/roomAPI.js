@@ -29,7 +29,6 @@ export const getRoomByBookTicket = (userId) => {
 }
 
 export const addNumberElectric = (number) => {
-    console.log(number)
     return doPost(ADD_NUMBER_ELECTRIC, number);
 }
 

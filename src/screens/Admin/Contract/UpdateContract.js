@@ -8,13 +8,14 @@ import {
     TouchableWithoutFeedback,
     View,
     StyleSheet,
-    TextInput
+    TextInput, ActivityIndicator
 } from 'react-native';
 import SafeAreaView from 'react-native/Libraries/Components/SafeAreaView/SafeAreaView';
 import { background_color, flex, font, font_weight, padding, shadow, text_size, width, height, text_color } from "../../../utils/styles/MainStyle";
 import AppError from '../../../components/AppError';
 import { Formik } from 'formik';
 import AppInputInf from '../../../components/AppInputInf';
+import Toast from "react-native-toast-message";
 import AppDialogSelect from '../../../components/AppDialogSelect';
 import AppButton from '../../../components/AppButton';
 import axios from 'axios';
@@ -56,7 +57,6 @@ class UpdateContract extends Component {
             this.setState({
                 data: data
             }, () => {
-                console.log(data.roomId);
                 this.getPhongData(data.roomId);
                 this.getUserData(data.userId);
             })
@@ -65,21 +65,17 @@ class UpdateContract extends Component {
 
     getPhongData(id) {
         this.props.doGetRoomById({ id: id }).then(data => {
-            console.log("check",data);
             this.setState({
                 dataP: [data]
             })
-
-            console.log(data, "Data P : ")
         })
     }
     getUserData(id) {
         this.props.doGetUserById({ userId: id }).then(data => {
             this.setState({
-                dataK: [data]
+                dataK: [data],
+                isLoading: false
             })
-
-            console.log(data, "Data K : ")
         })
     }
 
@@ -91,12 +87,22 @@ class UpdateContract extends Component {
     }
 
     UpdateContract = (values) => {
+        this.setState({isLoading: true})
         this.props.doUpdateContract(values, { id: this.props.route.params.id }).then(data => {
             if (data) {
-                alert("Cập nhật hợp đồng thành công!");
-                this.props.navigation.goBack(null);
+                Toast.show({
+                    type: 'success',
+                    text1: 'Hợp đồng',
+                    text2: 'Cập nhật thành công.',
+                    visibilityTime: 2000,
+                    autoHide: true
+                  });
+                  
+                setTimeout(() => {
+                    this.props.navigation.goBack();
+                }, 1000)
             } else {
-                alert("Cập nhật hợp đồng không thành công! Vui lòng thử lại!");
+                Alert.alert("Thông báo", "Cập nhật hợp đồng không thành công! Vui lòng thử lại!")
             }
         })
     };
@@ -106,27 +112,14 @@ class UpdateContract extends Component {
     render() {
         return (
             <View style={{ flex: 1 }}>
-                <Text
-                    style={[
-                        text_size.xs,
-                        font.serif,
-                        font_weight.bold,
-                        text_color.white,
-                        width.w_100,
-                        background_color.blue,
-                        {
-                            textAlign: 'center',
-                            paddingVertical: 15,
-                            lineHeight: 20,
-                            letterSpacing: 0,
-                        }
-                    ]}
-                >
-                    Cập nhật hợp đồng
-                </Text>
+                <Toast ref={(ref) => { Toast.setRef(ref) }} />
                 {
-                    this.state.data !== {}
+                    this.state.isLoading
                         ?
+                        <View style={{flex: 1, justifyContent: 'center'}}>
+                            <ActivityIndicator size="large" color={color_primary} />
+                        </View>
+                        :
                         <ScrollView style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}>
                             <Formik
                                 enableReinitialize
@@ -311,8 +304,6 @@ class UpdateContract extends Component {
                                 }}
                             </Formik>
                         </ScrollView>
-                        :
-                        <View />
                 }
             </View>
         );

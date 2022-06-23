@@ -290,12 +290,6 @@ class BillsComponent extends Component {
                 })
             })
         })
-
-        // setTimeout(() => {
-        //     this.setState({
-        //         isLoading: false
-        //     })
-        // }, 1000)
     }
 
 
@@ -370,10 +364,11 @@ class BillsComponent extends Component {
                                 text_size.sm,
                                 font.serif,
                                 font_weight.bold,
-                                text_color.primary
+                                text_color.primary, {width: 220}
                             ]}
+                            numberOfLines={1}
                         >
-                            Hóa đơn: {item.nameOfBill}
+                            {item.nameOfBill}
                         </Text>
                         <View
                             style={[

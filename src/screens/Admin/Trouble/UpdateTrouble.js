@@ -1,7 +1,7 @@
 import React, { Component, useState } from 'react';
 import {
     Alert, Image,
-    Keyboard, Pressable, ScrollView, Text, TouchableWithoutFeedback, View
+    Keyboard, Pressable, ScrollView, Text, TouchableWithoutFeedback, View, ActivityIndicator
 } from 'react-native';
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
 import {
@@ -25,6 +25,7 @@ import { doGetTroubleById, doUpdateTrouble } from '../../../redux/actions/troubl
 import { TroubleSchema } from '../../../utils/validation/ValidationTrouble';
 import { color_danger, color_primary } from '../../../utils/theme/Color';
 import AppButtonActionInf from "../../../components/AppButtonActionInf";
+import Toast from "react-native-toast-message";
 
 
 const HideKeyboard = ({ children }) => (
@@ -37,7 +38,7 @@ class UpdateTrouble extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isLoading: true,
+            isLoading: false,
             data: [],
             image: '',
             dataMD: [
@@ -87,6 +88,7 @@ class UpdateTrouble extends Component {
     }
 
     updateTrouble = (values) => {
+        this.setState({ isLoading: true });
         const date = new Date();
         const minutes = date.getMinutes();
         let data = new FormData();
@@ -96,10 +98,18 @@ class UpdateTrouble extends Component {
             name: this.state.image?.filename || `temp_image_${minutes}.jpg`
         });
         data.append("trouble", JSON.stringify(values));
-        this.props.doUpdateTrouble(data, { id: this.props.route.params.id }).then(data => {
-            alert("Cập nhật sự cố thành công!");
-            this.props.navigation.goBack(null);
-        })
+        this.props.doUpdateTrouble(data, { id: this.props.route.params.id });
+        Toast.show({
+            type: 'success',
+            text1: 'Sự cố',
+            text2: 'Cập nhật thành công.',
+            visibilityTime: 2000,
+            autoHide: true
+        });
+        setTimeout(() => {
+            this.props.navigation.goBack();
+        }, 1000)
+         
     }
     ChoosePhotoFromLibrary() {
         ImagePicker.openPicker({
@@ -127,201 +137,208 @@ class UpdateTrouble extends Component {
             <ScrollView
                 style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}
             >
-                <Formik
-                    enableReinitialize
-                    initialValues={
-                        {
-                            dateOfTrouble: moment(this.state.data.dateOfTrouble).format('DD-MM-YYYY'),
-                            //ThoiGian_ThuTien: moment(this.state.data.ThoiGian_ThuTien).format('DD-MM-YYYY'),
-                            dateOfSolve: this.state.data.dateOfSolve,
-                            name: this.state.data.name,
-                            describe: this.state.data.describe,
-                            image: this.state.data.image,
-                            level: this.state.data.level,
-                            status: this.state.data.status,
-                            roomId: this.state.data.roomId
-                        }
-                    }
-                    validationSchema={TroubleSchema}
-                    onSubmit={values => {
-                        if(values.status === 1){
-                            values.dateOfSolve = new Date();
-                        }
-                        this.updateTrouble(values);
-                    }}
-                >
-                    {({
-                        handleChange,
-                        handleBlur,
-                        handleSubmit, values,
-                        errors,
-                        touched,
-                        isValid
-                    }) => {
-                        return (
-                            <HideKeyboard>
-                                <SafeAreaView
-                                    style={[
-                                        { flex: 1, paddingBottom: 15 },
-                                        background_color.white,
-                                        height.h_100
-                                    ]}
-                                    onPress={Keyboard.dismiss}
-                                >
-                                    <View
-                                        style={[
-                                            { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
-                                        ]}
-                                    >
-                                        <AppInputInf
-                                            lable={"Tên sự cố:"}
-                                            secureTextEntry={false}
-                                            field={"name"}
-                                            handleChange={handleChange}
-                                            handleBlur={handleBlur}
-                                            values={values}
-                                        />
-                                        {errors.name && touched.name ? (
-                                            <AppError errors={errors.name} />
-                                        ) : null}
-                                    </View>
-                                    <View
-                                        style={[
-                                            width.w_100,
-                                            { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
-                                        ]}
-                                    >
-                                        <AppDatePicker
-                                            label={"Thời gian xảy ra sự cố:"}
-                                            value={values}
-                                            field={"dateOfTrouble"}
-                                            alreadydate={new Date()}
-                                        />
-                                    </View>
-
-                                    <View
-                                        style={[
-                                            width.w_100,
-                                            { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
-                                        ]}
-                                    >
-                                        <AppDialogSelect
-                                            lable={"Mức độ:"}
-                                            data={this.state.dataMD}
-                                            placeholder={(this.state.dataMD.filter(item => item.key == this.state.data.level)[0]?.label)}
-                                            value={values}
-                                            field={"level"}
-                                        />
-                                        {errors.level && touched.level ? (
-                                            <AppError errors={errors.level} />
-                                        ) : null}
-                                    </View>
-                                    <View
-                                        style={[
-                                            width.w_100,
-                                            { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
-                                        ]}
-                                    >
-                                        <Pressable onPress={() => this.ChoosePhotoFromLibrary()}>
-                                            <Text
+                <Toast ref={(ref) => { Toast.setRef(ref) }} />
+                {
+                    this.state.isLoading ?
+                        <View style={{ flex: 1, justifyContent: 'center' }}>
+                            <ActivityIndicator size="large" color={color_primary} />
+                        </View>
+                        :
+                        <Formik
+                            enableReinitialize
+                            initialValues={
+                                {
+                                    dateOfTrouble: this.state.data.dateOfTrouble,
+                                    dateOfSolve: this.state.data.dateOfSolve,
+                                    name: this.state.data.name,
+                                    describe: this.state.data.describe,
+                                    image: this.state.data.image,
+                                    level: this.state.data.level,
+                                    status: this.state.data.status,
+                                    roomId: this.state.data.roomId
+                                }
+                            }
+                            validationSchema={TroubleSchema}
+                            onSubmit={values => {
+                                if (values.status === 1) {
+                                    values.dateOfSolve = new Date();
+                                }
+                                this.updateTrouble(values);
+                            }}
+                        >
+                            {({
+                                handleChange,
+                                handleBlur,
+                                handleSubmit, values,
+                                errors,
+                                touched,
+                                isValid
+                            }) => {
+                                return (
+                                    <HideKeyboard>
+                                        <SafeAreaView
+                                            style={[
+                                                { flex: 1, paddingBottom: 15 },
+                                                background_color.white,
+                                                height.h_100
+                                            ]}
+                                            onPress={Keyboard.dismiss}
+                                        >
+                                            <View
                                                 style={[
-                                                    text_size.sm,
-                                                    font.serif
+                                                    { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
                                                 ]}
                                             >
-                                                Chọn ảnh
-                                            </Text>
-                                            <Image
-                                                source={{
-                                                    uri: this.state.image ? this.state.image.path : `${url}/${this.state.data.image}`
-                                                }}
+                                                <AppInputInf
+                                                    lable={"Tên sự cố:"}
+                                                    secureTextEntry={false}
+                                                    field={"name"}
+                                                    handleChange={handleChange}
+                                                    handleBlur={handleBlur}
+                                                    values={values}
+                                                />
+                                                {errors.name && touched.name ? (
+                                                    <AppError errors={errors.name} />
+                                                ) : null}
+                                            </View>
+                                            <View
                                                 style={[
                                                     width.w_100,
-                                                    {
-                                                        height: 200,
-                                                        borderRadius: 10,
-                                                        borderWidth: 2,
-                                                        borderColor: '#E0E0E0'
-                                                    }
+                                                    { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
                                                 ]}
-                                            />
-                                        </Pressable>
-                                    </View>
-                                    <View
-                                        style={[
-                                            width.w_100,
-                                            { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
-                                        ]}
-                                    >
-                                        <AppDialogSelect
-                                            lable={"Tình trạng:"}
-                                            data={this.state.dataTT}
-                                            placeholder={"Chưa giải quyết"}
-                                            value={values}
-                                            field={"status"}
-                                        />
-                                        {errors.status && touched.status ? (
-                                            <AppError errors={errors.status} />
-                                        ) : null}
-                                    </View>
-                                    <View
-                                        style={[
-                                            { paddingLeft: 15, paddingRight: 10, marginTop: 10 }
-                                        ]}
-                                    >
-                                        <AppInputInf
-                                            lable={"Tình trạng sự cố:"}
-                                            secureTextEntry={false}
-                                            field={"describe"}
-                                            handleChange={handleChange}
-                                            handleBlur={handleBlur}
-                                            values={values}
-                                        />
-                                        {errors.describe && touched.describe ? (
-                                            <AppError errors={errors.describe} />
-                                        ) : null}
-                                    </View>
-                                    <View
-                                        style={[
-                                            width.w_100,
-                                            flex.flex_row,
-                                            { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
-                                        ]}
-                                    >
-                                        <View
-                                            style={[
-                                                {
-                                                    flex: 1,
-                                                    marginRight: 15
-                                                }
-                                            ]}
-                                        >
-                                            <AppButtonActionInf
-                                                size={13}
-                                                textSize={18}
-                                                bg={color_danger}
-                                                onPress={() => { this.props.navigation.goBack() }}
-                                                title="Hủy"
-                                            />
-                                        </View>
-                                        <View
-                                            style={{ flex: 1 }}
-                                        >
-                                            <AppButtonActionInf
-                                                size={13}
-                                                textSize={18}
-                                                bg={color_primary}
-                                                disabled={!this.isFormValid(values.name, values.level, values.image)}
-                                                onPress={handleSubmit}
-                                                title="Chỉnh Sửa"
-                                            />
-                                        </View>
-                                    </View>
-                                </SafeAreaView>
-                            </HideKeyboard>
-                        );
-                    }}
-                </Formik>
+                                            >
+                                                <AppDatePicker
+                                                    label={"Thời gian xảy ra sự cố:"}
+                                                    value={values}
+                                                    field={"dateOfTrouble"}
+                                                    alreadydate={new Date()}
+                                                />
+                                            </View>
+
+                                            <View
+                                                style={[
+                                                    width.w_100,
+                                                    { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
+                                                ]}
+                                            >
+                                                <AppDialogSelect
+                                                    lable={"Mức độ:"}
+                                                    data={this.state.dataMD}
+                                                    placeholder={(this.state.dataMD.filter(item => item.key == this.state.data.level)[0]?.label)}
+                                                    value={values}
+                                                    field={"level"}
+                                                />
+                                                {errors.level && touched.level ? (
+                                                    <AppError errors={errors.level} />
+                                                ) : null}
+                                            </View>
+                                            <View
+                                                style={[
+                                                    width.w_100,
+                                                    { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
+                                                ]}
+                                            >
+                                                <Pressable onPress={() => this.ChoosePhotoFromLibrary()}>
+                                                    <Text
+                                                        style={[
+                                                            text_size.sm,
+                                                            font.serif
+                                                        ]}
+                                                    >
+                                                        Chọn ảnh
+                                                    </Text>
+                                                    <Image
+                                                        source={{
+                                                            uri: this.state.image ? this.state.image.path : `${url}/${this.state.data.image}`
+                                                        }}
+                                                        style={[
+                                                            width.w_100,
+                                                            {
+                                                                height: 200,
+                                                                borderRadius: 10,
+                                                                borderWidth: 2,
+                                                                borderColor: '#E0E0E0'
+                                                            }
+                                                        ]}
+                                                    />
+                                                </Pressable>
+                                            </View>
+                                            <View
+                                                style={[
+                                                    width.w_100,
+                                                    { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
+                                                ]}
+                                            >
+                                                <AppDialogSelect
+                                                    lable={"Tình trạng:"}
+                                                    data={this.state.dataTT}
+                                                    placeholder={"Chưa giải quyết"}
+                                                    value={values}
+                                                    field={"status"}
+                                                />
+                                                {errors.status && touched.status ? (
+                                                    <AppError errors={errors.status} />
+                                                ) : null}
+                                            </View>
+                                            <View
+                                                style={[
+                                                    { paddingLeft: 15, paddingRight: 10, marginTop: 10 }
+                                                ]}
+                                            >
+                                                <AppInputInf
+                                                    lable={"Tình trạng sự cố:"}
+                                                    secureTextEntry={false}
+                                                    field={"describe"}
+                                                    handleChange={handleChange}
+                                                    handleBlur={handleBlur}
+                                                    values={values}
+                                                />
+                                                {errors.describe && touched.describe ? (
+                                                    <AppError errors={errors.describe} />
+                                                ) : null}
+                                            </View>
+                                            <View
+                                                style={[
+                                                    width.w_100,
+                                                    flex.flex_row,
+                                                    { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
+                                                ]}
+                                            >
+                                                <View
+                                                    style={[
+                                                        {
+                                                            flex: 1,
+                                                            marginRight: 15
+                                                        }
+                                                    ]}
+                                                >
+                                                    <AppButtonActionInf
+                                                        size={13}
+                                                        textSize={18}
+                                                        bg={color_danger}
+                                                        onPress={() => { this.props.navigation.goBack() }}
+                                                        title="Hủy"
+                                                    />
+                                                </View>
+                                                <View
+                                                    style={{ flex: 1 }}
+                                                >
+                                                    <AppButtonActionInf
+                                                        size={13}
+                                                        textSize={18}
+                                                        bg={color_primary}
+                                                        disabled={!this.isFormValid(values.name, values.level, values.image)}
+                                                        onPress={handleSubmit}
+                                                        title="Chỉnh Sửa"
+                                                    />
+                                                </View>
+                                            </View>
+                                        </SafeAreaView>
+                                    </HideKeyboard>
+                                );
+                            }}
+                        </Formik>
+                }
             </ScrollView>
         );
     }

@@ -212,7 +212,7 @@ class DetailRoomScreen extends Component {
             Toast.show({
                 type: 'error',
                 text1: 'Đặt phòng',
-                text2: 'Phòng này bạn đã vừa đặt, xin vui lòng chờ xém duyệt.',
+                text2: 'Phòng này bạn đã vừa đặt, xin vui lòng chờ xét duyệt.',
                 visibilityTime: 3000,
                 autoHide: true
             });

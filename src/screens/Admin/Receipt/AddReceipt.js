@@ -27,6 +27,7 @@ import { ReceiptSchema } from "../../../utils/validation/ValidationReceipt";
 import AppItemHome from "../../../components/AppItemHome";
 import ImagePicker from 'react-native-image-crop-picker';
 import { Icon } from "@rneui/base";
+import Toast from "react-native-toast-message";
 import { connect } from 'react-redux';
 import { doAddReceipt } from '../../../redux/actions/receipt';
 import { color_danger, color_primary } from '../../../utils/theme/Color';
@@ -89,7 +90,7 @@ class AddReceipt extends Component {
                 setTimeout(() => {
                     this.setState({ isLoading: false })
                     this.props.navigation.goBack();
-                }, 2000)
+                }, 1000)
                 // alert("Thêm biên nhận thành công!");
                 // this.props.navigation.goBack(null);
             }
@@ -125,6 +126,7 @@ class AddReceipt extends Component {
             <ScrollView
                 style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}
             >
+                <Toast ref={(ref) => {Toast.setRef(ref)}} />
                 {
                     this.state.isLoading
                         ?

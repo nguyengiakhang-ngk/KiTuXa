@@ -130,7 +130,7 @@ const addTroubleError = (dispatch, error) => {
     });
 }
 
-const updateTroubleSuccess = (dispatch) => {
+const updateTroubleSuccess = (dispatch, data) => {
     dispatch({
         type: UPDATE_TROUBLE_SUCCESS,
     });

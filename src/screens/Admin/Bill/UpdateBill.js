@@ -1,7 +1,7 @@
 import React, { Component, useState } from 'react';
 import {
     Alert,
-    Keyboard, Pressable, ScrollView, Text, Touchable, TouchableOpacity, TouchableWithoutFeedback, View
+    Keyboard, Pressable, ScrollView, ActivityIndicator, Text, Touchable, TouchableOpacity, TouchableWithoutFeedback, View
 } from 'react-native';
 import SafeAreaView from "react-native/Libraries/Components/SafeAreaView/SafeAreaView";
 import {
@@ -15,6 +15,7 @@ import { Formik } from "formik";
 import AppInputInf from "../../../components/AppInputInf";
 import AppDialogSelect from "../../../components/AppDialogSelect";
 import AppButton from "../../../components/AppButton";
+import Toast from "react-native-toast-message";
 import axios from "axios";
 import { path } from "../../../constant/define";
 import { ContractSchema } from "../../../utils/validation/ValidationContract";
@@ -48,7 +49,8 @@ class UpdateBill extends Component {
     getBillData() {
         this.props.doLoadBillById({ id: this.props.route.params.id }).then(data => {
             this.setState({
-                data: data
+                data: data,
+                isLoading: false
             })
         })
     }
@@ -69,10 +71,20 @@ class UpdateBill extends Component {
     }
 
     updateBill = (values) => {
+        this.setState({isLoading: true})
         this.props.doUpdateBill(values, { id: this.props.route.params.id }).then(data => {
             if (data) {
-                alert('Cập nhật hóa đơn thành công!');
-                this.props.navigation.goBack(null);
+                Toast.show({
+                    type: 'success',
+                    text1: 'Hóa đơn',
+                    text2: 'Cập nhật thành công.',
+                    visibilityTime: 2000,
+                    autoHide: true
+                  });
+                  
+                setTimeout(() => {
+                    this.props.navigation.goBack();
+                }, 1000)
             }
         })
     }
@@ -80,219 +92,230 @@ class UpdateBill extends Component {
     render() {
 
         return (
+
             <ScrollView
                 style={{ flex: 1 }} contentContainerStyle={{ flexGrow: 1 }}
             >
-                <Formik
-                    enableReinitialize
-                    initialValues={{
-                        nameOfBill: this.state.data.nameOfBill,
-                        dateOfPayment: this.state.data.dateOfPayment,
-                        discount: this.state.data.discount,
-                        forfeit: this.state.data.forfeit,
-                        total: String(this.state.data.total),
-                        status: this.state.data.status,
-                        note: this.state.data.note
-                    }
-                    }
-                    validationSchema={BillsSchema}
-                    onSubmit={values => {
-                        this.updateBill(values);
-                        //alert(this.state.date);
-                    }}
-                >
-                    {({
-                        handleChange,
-                        handleBlur,
-                        handleSubmit, values,
-                        errors,
-                        touched,
-                        isValid
-                    }) => {
-                        return (
-                            <HideKeyboard>
-                                <SafeAreaView
-                                    style={[
-                                        { flex: 1, paddingBottom: 15 },
-                                        background_color.white,
-                                        height.h_100
-                                    ]}
-                                    onPress={Keyboard.dismiss}
-                                >
-                                    <View
-                                        style={[
-                                            { paddingLeft: 15, paddingRight: 10, marginTop: 10 }
-                                        ]}
-                                    >
-                                        <AppInputInf
-                                            lable={"Tên Hóa Đơn:"}
-                                            secureTextEntry={false}
-                                            field={"nameOfBill"}
-                                            handleChange={handleChange}
-                                            handleBlur={handleBlur}
-                                            values={values}
-                                        />
-                                        {errors.nameOfBill ? (
-                                            <AppError errors={errors.nameOfBill} />
-                                        ) : null}
-                                    </View>
-                                    <View
-                                        style={[
-                                            width.w_100,
-                                            { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
-                                        ]}
-                                    >
-                                        <AppDatePicker
-                                            label={"Ngày Thu Tiền:"}
-                                            value={values}
-                                            field={"dateOfPayment"}
-                                            alreadydate={new Date(values.dateOfPayment)}
-                                        />
-                                        {errors.dateOfPayment ? (
-                                            <AppError errors={errors.dateOfPayment} />
-                                        ) : null}
-                                    </View>
-                                    <View
-                                        style={[
-                                            flex.flex_row,
-                                            width.w_100,
-                                        ]}
-                                    >
-                                        <View
+                <Toast ref={(ref) => { Toast.setRef(ref) }} />
+                {
+                    this.state.isLoading
+                        ?
+                        <View style={{ flex: 1, justifyContent: 'center' }}>
+                            <ActivityIndicator size="large" color={color_primary} />
+                        </View>
+                        :
+                        <Formik
+                            enableReinitialize
+                            initialValues={{
+                                nameOfBill: this.state.data.nameOfBill,
+                                dateOfPayment: this.state.data.dateOfPayment,
+                                discount: this.state.data.discount,
+                                forfeit: this.state.data.forfeit,
+                                total: String(this.state.data.total),
+                                status: this.state.data.status,
+                                note: this.state.data.note
+                            }
+                            }
+                            validationSchema={BillsSchema}
+                            onSubmit={values => {
+                                this.updateBill(values);
+                                //alert(this.state.date);
+                            }}
+                        >
+                            {({
+                                handleChange,
+                                handleBlur,
+                                handleSubmit, values,
+                                errors,
+                                touched,
+                                isValid
+                            }) => {
+                                return (
+                                    <HideKeyboard>
+                                        <SafeAreaView
                                             style={[
-                                                { paddingLeft: 15, paddingRight: 10, marginTop: 10, flex: 1 }
+                                                { flex: 1, paddingBottom: 15 },
+                                                background_color.white,
+                                                height.h_100
                                             ]}
+                                            onPress={Keyboard.dismiss}
                                         >
-                                            <AppInputInf
-                                                lable={"Giảm giá(%):"}
-                                                field={"discount"}
-                                                keyboardType={'numeric'}
-                                                secureTextEntry={false}
-                                                handleChange={handleChange}
-                                                handleBlur={handleBlur}
-                                                values={values}
-                                                maxLength={3}
-                                            />
-                                            {errors.discount ? (
-                                                <AppError errors={errors.discount} />
-                                            ) : null}
-                                        </View>
-                                        <View
-                                            style={[
-                                                { paddingLeft: 10, paddingRight: 15, marginTop: 10, flex: 1 }
-                                            ]}
-                                        >
-                                            <AppInputInf
-                                                lable={"Phạt:"}
-                                                keyboardType={'numeric'}
-                                                secureTextEntry={false}
-                                                field={"forfeit"}
-                                                handleChange={handleChange}
-                                                handleBlur={handleBlur}
-                                                values={values}
-                                            />
-                                            {errors.forfeit ? (
-                                                <AppError errors={errors.forfeit} />
-                                            ) : null}
-                                        </View>
-                                    </View>
-                                    <View
-                                        style={[
-                                            width.w_100,
-                                            { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
-                                        ]}
-                                    >
-                                        <AppInputInf
-                                            lable={"Tổng:"}
-                                            keyboardType={'numeric'}
-                                            secureTextEntry={false}
-                                            field={"total"}
-                                            handleChange={handleChange}
-                                            handleBlur={handleBlur}
-                                            values={values}
-                                        />
-                                        {errors.total ? (
-                                            <AppError errors={errors.total} />
-                                        ) : null}
-                                    </View>
-                                    <View
-                                        style={[
-                                            width.w_100,
-                                            { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
-                                        ]}
-                                    >
-                                        <AppDialogSelect
-                                            lable={"Tình Trạng:"}
-                                            data={this.state.dataTT}
-                                            placeholder={""}
-                                            value={values}
-                                            field={"status"}
-                                            placeholder={this.state.data.status == 0 ? "Chưa thanh toán" : "Đã thanh toán"}
-                                        />
-                                        {errors.status ? (
-                                            <AppError errors={errors.status} />
-                                        ) : null}
-                                    </View>
-                                    <View
-                                        style={[
-                                            width.w_100,
-                                            { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
-                                        ]}
-                                    >
-                                        <AppInputInf
-                                            lable={"Ghi Chú:"}
-                                            secureTextEntry={false}
-                                            field={"note"}
-                                            handleChange={handleChange}
-                                            handleBlur={handleBlur}
-                                            values={values}
-                                            numberOfLines={3}
-                                        />
-                                        {errors.note ? (
-                                            <AppError errors={errors.note} />
-                                        ) : null}
-                                    </View>
-                                    <View
-                                        style={[
-                                            width.w_100,
-                                            flex.flex_row,
-                                            { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
-                                        ]}
-                                    >
-                                        <View
-                                            style={[
-                                                {
-                                                    flex: 1,
-                                                    marginRight: 15
-                                                }
-                                            ]}
-                                        >
-                                            <AppButtonActionInf
-                                                size={13}
-                                                textSize={18}
-                                                bg={color_danger}
-                                                onPress={() => { this.props.navigation.goBack() }}
-                                                title="Hủy"
-                                            />
-                                        </View>
-                                        <View
-                                            style={{ flex: 1 }}
-                                        >
-                                            <AppButtonActionInf
-                                                size={13}
-                                                textSize={18}
-                                                bg={color_primary}
-                                                disabled={!this.isFormValid(isValid, values.nameOfBill, values.discount, values.forfeit, values.total, values.note)}
-                                                onPress={handleSubmit}
-                                                title="Chỉnh Sửa"
-                                            />
-                                        </View>
-                                    </View>
-                                </SafeAreaView>
-                            </HideKeyboard>
-                        );
-                    }}
-                </Formik>
+                                            <View
+                                                style={[
+                                                    { paddingLeft: 15, paddingRight: 10, marginTop: 10 }
+                                                ]}
+                                            >
+                                                <AppInputInf
+                                                    lable={"Tên Hóa Đơn:"}
+                                                    secureTextEntry={false}
+                                                    field={"nameOfBill"}
+                                                    handleChange={handleChange}
+                                                    handleBlur={handleBlur}
+                                                    values={values}
+                                                />
+                                                {errors.nameOfBill ? (
+                                                    <AppError errors={errors.nameOfBill} />
+                                                ) : null}
+                                            </View>
+                                            <View
+                                                style={[
+                                                    width.w_100,
+                                                    { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
+                                                ]}
+                                            >
+                                                <AppDatePicker
+                                                    label={"Ngày Thu Tiền:"}
+                                                    value={values}
+                                                    field={"dateOfPayment"}
+                                                    alreadydate={new Date(values.dateOfPayment)}
+                                                />
+                                                {errors.dateOfPayment ? (
+                                                    <AppError errors={errors.dateOfPayment} />
+                                                ) : null}
+                                            </View>
+                                            <View
+                                                style={[
+                                                    flex.flex_row,
+                                                    width.w_100,
+                                                ]}
+                                            >
+                                                <View
+                                                    style={[
+                                                        { paddingLeft: 15, paddingRight: 10, marginTop: 10, flex: 1 }
+                                                    ]}
+                                                >
+                                                    <AppInputInf
+                                                        lable={"Giảm giá(%):"}
+                                                        field={"discount"}
+                                                        keyboardType={'numeric'}
+                                                        secureTextEntry={false}
+                                                        handleChange={handleChange}
+                                                        handleBlur={handleBlur}
+                                                        values={values}
+                                                        maxLength={3}
+                                                    />
+                                                    {errors.discount ? (
+                                                        <AppError errors={errors.discount} />
+                                                    ) : null}
+                                                </View>
+                                                <View
+                                                    style={[
+                                                        { paddingLeft: 10, paddingRight: 15, marginTop: 10, flex: 1 }
+                                                    ]}
+                                                >
+                                                    <AppInputInf
+                                                        lable={"Phạt:"}
+                                                        keyboardType={'numeric'}
+                                                        secureTextEntry={false}
+                                                        field={"forfeit"}
+                                                        handleChange={handleChange}
+                                                        handleBlur={handleBlur}
+                                                        values={values}
+                                                    />
+                                                    {errors.forfeit ? (
+                                                        <AppError errors={errors.forfeit} />
+                                                    ) : null}
+                                                </View>
+                                            </View>
+                                            <View
+                                                style={[
+                                                    width.w_100,
+                                                    { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
+                                                ]}
+                                            >
+                                                <AppInputInf
+                                                    lable={"Tổng:"}
+                                                    keyboardType={'numeric'}
+                                                    secureTextEntry={false}
+                                                    field={"total"}
+                                                    handleChange={handleChange}
+                                                    handleBlur={handleBlur}
+                                                    values={values}
+                                                />
+                                                {errors.total ? (
+                                                    <AppError errors={errors.total} />
+                                                ) : null}
+                                            </View>
+                                            <View
+                                                style={[
+                                                    width.w_100,
+                                                    { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
+                                                ]}
+                                            >
+                                                <AppDialogSelect
+                                                    lable={"Tình Trạng:"}
+                                                    data={this.state.dataTT}
+                                                    placeholder={""}
+                                                    value={values}
+                                                    field={"status"}
+                                                    placeholder={this.state.data.status == 0 ? "Chưa thanh toán" : "Đã thanh toán"}
+                                                />
+                                                {errors.status ? (
+                                                    <AppError errors={errors.status} />
+                                                ) : null}
+                                            </View>
+                                            <View
+                                                style={[
+                                                    width.w_100,
+                                                    { paddingLeft: 15, paddingRight: 15, marginTop: 10 }
+                                                ]}
+                                            >
+                                                <AppInputInf
+                                                    lable={"Ghi Chú:"}
+                                                    secureTextEntry={false}
+                                                    field={"note"}
+                                                    handleChange={handleChange}
+                                                    handleBlur={handleBlur}
+                                                    values={values}
+                                                    numberOfLines={3}
+                                                />
+                                                {errors.note ? (
+                                                    <AppError errors={errors.note} />
+                                                ) : null}
+                                            </View>
+                                            <View
+                                                style={[
+                                                    width.w_100,
+                                                    flex.flex_row,
+                                                    { paddingLeft: 15, paddingRight: 15, marginTop: 20 }
+                                                ]}
+                                            >
+                                                <View
+                                                    style={[
+                                                        {
+                                                            flex: 1,
+                                                            marginRight: 15
+                                                        }
+                                                    ]}
+                                                >
+                                                    <AppButtonActionInf
+                                                        size={13}
+                                                        textSize={18}
+                                                        bg={color_danger}
+                                                        onPress={() => { this.props.navigation.goBack() }}
+                                                        title="Hủy"
+                                                    />
+                                                </View>
+                                                <View
+                                                    style={{ flex: 1 }}
+                                                >
+                                                    <AppButtonActionInf
+                                                        size={13}
+                                                        textSize={18}
+                                                        bg={color_primary}
+                                                        disabled={!this.isFormValid(isValid, values.nameOfBill, values.discount, values.forfeit, values.total, values.note)}
+                                                        onPress={handleSubmit}
+                                                        title="Chỉnh Sửa"
+                                                    />
+                                                </View>
+                                            </View>
+                                        </SafeAreaView>
+                                    </HideKeyboard>
+                                );
+                            }}
+                        </Formik>
+                }
+
             </ScrollView>
         );
     }

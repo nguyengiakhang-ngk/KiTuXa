@@ -128,13 +128,13 @@ const addReceiptError = (status) => dispatch => {
     });
 }
 
-const updateReceiptSuccess = (dispatch) => {
+const updateReceiptSuccess = (dispatch, data) => {
     dispatch({
         type: UPDATE_RECEIPT_SUCCESS,
     });
 }
 
-const updateReceiptError = (status) => dispatch => {
+const updateReceiptError = () => dispatch => {
     dispatch({
         type: UPDATE_RECEIPT_FAIL,
         error: error

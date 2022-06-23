@@ -167,7 +167,7 @@ class BillDetails extends Component {
                         <View style={[width.w_90, {paddingTop: 20}]}>
                            <AppButton
                                 onPress={() => {this.props.navigation.navigate('ReceiptComponent', {billId: this.state.data.id, status: this.state.data.status})}}
-                                title={this.state.data.status == 0 ? "Thêm biên nhận" : "Xem biên nhận"}
+                                title={this.state.data.status === '0' ? "Thêm biên nhận" : "Xem biên nhận"}
                             />
                         </View>
                     </View>

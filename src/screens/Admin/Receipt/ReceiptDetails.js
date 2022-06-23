@@ -28,7 +28,7 @@ class ReceiptDetails extends Component {
 
     getReceiptData() {
         this.props.doGetReceiptById({ id: this.props.route.params.id }).then(data => {
-            this.setState({ data: data })
+            this.setState({ data: data, isLoading: false })
         })
     }
     componentDidMount() {

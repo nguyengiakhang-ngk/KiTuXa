@@ -226,7 +226,6 @@ const addRoomFail = (dispatch, error) => {
 
 export const doAddNumberElectric = (number) => dispatch => {
     return new Promise((resolve, reject) => {
-        console.log(number, ":)")
         addNumberElectric(number)
             .then(data => {
                 addNumberElectricSuccess(dispatch, data);

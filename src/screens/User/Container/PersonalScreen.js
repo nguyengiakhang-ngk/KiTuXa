@@ -6,6 +6,7 @@ import {
     Image,
     TouchableOpacity,
     FlatList,
+    Alert,
 
 } from 'react-native';
 import { color_dark, color_primary, color_secondary } from "../../../utils/theme/Color";
@@ -101,7 +102,7 @@ class PersonalScreen extends Component {
                     if (this.state.dataUser) {
                         this.props.navigation.navigate(item.onPress, item.params);
                     } else {
-                        alert("Vui lòng đăng nhập để sử dụng!");
+                        Alert.alert("Thông báo","Vui lòng đăng nhập để sử dụng!");
                     }
                 } else {
                     if (item.onPress === 'Welcome') {

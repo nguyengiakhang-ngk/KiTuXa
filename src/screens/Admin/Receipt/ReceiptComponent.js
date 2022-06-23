@@ -31,7 +31,7 @@ class ReceiptComponent extends Component{
     }
 
     viewAddReceipt(){
-        if(this.props.route.params.status === 0){
+        if(this.props.route.params.status === '0'){
             this.props.navigation.navigate("AddReceipt",
             {
                 billId: this.props.route.params.billId,
@@ -49,14 +49,14 @@ class ReceiptComponent extends Component{
                 isConfirm: false,
                 receiptDelete: ''
             })
-            this.refresh()
             Toast.show({
                 type: 'success',
                 text1: 'Biên nhận',
                 text2: 'Xóa thành công.',
-                visibilityTime: 2000,
+                visibilityTime: 1000,
                 autoHide: true
             });
+            this.refresh()
         })
     }
 
@@ -71,7 +71,7 @@ class ReceiptComponent extends Component{
         this.props.doGetReceiptByBill({billId: this.props.route.params.billId}).then(data => {
             this.setState({
                 data: data
-            }, () => {console.log(data)})
+            })
         })
         setTimeout(() => {
             this.setState({

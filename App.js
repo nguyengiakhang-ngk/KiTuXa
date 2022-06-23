@@ -12,10 +12,14 @@ import {Provider} from "react-redux";
 import {store} from "./src/redux/store";
 import {
   StyleSheet,
-  View,
+  View,LogBox
 } from 'react-native';
   import StackScreen from './src/navigators/StackScreen'
-
+// Ignore log notification by message
+LogBox.ignoreLogs(['Warning: ...']);
+ 
+//Ignore all log notifications
+LogBox.ignoreAllLogs();
 const App: () => Node = () => {
   return (
       <View style={styles.container}>
